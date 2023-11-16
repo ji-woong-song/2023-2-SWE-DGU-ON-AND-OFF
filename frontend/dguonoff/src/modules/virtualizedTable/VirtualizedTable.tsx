@@ -10,14 +10,17 @@ import styles from "./VirtualizedTable.module.css"
 /** VirtualizedTable의 속성 인터페이스 */
 export interface VirtualizedTableProps {
     windowHeight: number;  // 윈도우 높이
+    tableStyles?: React.CSSProperties;
 
     numColumns: number;  // 열의 개수
     columnHeight: number;  // 열 높이
     columnWidths: React.CSSProperties[];  // 각 열의 너비
+    columnStyles?: React.CSSProperties;
     renderColumns: (item: { index: number; columnClassName: string; columnStyle: React.CSSProperties; }) => JSX.Element;  // 열 렌더링 함수
 
     numRows: number;  // 행의 개수
     rowHeight: number;  // 행 높이
+    rowStyles?: React.CSSProperties;
     renderRows: (item: { index: number; rowClassName: string; rowStyle: React.CSSProperties, itemClassName: string; itemStyles: React.CSSProperties[]; }) => JSX.Element;  // 행 렌더링 함수
 }
 
@@ -32,8 +35,9 @@ export interface VirtualizedTableProps {
  */
 export default function VirtualizedTable({
     windowHeight,
-    numColumns, columnHeight, columnWidths, renderColumns,
-    numRows, rowHeight, renderRows,
+    tableStyles: tableStyle,
+    numColumns, columnHeight, columnWidths, columnStyles, renderColumns,
+    numRows, rowHeight, rowStyles, renderRows,
 }: VirtualizedTableProps): JSX.Element {
     const [scrollTop, setScrollTop] = useState(0);  // 현재 스크롤 위치
 
@@ -55,8 +59,8 @@ export default function VirtualizedTable({
                 index: i,
                 columnClassName: `${styles.virtualizedTable_column}`,
                 columnStyle: {
+                    ...columnStyles,
                     flex: `0 0 ${columnWidths?.length ? columnWidths[i].width : "100px"}`,
-                    minWidth: `${columnWidths?.length ? columnWidths[i].minWidth : "100px"}`,
                     height: `${columnHeight}px`,
                     textAlign: "center",
                 }
@@ -71,6 +75,7 @@ export default function VirtualizedTable({
                 index: i,
                 rowClassName: `${styles.virtualizedTable_row}`,
                 rowStyle: {
+                    ...rowStyles,
                     display: "flex",
                     position: "absolute",
                     top: `${i * rowHeight}px`,
@@ -78,10 +83,9 @@ export default function VirtualizedTable({
                     height: `${rowHeight}px`,
                 },
                 itemClassName: `${styles.virtualizedTable_item}`,
-                itemStyles: columnWidths.map((column) => {
+                itemStyles: columnWidths.map((column, index) => {
                     return {
                         flex: `0 0 ${column.width}`,
-                        minWidth: `${column.minWidth}`,
                         height: `100%`,
                         textAlign: "center",
                         overflowX: "hidden",
@@ -92,15 +96,26 @@ export default function VirtualizedTable({
         );
     }
 
+
     return (
-        <div className={styles.virtualizedTable}>
-            <div className={styles.table__header} style={{ height: `${headerHeight}px`, maxHeight: `${headerHeight}px` }}>
+        <div className={styles.virtualizedTable} style={tableStyle}>
+            <div className={styles.table__header}
+                style={{
+                    height: `${headerHeight}px`,
+                    maxHeight: `${headerHeight}px`,
+                    borderRightColor: `${(columnStyles?.backgroundColor as string)?.split(' ').pop()}`
+                }}>
                 <div className={styles.table__headers_columns}>
                     {columns}
                 </div>
             </div>
 
-            <div className={styles.table__body} style={{ height: `${bodyHeight}px`, maxHeight: `${bodyHeight}px` }} onScroll={onScroll}>
+            <div className={styles.table__body}
+                style={{
+                    height: `${bodyHeight}px`,
+                    maxHeight: `${bodyHeight}px`
+                }}
+                onScroll={onScroll}>
                 <div className={styles.table__body_rows} style={{ height: `${innerHeight}px` }}>
                     {rows}
                 </div>

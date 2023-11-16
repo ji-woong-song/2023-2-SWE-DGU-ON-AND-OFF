@@ -10,8 +10,8 @@
 .sidebar {
   height: calc(100% - 2px);
   width: 300px;
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
   border: 1px solid var(--component-main-color);
   background-color: var(--component-main-color);
 }
@@ -109,9 +109,13 @@
 
 
 
-
 /* mainContent's components  */
 .main_top {
+  width: 100%;
+}
+
+.main_mid {
+  height: calc(100% - 80px);
   width: 100%;
 }
 

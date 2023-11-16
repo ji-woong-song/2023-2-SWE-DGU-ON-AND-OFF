@@ -1,0 +1,122 @@
+.ReservationManager {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* ReservationManager's components */
+.search_filter {
+    width: calc(100% - 30px);
+    height: 50px;
+    padding: 20px 15px 15px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reservation_table {
+    width: calc(100% - 30px);
+    height: calc(100% - 50px - 35px);
+    padding: 15px 15px 20px 15px;
+}
+
+
+
+/* search_filter's components */
+.search_filter .period {
+    width: calc(50% - 30px);
+    min-width: 520px;
+    padding-left: 15px;
+    padding-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search_filter .building,
+.search_filter .status {
+    width: calc(25% - 30px);
+    padding-left: 15px;
+    padding-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search_filter label {
+    margin-right: 10px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.search_filter input[type="date"] {
+    flex-grow: 1;
+    height: 26px;
+    padding: 5px;
+    border-radius: 10px;
+    border: 2px solid var(--component-main-color);
+    font-size: 17px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.search_filter span {
+    margin-left: 5px;
+    margin-right: 5px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.search_filter select {
+    flex-grow: 1;
+    height: 40px;
+    padding: 5px;
+    border-radius: 10px;
+    border: 2px solid var(--component-main-color);
+    font-size: 17px;
+    text-align: center;
+    cursor: pointer;
+}
+
+
+
+/**/
+.manage_button {
+    height: calc(100% - 4px - 2px);
+    width: 70px;
+    cursor: pointer;
+    border: 2px solid var(--button-border-color);
+    border-radius: 15px;
+    padding: 1px;
+    font-size: 15px;
+    color: var(--button-text-color);
+}
+
+.manage_button_pending {
+    background-color: var(--button-blank-color);
+}
+
+.manage_button_pending:hover {
+    background-color: var(--button-blank-hover-color);
+    color: var(--button-text-hovercolor);
+}
+
+.manage_button_accept {
+    background-color: var(--button-positive-color);
+}
+
+.manage_button_accept:hover {
+    background-color: var(--button-positive-hover-color);
+    color: var(--button-text-hovercolor);
+}
+
+.manage_button_reject {
+    background-color: var(--button-negative-color);
+}
+
+.manage_button_reject:hover {
+    background-color: var(--button-negative-hover-color);
+    color: var(--button-text-hovercolor);
+}
