@@ -56,7 +56,7 @@ export default function ReservationManager() {
             return new Reservation(
                 (1000 + index).toString(),
                 `MJH`,
-                new Facility(`${3105 + index}`),
+                new Facility(`신공학관 ${3105 + index}`, Math.floor(Math.random() * 100)),
                 new Date(),
                 new Date(),
                 ["pending", "accept", "reject"][Math.floor(Math.random() * 3)] as ReservationStatus);
@@ -79,7 +79,6 @@ export default function ReservationManager() {
                 return "";
         }
     }
-
 
 
     // Render
@@ -147,7 +146,7 @@ export default function ReservationManager() {
                     columnWidths={tableColumns.map((column) => column.style)}
                     columnStyles={{
                         userSelect: "none",
-                        backgroundColor: "var(--component-table-head-color)",
+                        backgroundColor: "var(--component-main-light-color)",
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
@@ -165,23 +164,38 @@ export default function ReservationManager() {
 
                     numRows={reservations.length}
                     rowHeight={35}
+                    rowStyles={{
+                        default: {
+                            userSelect: "none",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            fontSize: "17px",
+                            cursor: "pointer",
+                            backgroundColor: "var(--component-inner-color)"
+                        },
+                        hover: {
+                            backgroundColor: "var(--component-main-light-color)"
+                        }
+                    }}
                     renderRows={({ index, rowClassName, rowStyle, itemClassName, itemStyles }) => {
                         const reservation = reservations[index];
                         return (
                             <div key={index} id={`${index}`} className={rowClassName}
-                                style={{
-                                    ...rowStyle,
-                                    userSelect: "none",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    fontSize: "17px",
-                                    cursor: "pointer"
-                                }}>
+                                style={rowStyle}>
                                 <div className={itemClassName} style={itemStyles[0]}>{reservation.getId()}</div>
                                 <div className={itemClassName} style={itemStyles[1]}>{reservation.getReserver()}</div>
                                 <div className={itemClassName} style={itemStyles[2]}>{reservation.getFacility().getName()}</div>
-                                <div className={itemClassName} style={itemStyles[3]}>{reservation.getStartTime().toISOString().split('T')[0]}</div>
+                                <div className={itemClassName} style={itemStyles[3]}>{
+                                    (() => {
+                                        const startTime = reservation.getStartTime().toISOString();
+                                        const endTime = reservation.getEndTime().toISOString();
+                                        return `${startTime.split('T')[0]} - 
+                                        ${startTime.split('T')[1].split(':')[0]}:${startTime.split('T')[1].split(':')[1]} ~ 
+                                        ${endTime.split('T')[1].split(':')[0]}:${endTime.split('T')[1].split(':')[1]}`;
+                                    })()
+                                }
+                                </div>
                                 <div className={itemClassName} style={itemStyles[4]}>
                                     <button className={`${styles.manage_button} ${styles['manage_button_' + reservation.getStatus()]}`}
                                         onClick={() => { /* TODO: 상세 및 승인여부 모달 구현 필요 */ }}>

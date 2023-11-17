@@ -11,6 +11,7 @@ import styles from "./VirtualizedTable.module.css"
 export interface VirtualizedTableProps {
     windowHeight: number;  // 윈도우 높이
     tableStyles?: React.CSSProperties;
+    hideScrollbar?: boolean;
 
     numColumns: number;  // 열의 개수
     columnHeight: number;  // 열 높이
@@ -20,7 +21,7 @@ export interface VirtualizedTableProps {
 
     numRows: number;  // 행의 개수
     rowHeight: number;  // 행 높이
-    rowStyles?: React.CSSProperties;
+    rowStyles?: { default?: React.CSSProperties, hover?: React.CSSProperties };
     renderRows: (item: { index: number; rowClassName: string; rowStyle: React.CSSProperties, itemClassName: string; itemStyles: React.CSSProperties[]; }) => JSX.Element;  // 행 렌더링 함수
 }
 
@@ -34,24 +35,31 @@ export interface VirtualizedTableProps {
  * @returns {JSX.Element} 렌더링된 가상 스크롤 테이블입니다.
  */
 export default function VirtualizedTable({
-    windowHeight,
-    tableStyles: tableStyle,
+    windowHeight, tableStyles, hideScrollbar,
     numColumns, columnHeight, columnWidths, columnStyles, renderColumns,
     numRows, rowHeight, rowStyles, renderRows,
 }: VirtualizedTableProps): JSX.Element {
+    // Const
     const [scrollTop, setScrollTop] = useState(0);  // 현재 스크롤 위치
-
-    // 스크롤 이벤트 핸들러
-    const onScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-        setScrollTop(e.currentTarget.scrollTop);  // 스크롤 위치 업데이트
-    }, []);
-
     const innerHeight = numRows * rowHeight;
     const headerHeight = columnHeight;
     const bodyHeight = windowHeight - columnHeight;
     const startIndex = Math.floor(scrollTop / rowHeight);
     const endIndex = Math.min(numRows - 1, Math.floor((scrollTop + bodyHeight) / rowHeight));
 
+
+    // State
+    const [hoveredRow, setHoveredRow] = useState<number | null>(null);
+
+
+    // Handler
+    /** 스크롤 이벤트 핸들러 */
+    const onScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+        setScrollTop(e.currentTarget.scrollTop);  // 스크롤 위치 업데이트
+    }, []);
+
+
+    // Init
     const columns = [];
     for (let i = 0; i < numColumns; i++) {
         columns.push(
@@ -70,12 +78,16 @@ export default function VirtualizedTable({
 
     const rows = [];
     for (let i = startIndex; i <= endIndex; i++) {
+        const isHovered = i === hoveredRow;
+        const currentRowStyle = isHovered ? rowStyles?.hover : rowStyles?.default;
+
         rows.push(
             React.cloneElement(renderRows({
                 index: i,
                 rowClassName: `${styles.virtualizedTable_row}`,
                 rowStyle: {
-                    ...rowStyles,
+                    ...rowStyles?.default,
+                    ...(i === hoveredRow && rowStyles?.hover),
                     display: "flex",
                     position: "absolute",
                     top: `${i * rowHeight}px`,
@@ -92,13 +104,18 @@ export default function VirtualizedTable({
                         overflowY: "auto",
                     }
                 })
-            }), { key: `row-${i}` })
+            }), {
+                key: `row-${i}`,
+                onMouseEnter: () => setHoveredRow(i),
+                onMouseLeave: () => setHoveredRow(null)
+            })
         );
     }
 
 
+    // Render
     return (
-        <div className={styles.virtualizedTable} style={tableStyle}>
+        <div className={styles.virtualizedTable} style={tableStyles}>
             <div className={styles.table__header}
                 style={{
                     height: `${headerHeight}px`,
@@ -113,7 +130,8 @@ export default function VirtualizedTable({
             <div className={styles.table__body}
                 style={{
                     height: `${bodyHeight}px`,
-                    maxHeight: `${bodyHeight}px`
+                    maxHeight: `${bodyHeight}px`,
+                    overflowY: `${hideScrollbar ? "hidden" : "scroll"}`
                 }}
                 onScroll={onScroll}>
                 <div className={styles.table__body_rows} style={{ height: `${innerHeight}px` }}>

@@ -1,7 +1,7 @@
 :root {
     /* component */
     --component-main-color: #FBAF3E;
-    --component-table-head-color: #ffe7c2;
+    --component-main-light-color: #ffe7c2;
     --component-inner-color: white;
     --component-inner-select-color: black;
     --component-innertext-color: black;
@@ -9,18 +9,18 @@
 
 
     /* button */
-    --button-color: #2260ff;
-    --button-hover-color: #80a3fc;
-    --button-border-color: #cbd8e4;
-    --button-text-color: #ffffff;
-    --button-text-hover-color: #000000;
+    --button-text-light-color: #ffffff;
+    --button-text-dark-color: #000000;
 
     --button-positive-color: #08b66d;
-    --button-positive-hover-color: #7be6b9;
+    --button-positive-light-color: #7be6b9;
 
-    --button-negative-color: #e06060;
-    --button-negative-hover-color: #d19a9a;
+    --button-negative-color: #ff7b7b;
+    --button-negative-light-color: #ffbaba;
 
     --button-blank-color: #696969;
-    --button-blank--hover-color: #afafaf;
+    --button-blank--light-color: #979797;
+
+    --button-gray-color: #D2D2D2;
+    --button-gray-light-color: #f9f9f9;
 }

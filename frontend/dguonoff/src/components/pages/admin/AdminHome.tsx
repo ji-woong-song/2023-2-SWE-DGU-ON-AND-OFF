@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import styles from "./AdminHome.module.css";
 import ReservationManager from "./mainContent/ReservationManager";
+import Welcome from "./mainContent/Welcome";
+import FixedTimetableManager from "./mainContent/FixedTimetableManager";
 
 
 type SidebarMenu = "Blank" | "예약 신청 관리" | "고정 시간표 관리" | "개별 시간표 관리";
@@ -14,8 +16,8 @@ export default function AdminHome() {
 
 
     // State
-    const [currMenu, setCurrMenu] = useState<SidebarMenu>("예약 신청 관리");
-    const [hoverMenu, sethoverMenu] = useState<SidebarMenu>("예약 신청 관리");
+    const [currMenu, setCurrMenu] = useState<SidebarMenu>("고정 시간표 관리");
+    const [hoverMenu, sethoverMenu] = useState<SidebarMenu>("고정 시간표 관리");
     const [currFacility, setCurrFacility] = useState<Facility>("Blank");
     const [hoverFacility, sethoverFacility] = useState<Facility>("Blank");
 
@@ -40,12 +42,15 @@ export default function AdminHome() {
 
     const getContentComponent = () => {
         switch (currMenu) {
-            case "예약 신청 관리": {
-                return <ReservationManager
-
-                />;
+            case "Blank": {
+                return <Welcome />;
             }
-
+            case "예약 신청 관리": {
+                return <ReservationManager />;
+            }
+            case "고정 시간표 관리": {
+                return <FixedTimetableManager />;
+            }
             default: {
                 return <></>;
             }
@@ -86,28 +91,30 @@ export default function AdminHome() {
 
             <div className={styles.mainContent}>
                 <div className={styles.main_top}>
-                    <table className={styles.facility_select}>
-                        <tbody >
-                            <tr >
-                                {facilities.map((facility, index) => (
-                                    <td key={index}
-                                        className={styles.facility}
-                                        onClick={() => onSelectFacility(facility)}
-                                        onMouseOver={() => onHoverFacility(facility)}
-                                        onMouseLeave={() => onHoverFacility("Blank")}
-                                        style={{
-                                            color: currFacility === facility || hoverFacility === facility ?
-                                                'var(--component-innertext-select-color)' : 'var(--component-innertext-color)',
-                                            backgroundColor: currFacility === facility || hoverFacility === facility ?
-                                                'var(--component-main-color)' : 'var(--component-inner-color)',
-                                        }}>
-                                        {facility}
-                                    </td>
-                                ))}
-                            </tr>
-                        </tbody>
-                    </table>
-                </div >
+                    {(currMenu !== "Blank") &&
+                        <table className={styles.facility_select}>
+                            <tbody >
+                                <tr >
+                                    {facilities.map((facility, index) => (
+                                        <td key={index}
+                                            className={styles.facility}
+                                            onClick={() => onSelectFacility(facility)}
+                                            onMouseOver={() => onHoverFacility(facility)}
+                                            onMouseLeave={() => onHoverFacility("Blank")}
+                                            style={{
+                                                color: currFacility === facility || hoverFacility === facility ?
+                                                    'var(--component-innertext-select-color)' : 'var(--component-innertext-color)',
+                                                backgroundColor: currFacility === facility || hoverFacility === facility ?
+                                                    'var(--component-main-color)' : 'var(--component-inner-color)',
+                                            }}>
+                                            {facility}
+                                        </td>
+                                    ))}
+                                </tr>
+                            </tbody>
+                        </table>
+                    }
+                </div>
                 <div className={styles.main_mid}>
                     {getContentComponent()}
                 </div>
@@ -115,10 +122,3 @@ export default function AdminHome() {
         </div >
     );
 };
-
-
-/*
-                    <div className={styles.welcome}>
-                        <img src="/images/logo.gif" alt="Logo" />
-                    </div>
-*/

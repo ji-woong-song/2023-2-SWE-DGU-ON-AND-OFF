@@ -20,6 +20,7 @@
     width: calc(100% - 30px);
     height: calc(100% - 50px - 35px);
     padding: 15px 15px 20px 15px;
+    overflow: hidden;
 }
 
 
@@ -49,6 +50,7 @@
     margin-right: 10px;
     font-size: 18px;
     font-weight: 600;
+    user-select: none;
 }
 
 .search_filter input[type="date"] {
@@ -58,6 +60,7 @@
     border-radius: 10px;
     border: 2px solid var(--component-main-color);
     font-size: 17px;
+    font-weight: 600;
     text-align: center;
     cursor: pointer;
 }
@@ -76,6 +79,7 @@
     border-radius: 10px;
     border: 2px solid var(--component-main-color);
     font-size: 17px;
+    font-weight: 600;
     text-align: center;
     cursor: pointer;
 }
@@ -87,36 +91,38 @@
     height: calc(100% - 4px - 2px);
     width: 70px;
     cursor: pointer;
-    border: 2px solid var(--button-border-color);
     border-radius: 15px;
     padding: 1px;
     font-size: 15px;
-    color: var(--button-text-color);
+    color: var(--button-text-dark-color);
 }
 
 .manage_button_pending {
-    background-color: var(--button-blank-color);
+    border: 2px solid var(--button-blank-color);
+    background-color: var(--button-blank-light-color);
 }
 
 .manage_button_pending:hover {
-    background-color: var(--button-blank-hover-color);
-    color: var(--button-text-hovercolor);
+    background-color: var(--button-blank-color);
+    color: var(--button-text-light-color);
 }
 
 .manage_button_accept {
-    background-color: var(--button-positive-color);
+    border: 2px solid var(--button-positive-color);
+    background-color: var(--button-positive-light-color);
 }
 
 .manage_button_accept:hover {
-    background-color: var(--button-positive-hover-color);
-    color: var(--button-text-hovercolor);
+    background-color: var(--button-positive-color);
+    color: var(--button-text-light-color);
 }
 
 .manage_button_reject {
-    background-color: var(--button-negative-color);
+    border: 2px solid var(--button-negative-color);
+    background-color: var(--button-negative-light-color);
 }
 
 .manage_button_reject:hover {
-    background-color: var(--button-negative-hover-color);
-    color: var(--button-text-hovercolor);
+    background-color: var(--button-negative-color);
+    color: var(--button-text-light-color);
 }
