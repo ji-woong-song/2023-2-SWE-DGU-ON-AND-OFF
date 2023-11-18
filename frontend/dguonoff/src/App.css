@@ -10,6 +10,7 @@
 
     /* button */
     --button-text-light-color: #ffffff;
+    --button-text-medium-color: #6e6e6e;
     --button-text-dark-color: #000000;
 
     --button-positive-color: #08b66d;
@@ -18,8 +19,8 @@
     --button-negative-color: #ff7b7b;
     --button-negative-light-color: #ffbaba;
 
-    --button-blank-color: #696969;
-    --button-blank--light-color: #979797;
+    --button-blank-color: #616161;
+    --button-blank-light-color: #bfbfbf;
 
     --button-gray-color: #D2D2D2;
     --button-gray-light-color: #f9f9f9;

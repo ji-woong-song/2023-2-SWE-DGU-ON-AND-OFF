@@ -1,17 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./ReservationManager.module.css";
-import Building from "../../../../types/Building";
-import Facility from "../../../../types/Facility";
-import VirtualizedTable from "../../../../modules/virtualizedTable/VirtualizedTable";
-import useElementDimensions from "../../../../hooks/useElementDimensions";
-import Reservation, { ReservationStatus } from "../../../../types/Reservation";
+
 import FacilityCategoryTable, { FacilityCategory } from "./commons/FacilityCategoryTable";
+import Reservation, { ReservationStatus } from "../../../../../types/Reservation";
+import Building from "../../../../../types/Building";
+import useElementDimensions from "../../../../../hooks/useElementDimensions";
+import Facility from "../../../../../types/Facility";
+import VirtualizedTable from "../../../../../modules/virtualizedTable/VirtualizedTable";
+import { useModal } from "../../../../../modules/modal/Modal";
+import { ModalAnimationType } from "../../../../../modules/modal/ModalAnimations";
 
 
 
 export default function ReservationManager() {
     // Const
-    const [currFacility, setCurrFacility] = useState<FacilityCategory>("Blank");
+    const [currFacility, setCurrFacility] = useState<FacilityCategory>("강의실");
     const reservationStatuses: ("all" | ReservationStatus)[] = ["all", "pending", "accept", "reject"];
 
     const tableColumns: { name: string, style: React.CSSProperties }[] = [
@@ -45,11 +48,12 @@ export default function ReservationManager() {
     const [selectedBuilding, setSelectedBuilding] = useState<Building>(new Building());
     const [selectedReservationStatus, setSelectedReservationStatus] = useState<"all" | ReservationStatus>("all");
     const [reservations, setReservations] = useState<Reservation[]>([]);
+    const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
 
 
     // Hook
     const [reservationTableWidth, reservationTableHeight] = useElementDimensions(reservationTableRef, "Pure");
-
+    const [ReservationDetailsModal, openReservationDetailsModal, closeReservationDetailsModal] = useModal(ModalAnimationType.ZOOM);
 
     // Effect
     useEffect(() => {
@@ -58,9 +62,11 @@ export default function ReservationManager() {
             return new Reservation(
                 (1000 + index).toString(),
                 `MJH`,
+                "학습 목적",
                 new Facility(`신공학관 ${3105 + index}`, Math.floor(Math.random() * 100)),
                 new Date(),
                 new Date(),
+                Math.floor(Math.random() * 30),
                 ["pending", "accept", "reject"][Math.floor(Math.random() * 3)] as ReservationStatus);
         }));
     }, []);
@@ -82,12 +88,17 @@ export default function ReservationManager() {
         }
     }
 
+    const openReservationDetails = (reservation: Reservation) => {
+        setSelectedReservation(reservation);
+        openReservationDetailsModal();
+    };
+
 
     // Render
     return (
         <div className={styles.reservationManager}>
             <div className={styles.top_contents}>
-            <FacilityCategoryTable
+                <FacilityCategoryTable
                     currFacility={currFacility}
                     setCurrFacility={setCurrFacility}
                 />
@@ -207,7 +218,7 @@ export default function ReservationManager() {
                                     </div>
                                     <div className={itemClassName} style={itemStyles[4]}>
                                         <button className={`${styles.manage_button} ${styles['manage_button_' + reservation.getStatus()]}`}
-                                            onClick={() => { /* TODO: 상세 및 승인여부 모달 구현 필요 */ }}>
+                                            onClick={() => { openReservationDetails(reservation); }}>
                                             {statusToString(reservation.getStatus())}
                                         </button>
                                     </div>
@@ -217,6 +228,40 @@ export default function ReservationManager() {
                     />
                 </div>
             </div >
+
+            {selectedReservation && (
+                <ReservationDetailsModal>
+                    <div className={styles.reservation_details}>
+                        <div className={styles.top}>
+                            예약 상세 정보
+                        </div>
+                        <div className={styles.middle}>
+                            <div className={styles.head}>
+                                <label htmlFor="user-name">예약자명</label>
+                                <label htmlFor="use-purpose">사용 목적</label>
+                                <label htmlFor="date-time">날짜 및 시간</label>
+                                <label htmlFor="group-info">예약 인원 및 정보</label>
+                            </div>
+                            <div className={styles.data}>
+                                <label htmlFor="user-name">{selectedReservation.getReserver()}</label>
+                                <label htmlFor="use-purpose">{selectedReservation.getPurpose()}</label>
+                                <label htmlFor="date-time">{(() => {
+                                    const startTime = selectedReservation.getStartTime().toISOString();
+                                    const endTime = selectedReservation.getEndTime().toISOString();
+                                    return `${startTime.split('T')[0]} - 
+                                        ${startTime.split('T')[1].split(':')[0]}:${startTime.split('T')[1].split(':')[1]} ~ 
+                                        ${endTime.split('T')[1].split(':')[0]}:${endTime.split('T')[1].split(':')[1]}`;
+                                })()}</label>
+                                <label htmlFor="group-info">{`${selectedReservation.getReserver()} 외 ${selectedReservation.getGroupNum() - 1} >`}</label>
+                            </div>
+                        </div>
+                        <div className={styles.bottom}>
+                            <button className={styles.accept} onClick={() => { closeReservationDetailsModal() }}>예약 승인</button>
+                            <button className={styles.reject} onClick={() => { closeReservationDetailsModal() }}>예약 거절</button>
+                        </div>
+                    </div>
+                </ReservationDetailsModal>
+            )}
         </div>
     );
 };

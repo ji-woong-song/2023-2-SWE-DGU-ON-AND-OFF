@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./AdminAccountManager.module.css";
-import User, { UserRole } from "../../../../types/User";
-import useElementDimensions from "../../../../hooks/useElementDimensions";
-import VirtualizedTable from "../../../../modules/virtualizedTable/VirtualizedTable";
+import User, { UserRole } from "../../../../../types/User";
+import useElementDimensions from "../../../../../hooks/useElementDimensions";
+import VirtualizedTable from "../../../../../modules/virtualizedTable/VirtualizedTable";
+
 
 
 export default function AdminAccountManager() {

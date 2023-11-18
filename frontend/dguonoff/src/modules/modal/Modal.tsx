@@ -145,7 +145,7 @@ export function useModal(modalAnimation: ModalAnimationType, backgroundColor: st
         setIsUnmount(true);
         setTimeout(() => {
             setIsOpen(false);
-        }, animation.duration);
+        }, animation.duration * 0.9);
     };
 
     const openModal = () => {

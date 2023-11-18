@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import styles from "./FixedTimetableManager.module.css";
-import Building from "../../../../types/Building";
-import Facility from "../../../../types/Facility";
-import { Day } from "../../../../types/Day";
 import FacilityTable from "./commons/FacilityTable";
 import FacilityTimetable from "./commons/FacilityTimetable";
 import FacilityEventInfo from "./commons/FacilityEventInfo";
 import FacilityCategoryTable, { FacilityCategory } from "./commons/FacilityCategoryTable";
+import Building from "../../../../../types/Building";
+import Facility from "../../../../../types/Facility";
+import { Day } from "../../../../../types/Day";
 
 
 /** 고정 시간표 관리 */
 export default function FixedTimetableManager() {
     // State
-    const [currFacility, setCurrFacility] = useState<FacilityCategory>("Blank");
+    const [currFacility, setCurrFacility] = useState<FacilityCategory>("강의실");
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date>(new Date());
     const [buildings, setBuildings] = useState<Building[]>([]);

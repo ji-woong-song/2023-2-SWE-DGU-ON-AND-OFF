@@ -1,8 +1,9 @@
 import { useRef } from "react";
-import VirtualizedTable from "../../../../../modules/virtualizedTable/VirtualizedTable";
 import styles from "./FacilityTable.module.css";
-import useElementDimensions from "../../../../../hooks/useElementDimensions";
-import Facility from "../../../../../types/Facility";
+import VirtualizedTable from "../../../../../../modules/virtualizedTable/VirtualizedTable";
+import Facility from "../../../../../../types/Facility";
+import useElementDimensions from "../../../../../../hooks/useElementDimensions";
+
 
 
 export interface FacilityTableProps {

@@ -10,8 +10,8 @@
 
 /* welcome's components */
 .welcome img {
-    width: 60%;
-    height: auto;
+    height: 50%;
+    width: auto;
     max-width: 60%;
     max-height: 100%;
     object-fit: cover;

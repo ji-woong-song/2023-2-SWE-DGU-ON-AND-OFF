@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
-import { Day } from "../../../../../types/Day";
 import styles from "./FacilityTimetable.module.css";
-import useElementDimensions from "../../../../../hooks/useElementDimensions";
-import VirtualizedTable from "../../../../../modules/virtualizedTable/VirtualizedTable";
+import { Day } from "../../../../../../types/Day";
+import useElementDimensions from "../../../../../../hooks/useElementDimensions";
+import VirtualizedTable from "../../../../../../modules/virtualizedTable/VirtualizedTable";
 
 
 export interface FacilityTimetableProps {

@@ -5,6 +5,7 @@ import Welcome from "./mainContent/Welcome";
 import FixedTimetableManager from "./mainContent/FixedTimetableManager";
 import IndividualTimetableManager from "./mainContent/IndividualTimetableManager";
 import AdminAccountManager from "./mainContent/AdminAccountManager";
+import { useNavigate } from "react-router-dom";
 
 
 type SidebarMenu = "Blank" | "예약 신청 관리" | "고정 시간표 관리" | "개별 시간표 관리" | "관리자 계정 관리";
@@ -13,11 +14,12 @@ type SidebarMenu = "Blank" | "예약 신청 관리" | "고정 시간표 관리" 
 export default function AdminHome() {
     // Const
     const sidebarMenus: SidebarMenu[] = ["예약 신청 관리", "고정 시간표 관리", "개별 시간표 관리", "관리자 계정 관리"];
+    const navigate = useNavigate();
 
 
     // State
-    const [currMenu, setCurrMenu] = useState<SidebarMenu>("관리자 계정 관리");
-    const [hoverMenu, sethoverMenu] = useState<SidebarMenu>("관리자 계정 관리");
+    const [currMenu, setCurrMenu] = useState<SidebarMenu>("Blank");
+    const [hoverMenu, sethoverMenu] = useState<SidebarMenu>("Blank");
 
 
     // Handler
@@ -28,6 +30,10 @@ export default function AdminHome() {
     const onHoverMenu = (menu: SidebarMenu) => {
         sethoverMenu(menu);
     }
+
+    const onLogoutClick = () => {
+        navigate('/admin/login');
+    };
 
     const getContentComponent = () => {
         switch (currMenu) {
@@ -80,7 +86,7 @@ export default function AdminHome() {
                     ))}
                 </div>
                 <div className={styles.sidebar__logout}>
-                    <div className={styles.sidebar__logout_text}>로그아웃</div>
+                    <div className={styles.sidebar__logout_text} onClick={onLogoutClick}>로그아웃</div>
                 </div>
             </div>
 

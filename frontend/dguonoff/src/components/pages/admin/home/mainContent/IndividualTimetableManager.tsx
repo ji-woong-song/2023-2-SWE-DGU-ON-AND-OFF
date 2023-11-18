@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import styles from "./IndividualTimetableManager.module.css";
-import Building from "../../../../types/Building";
-import Facility from "../../../../types/Facility";
-import { Day } from "../../../../types/Day";
 import FacilityTable from "./commons/FacilityTable";
 import FacilityTimetable from "./commons/FacilityTimetable";
 import FacilityEventInfo from "./commons/FacilityEventInfo";
 import FacilityCategoryTable, { FacilityCategory } from "./commons/FacilityCategoryTable";
+import Facility from "../../../../../types/Facility";
+import Building from "../../../../../types/Building";
+import { Day } from "../../../../../types/Day";
 
 
 /** 개별 시간표 관리 */
 export default function IndividualTimetableManager() {
     // State
-    const [currFacility, setCurrFacility] = useState<FacilityCategory>("Blank");
+    const [currFacility, setCurrFacility] = useState<FacilityCategory>("강의실");
     const [date, setDate] = useState<Date>(new Date());
     const [buildings, setBuildings] = useState<Building[]>([]);
     const [selectedBuilding, setSelectedBuilding] = useState<Building>(new Building());

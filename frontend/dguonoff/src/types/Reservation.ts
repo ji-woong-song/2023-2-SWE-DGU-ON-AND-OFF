@@ -6,23 +6,29 @@ export type ReservationStatus = "pending" | "accept" | "reject";
 export default class Reservation {
     private id: string;
     private reserver: string;
+    private purpose: string;
     private facility: Facility;
     private startTime: Date;
     private endTime: Date;
+    private groupNum: number;
     private status: ReservationStatus;
 
     constructor(
         id: string = "",
         reserver: string = "",
+        purpose: string = "",
         facility: Facility = new Facility(),
         dateTime: Date = new Date(),
         endTime: Date = new Date(),
+        groupNum: number = 0,
         status: ReservationStatus = "pending") {
         this.id = id;
         this.reserver = reserver;
+        this.purpose = purpose;
         this.facility = facility;
         this.startTime = dateTime;
         this.endTime = endTime;
+        this.groupNum = groupNum;
         this.status = status;
     }
 
@@ -38,6 +44,13 @@ export default class Reservation {
     }
     public setReserver(reserver: string): void {
         this.reserver = reserver;
+    }
+
+    public getPurpose(): string {
+        return this.purpose;
+    }
+    public setPurpose(purpose: string): void {
+        this.purpose = purpose;
     }
 
     public getFacility(): Facility {
@@ -59,6 +72,13 @@ export default class Reservation {
     }
     public setEndTime(endTime: Date): void {
         this.endTime = endTime;
+    }
+
+    public getGroupNum(): number {
+        return this.groupNum;
+    }
+    public setGroupNum(groupNum: number): void {
+        this.groupNum = groupNum;
     }
 
     public getStatus(): ReservationStatus {

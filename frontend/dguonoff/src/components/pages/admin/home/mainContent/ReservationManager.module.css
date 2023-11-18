@@ -108,7 +108,6 @@
     border-radius: 15px;
     padding: 1px;
     font-size: 15px;
-    color: var(--button-text-dark-color);
 }
 
 .manage_button_pending {
@@ -139,4 +138,115 @@
 .manage_button_reject:hover {
     background-color: var(--button-negative-color);
     color: var(--button-text-light-color);
+}
+
+
+
+/* ReservationDetailsModal's components */
+.reservation_details {
+    width: calc(50vw - 80px);
+    height: calc(50vh - 80px);
+    padding: 40px;
+    border: 2px solid var(--component-main-color);
+    border-radius: 15px;
+    background-color: var(--component-inner-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.reservation_details .top {
+    height: 50px;
+    width: calc(100% - 20px);
+    padding-left: 20px;
+    font-size: 28px;
+    font-weight: 600;
+    user-select: none;
+}
+
+.reservation_details .middle {
+    flex-grow: 1;
+    padding: 5%;
+    display: flex;
+}
+
+.reservation_details .bottom {
+    height: 50px;
+    width: 40%;
+    padding-left: 55%;
+    padding-right: 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+
+/* middle's components */
+.middle .head {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    user-select: none;
+}
+
+.middle .data {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.middle .head label {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--button-text-medium-color);
+    user-select: none;
+}
+
+.middle .data label {
+    width: 100%;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--button-text-dark-color);
+    user-select: none;
+    text-align: end;
+}
+
+
+/* bottom's components */
+.reservation_details .accept {
+    height: calc(100% - 4px);
+    width: 45%;
+    cursor: pointer;
+    border: 2px solid var(--button-positive-color);
+    background-color: var(--button-positive-light-color);
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--component-innertext-color);
+    user-select: none;
+}
+
+.reservation_details .accept:hover {
+    background-color: var(--button-positive-color);
+    color: var(--component-innertext-select-color);
+}
+
+.reservation_details .reject {
+    height: calc(100% - 4px);
+    width: 45%;
+    cursor: pointer;
+    border: 2px solid var(--button-negative-color);
+    background-color: var(--button-negative-light-color);
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--component-innertext-color);
+    user-select: none;
+}
+
+.reservation_details .reject:hover {
+    background-color: var(--button-negative-color);
+    color: var(--component-innertext-select-color);
 }

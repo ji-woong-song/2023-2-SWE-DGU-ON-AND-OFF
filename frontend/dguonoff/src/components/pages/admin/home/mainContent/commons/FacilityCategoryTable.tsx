@@ -18,7 +18,7 @@ export default function FacilityCategoryTable({ currFacility, setCurrFacility }:
 
 
     // State
-    const [hoverFacility, sethoverFacility] = useState<FacilityCategory>("Blank");
+    const [hoverFacility, sethoverFacility] = useState<FacilityCategory>("강의실");
 
 
     // Handler
