@@ -5,11 +5,13 @@ import Facility from "../../../../types/Facility";
 import VirtualizedTable from "../../../../modules/virtualizedTable/VirtualizedTable";
 import useElementDimensions from "../../../../hooks/useElementDimensions";
 import Reservation, { ReservationStatus } from "../../../../types/Reservation";
+import FacilityCategoryTable, { FacilityCategory } from "./commons/FacilityCategoryTable";
 
 
 
 export default function ReservationManager() {
     // Const
+    const [currFacility, setCurrFacility] = useState<FacilityCategory>("Blank");
     const reservationStatuses: ("all" | ReservationStatus)[] = ["all", "pending", "accept", "reject"];
 
     const tableColumns: { name: string, style: React.CSSProperties }[] = [
@@ -83,130 +85,138 @@ export default function ReservationManager() {
 
     // Render
     return (
-        <div className={styles.ReservationManager}>
-            <div className={styles.search_filter}>
-                <div className={styles.period}>
-                    <label htmlFor="start-date">적용 기간</label>
-                    <input
-                        type="date"
-                        id="start-date"
-                        name="start-date"
-                        value={startDate.toISOString().split('T')[0]}
-                        onChange={(e) => { setStartDate(new Date(e.target.value)); }}
-                    />
-
-                    <span>~</span>
-
-                    <input
-                        type="date"
-                        id="end-date"
-                        name="end-date"
-                        value={endDate.toISOString().split('T')[0]}
-                        onChange={(e) => { setEndDate(new Date(e.target.value)); }}
-                    />
-                </div>
-
-                <div className={styles.building}>
-                    <label htmlFor="building-select">건물 코드</label>
-                    <select
-                        id="building-select"
-                        onChange={(e) => setSelectedBuilding(buildings[e.target.selectedIndex])}
-                    >
-                        {buildings.map((building, index) => (
-                            <option key={index} value={building.getName()}>
-                                {building.getName()}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div className={styles.status}>
-                    <label htmlFor="status-select">예약 상태</label>
-                    <select
-                        id="status-select"
-                        value={selectedReservationStatus}
-                        onChange={(e) => setSelectedReservationStatus(reservationStatuses[e.target.selectedIndex])}
-                    >
-                        {reservationStatuses.map((status, index) => (
-                            <option key={index} value={statusToString(status)}>
-                                {statusToString(status)}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+        <div className={styles.reservationManager}>
+            <div className={styles.top_contents}>
+            <FacilityCategoryTable
+                    currFacility={currFacility}
+                    setCurrFacility={setCurrFacility}
+                />
             </div>
+            <div className={styles.mid_contents}>
+                <div className={styles.search_filter}>
+                    <div className={styles.period}>
+                        <label htmlFor="start-date">적용 기간</label>
+                        <input
+                            type="date"
+                            id="start-date"
+                            name="start-date"
+                            value={startDate.toISOString().split('T')[0]}
+                            onChange={(e) => { setStartDate(new Date(e.target.value)); }}
+                        />
 
-            <div className={styles.reservation_table} ref={reservationTableRef}>
-                <VirtualizedTable
-                    windowHeight={reservationTableHeight - 4}
-                    tableStyles={{ overflow: "hidden", borderRadius: "10px", border: "2px solid var(--component-main-color)" }}
+                        <span>~</span>
 
-                    numColumns={tableColumns.length}
-                    columnHeight={35}
-                    columnWidths={tableColumns.map((column) => column.style)}
-                    columnStyles={{
-                        userSelect: "none",
-                        backgroundColor: "var(--component-main-light-color)",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        fontSize: "17px",
-                        fontWeight: "600"
-                    }}
-                    renderColumns={({ index, columnClassName, columnStyle }) => {
-                        return (
-                            <div key={index} className={columnClassName}
-                                style={columnStyle}>
-                                {tableColumns[index].name}
-                            </div>
-                        );
-                    }}
+                        <input
+                            type="date"
+                            id="end-date"
+                            name="end-date"
+                            value={endDate.toISOString().split('T')[0]}
+                            onChange={(e) => { setEndDate(new Date(e.target.value)); }}
+                        />
+                    </div>
 
-                    numRows={reservations.length}
-                    rowHeight={35}
-                    rowStyles={{
-                        default: {
+                    <div className={styles.building}>
+                        <label htmlFor="building-select">건물 코드</label>
+                        <select
+                            id="building-select"
+                            onChange={(e) => setSelectedBuilding(buildings[e.target.selectedIndex])}
+                        >
+                            {buildings.map((building, index) => (
+                                <option key={index} value={building.getName()}>
+                                    {building.getName()}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className={styles.status}>
+                        <label htmlFor="status-select">예약 상태</label>
+                        <select
+                            id="status-select"
+                            value={selectedReservationStatus}
+                            onChange={(e) => setSelectedReservationStatus(reservationStatuses[e.target.selectedIndex])}
+                        >
+                            {reservationStatuses.map((status, index) => (
+                                <option key={index} value={statusToString(status)}>
+                                    {statusToString(status)}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                <div className={styles.reservation_table} ref={reservationTableRef}>
+                    <VirtualizedTable
+                        windowHeight={reservationTableHeight - 4}
+                        tableStyles={{ overflow: "hidden", borderRadius: "10px", border: "2px solid var(--component-main-color)" }}
+
+                        numColumns={tableColumns.length}
+                        columnHeight={35}
+                        columnWidths={tableColumns.map((column) => column.style)}
+                        columnStyles={{
                             userSelect: "none",
+                            backgroundColor: "var(--component-main-light-color)",
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
                             fontSize: "17px",
-                            cursor: "pointer",
-                            backgroundColor: "var(--component-inner-color)"
-                        },
-                        hover: {
-                            backgroundColor: "var(--component-main-light-color)"
-                        }
-                    }}
-                    renderRows={({ index, rowClassName, rowStyle, itemClassName, itemStyles }) => {
-                        const reservation = reservations[index];
-                        return (
-                            <div key={index} id={`${index}`} className={rowClassName}
-                                style={rowStyle}>
-                                <div className={itemClassName} style={itemStyles[0]}>{reservation.getId()}</div>
-                                <div className={itemClassName} style={itemStyles[1]}>{reservation.getReserver()}</div>
-                                <div className={itemClassName} style={itemStyles[2]}>{reservation.getFacility().getName()}</div>
-                                <div className={itemClassName} style={itemStyles[3]}>{
-                                    (() => {
-                                        const startTime = reservation.getStartTime().toISOString();
-                                        const endTime = reservation.getEndTime().toISOString();
-                                        return `${startTime.split('T')[0]} - 
+                            fontWeight: "600"
+                        }}
+                        renderColumns={({ index, columnClassName, columnStyle }) => {
+                            return (
+                                <div key={index} className={columnClassName}
+                                    style={columnStyle}>
+                                    {tableColumns[index].name}
+                                </div>
+                            );
+                        }}
+
+                        numRows={reservations.length}
+                        rowHeight={35}
+                        rowStyles={{
+                            default: {
+                                userSelect: "none",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                fontSize: "17px",
+                                cursor: "pointer",
+                                backgroundColor: "var(--component-inner-color)"
+                            },
+                            hover: {
+                                backgroundColor: "var(--component-main-light-color)"
+                            }
+                        }}
+                        renderRows={({ index, rowClassName, rowStyle, itemClassName, itemStyles }) => {
+                            const reservation = reservations[index];
+                            return (
+                                <div key={index} id={`${index}`} className={rowClassName}
+                                    style={rowStyle}>
+                                    <div className={itemClassName} style={itemStyles[0]}>{reservation.getId()}</div>
+                                    <div className={itemClassName} style={itemStyles[1]}>{reservation.getReserver()}</div>
+                                    <div className={itemClassName} style={itemStyles[2]}>{reservation.getFacility().getName()}</div>
+                                    <div className={itemClassName} style={itemStyles[3]}>{
+                                        (() => {
+                                            const startTime = reservation.getStartTime().toISOString();
+                                            const endTime = reservation.getEndTime().toISOString();
+                                            return `${startTime.split('T')[0]} - 
                                         ${startTime.split('T')[1].split(':')[0]}:${startTime.split('T')[1].split(':')[1]} ~ 
                                         ${endTime.split('T')[1].split(':')[0]}:${endTime.split('T')[1].split(':')[1]}`;
-                                    })()
-                                }
+                                        })()
+                                    }
+                                    </div>
+                                    <div className={itemClassName} style={itemStyles[4]}>
+                                        <button className={`${styles.manage_button} ${styles['manage_button_' + reservation.getStatus()]}`}
+                                            onClick={() => { /* TODO: 상세 및 승인여부 모달 구현 필요 */ }}>
+                                            {statusToString(reservation.getStatus())}
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className={itemClassName} style={itemStyles[4]}>
-                                    <button className={`${styles.manage_button} ${styles['manage_button_' + reservation.getStatus()]}`}
-                                        onClick={() => { /* TODO: 상세 및 승인여부 모달 구현 필요 */ }}>
-                                        {statusToString(reservation.getStatus())}
-                                    </button>
-                                </div>
-                            </div>
-                        );
-                    }}
-                />
-            </div>
-        </div >
+                            );
+                        }}
+                    />
+                </div>
+            </div >
+        </div>
     );
 };

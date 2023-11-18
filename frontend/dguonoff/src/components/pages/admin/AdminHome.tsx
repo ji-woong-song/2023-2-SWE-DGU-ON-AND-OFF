@@ -4,23 +4,20 @@ import ReservationManager from "./mainContent/ReservationManager";
 import Welcome from "./mainContent/Welcome";
 import FixedTimetableManager from "./mainContent/FixedTimetableManager";
 import IndividualTimetableManager from "./mainContent/IndividualTimetableManager";
+import AdminAccountManager from "./mainContent/AdminAccountManager";
 
 
-type SidebarMenu = "Blank" | "예약 신청 관리" | "고정 시간표 관리" | "개별 시간표 관리";
-type Facility = "Blank" | "강의실" | "도서관 세미나실" | "운동장" | "만해광장" | "강당";
+type SidebarMenu = "Blank" | "예약 신청 관리" | "고정 시간표 관리" | "개별 시간표 관리" | "관리자 계정 관리";
 
 
 export default function AdminHome() {
     // Const
-    const sidebarMenus: SidebarMenu[] = ["예약 신청 관리", "고정 시간표 관리", "개별 시간표 관리"];
-    const facilities: Facility[] = ["강의실", "도서관 세미나실", "운동장", "만해광장", "강당"];
+    const sidebarMenus: SidebarMenu[] = ["예약 신청 관리", "고정 시간표 관리", "개별 시간표 관리", "관리자 계정 관리"];
 
 
     // State
-    const [currMenu, setCurrMenu] = useState<SidebarMenu>("개별 시간표 관리");
-    const [hoverMenu, sethoverMenu] = useState<SidebarMenu>("개별 시간표 관리");
-    const [currFacility, setCurrFacility] = useState<Facility>("Blank");
-    const [hoverFacility, sethoverFacility] = useState<Facility>("Blank");
+    const [currMenu, setCurrMenu] = useState<SidebarMenu>("관리자 계정 관리");
+    const [hoverMenu, sethoverMenu] = useState<SidebarMenu>("관리자 계정 관리");
 
 
     // Handler
@@ -31,15 +28,6 @@ export default function AdminHome() {
     const onHoverMenu = (menu: SidebarMenu) => {
         sethoverMenu(menu);
     }
-
-    const onSelectFacility = (facility: Facility) => {
-        setCurrFacility(facility);
-    }
-
-    const onHoverFacility = (facility: Facility) => {
-        sethoverFacility(facility);
-    }
-
 
     const getContentComponent = () => {
         switch (currMenu) {
@@ -54,6 +42,9 @@ export default function AdminHome() {
             }
             case "개별 시간표 관리": {
                 return <IndividualTimetableManager />;
+            }
+            case "관리자 계정 관리": {
+                return <AdminAccountManager />
             }
             default: {
                 return <></>;
@@ -94,34 +85,7 @@ export default function AdminHome() {
             </div>
 
             <div className={styles.mainContent}>
-                <div className={styles.main_top}>
-                    {(currMenu !== "Blank") &&
-                        <table className={styles.facility_select}>
-                            <tbody >
-                                <tr >
-                                    {facilities.map((facility, index) => (
-                                        <td key={index}
-                                            className={styles.facility}
-                                            onClick={() => onSelectFacility(facility)}
-                                            onMouseOver={() => onHoverFacility(facility)}
-                                            onMouseLeave={() => onHoverFacility("Blank")}
-                                            style={{
-                                                color: currFacility === facility || hoverFacility === facility ?
-                                                    'var(--component-innertext-select-color)' : 'var(--component-innertext-color)',
-                                                backgroundColor: currFacility === facility || hoverFacility === facility ?
-                                                    'var(--component-main-color)' : 'var(--component-inner-color)',
-                                            }}>
-                                            {facility}
-                                        </td>
-                                    ))}
-                                </tr>
-                            </tbody>
-                        </table>
-                    }
-                </div>
-                <div className={styles.main_mid}>
-                    {getContentComponent()}
-                </div>
+                {getContentComponent()}
             </div>
         </div >
     );

@@ -94,6 +94,7 @@
     font-size: 18px;
     font-weight: 600;
     color: var(--component-innertext-color);
+    user-select: none;
 }
 
 .event_info__body .buttons .submit:hover {
@@ -112,6 +113,7 @@
     font-size: 18px;
     font-weight: 600;
     color: var(--component-innertext-color);
+    user-select: none;
 }
 
 .event_info__body .buttons .remove:hover {

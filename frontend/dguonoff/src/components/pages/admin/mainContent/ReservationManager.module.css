@@ -1,4 +1,4 @@
-.ReservationManager {
+.reservationManager {
     width: 100%;
     height: 100%;
     display: flex;
@@ -6,7 +6,21 @@
 }
 
 
-/* ReservationManager's components */
+
+/* reservationManager's components */
+.top_contents {
+    height: 80px;
+    width: 100%;
+}
+
+.mid_contents {
+    height: calc(100% - 80px);
+    width: 100%;
+}
+
+
+
+/* mid_contents's components */
 .search_filter {
     width: calc(100% - 30px);
     height: 50px;
@@ -18,7 +32,7 @@
 
 .reservation_table {
     width: calc(100% - 30px);
-    height: calc(100% - 50px - 35px);
+    height: calc(100% - 85px - 35px);
     padding: 15px 15px 20px 15px;
     overflow: hidden;
 }

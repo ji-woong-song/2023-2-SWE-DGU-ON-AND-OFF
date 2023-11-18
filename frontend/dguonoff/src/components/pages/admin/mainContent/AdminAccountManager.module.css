@@ -1,22 +1,13 @@
-.individualTimetableManager {
+.adminAccountManager {
     width: 100%;
-    height: 100%;
+    height: calc(100% - 40px - 20px);
+    padding-top: 40px;
+    padding-bottom: 20px;
 }
 
 
-/* individualTimetableManager's components */
-.top_contents {
-    height: 80px;
-    width: 100%;
-}
 
-.mid_contents {
-    height: calc(100% - 80px);
-    width: 100%;
-}
-
-
-/* mid_contents's components */
+/* adminAccountManager's components */
 .search_filter {
     width: calc(100% - 30px);
     height: 50px;
@@ -26,7 +17,7 @@
     align-items: center;
 }
 
-.facility_manager {
+.user_table {
     width: calc(100% - 30px);
     height: calc(100% - 85px - 35px);
     padding: 15px 15px 20px 15px;
@@ -37,8 +28,9 @@
 
 
 /* search_filter's components */
-.search_filter .period {
-    width: calc(50% - 30px);
+.search_filter .account_type {
+    width: calc(20% - 30px);
+    height: 100%;
     min-width: 520px;
     padding-left: 15px;
     padding-right: 15px;
@@ -47,13 +39,24 @@
     justify-content: center;
 }
 
-.search_filter .building {
-    width: calc(25% - 30px);
+.search_filter .user_name {
+    width: calc(50% - 30px);
+    height: 100%;
     padding-left: 15px;
     padding-right: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.search_filter .buttons {
+    width: calc(30% - 10% - 15px);
+    height: 100%;
+    padding-left: 10%;
+    padding-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .search_filter label {
@@ -63,27 +66,7 @@
     user-select: none;
 }
 
-.search_filter input[type="date"] {
-    flex-grow: 1;
-    height: 26px;
-    padding: 5px;
-    border-radius: 10px;
-    border: 2px solid var(--component-main-color);
-    font-size: 17px;
-    font-weight: 600;
-    text-align: center;
-    cursor: pointer;
-    user-select: none;
-}
-
-.search_filter span {
-    margin-left: 5px;
-    margin-right: 5px;
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.search_filter select {
+.account_type select {
     flex-grow: 1;
     height: 40px;
     padding: 5px;
@@ -96,71 +79,70 @@
     user-select: none;
 }
 
-.search_filter .buttons {
-    width: calc(25% - 30px);
-    padding-left: 15px;
-    padding-right: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.user_name input {
+    flex-grow: 1;
+    height: calc(40px - 10px - 4px);
+    padding: 5px;
+    border-radius: 10px;
+    border: 2px solid var(--component-main-color);
+    font-size: 17px;
+    text-align: center;
+}
+
+.user_name .search {
+    height: 70%;
+    width: 10%;
+    cursor: pointer;
+    margin-left: 10px;
+    border: 2px solid var(--component-main-color);
+    background-color: var(--component-main-light-color);
+    border-radius: 15px;
+    padding: 1px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--component-innertext-color);
     user-select: none;
 }
 
-.search_filter .buttons .search {
-    height: 37.5px;
-    width: 75px;
-    cursor: pointer;
-    border: 2px solid var(--component-main-color);
-    background-color: var(--component-main-light-color);
-    border-radius: 13px;
-    padding: 1px;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--component-innertext-color);
-}
-
-.search_filter .buttons .search:hover {
+.user_name .search:hover {
     background-color: var(--component-main-color);
     color: var(--component-innertext-select-color);
 }
 
-.search_filter .buttons .register {
-    height: 37.5px;
-    width: 170px;
+.buttons .save {
+    height: 70%;
+    width: 45%;
     cursor: pointer;
-    border: 2px solid var(--component-main-color);
-    background-color: var(--component-main-light-color);
-    border-radius: 13px;
+    border: 2px solid var(--button-positive-color);
+    background-color: var(--button-positive-light-color);
+    border-radius: 15px;
     padding: 1px;
     font-size: 18px;
     font-weight: 600;
     color: var(--component-innertext-color);
+    user-select: none;
 }
 
-.search_filter .buttons .register:hover {
-    background-color: var(--component-main-color);
+.buttons .save:hover {
+    background-color: var(--button-positive-color);
     color: var(--component-innertext-select-color);
 }
 
-
-
-/* facility_manager's components */
-.facility_table {
-    height: 100%;
-    width: calc(35% - 10px);
-    padding-right: 10px;
+.buttons .undo {
+    height: 70%;
+    width: 45%;
+    cursor: pointer;
+    border: 2px solid var(--button-negative-color);
+    background-color: var(--button-negative-light-color);
+    border-radius: 15px;
+    padding: 1px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--component-innertext-color);
+    user-select: none;
 }
 
-.facility_timetable {
-    height: 100%;
-    width: calc(30% - 20px);
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-.event_info {
-    height: 100%;
-    width: calc(35% - 10px);
-    padding-left: 10px;
-    overflow: hidden;
+.buttons .undo:hover {
+    background-color: var(--button-negative-color);
+    color: var(--component-innertext-select-color);
 }
