@@ -3,6 +3,7 @@ import styles from "./AdminHome.module.css";
 import ReservationManager from "./mainContent/ReservationManager";
 import Welcome from "./mainContent/Welcome";
 import FixedTimetableManager from "./mainContent/FixedTimetableManager";
+import IndividualTimetableManager from "./mainContent/IndividualTimetableManager";
 
 
 type SidebarMenu = "Blank" | "예약 신청 관리" | "고정 시간표 관리" | "개별 시간표 관리";
@@ -16,8 +17,8 @@ export default function AdminHome() {
 
 
     // State
-    const [currMenu, setCurrMenu] = useState<SidebarMenu>("고정 시간표 관리");
-    const [hoverMenu, sethoverMenu] = useState<SidebarMenu>("고정 시간표 관리");
+    const [currMenu, setCurrMenu] = useState<SidebarMenu>("개별 시간표 관리");
+    const [hoverMenu, sethoverMenu] = useState<SidebarMenu>("개별 시간표 관리");
     const [currFacility, setCurrFacility] = useState<Facility>("Blank");
     const [hoverFacility, sethoverFacility] = useState<Facility>("Blank");
 
@@ -50,6 +51,9 @@ export default function AdminHome() {
             }
             case "고정 시간표 관리": {
                 return <FixedTimetableManager />;
+            }
+            case "개별 시간표 관리": {
+                return <IndividualTimetableManager />;
             }
             default: {
                 return <></>;

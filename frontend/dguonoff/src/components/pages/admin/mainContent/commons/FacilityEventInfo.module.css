@@ -1,0 +1,120 @@
+/* event_info's components */
+.facilityEventInfo {
+    height: calc(100% - 4px);
+    width: calc(100% - 4px);
+    border: 2px solid var(--component-main-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.event_info__header {
+    height: 35px;
+    width: 100%;
+    background-color: var(--component-main-light-color);
+    font-size: 17px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+}
+
+.event_info__body {
+    height: calc(100% - 35px - 25px - 25px);
+    padding-top: 25px;
+    padding-bottom: 25px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.text_field {
+    height: 12%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.memo_field {
+    height: 24%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.memo_field label,
+.text_field label {
+    width: 90px;
+    margin-right: 8%;
+    font-size: 20px;
+    font-weight: 600;
+    user-select: none;
+}
+
+.text_field input {
+    height: 40%;
+    width: 60%;
+    padding: 5px;
+    border-radius: 10px;
+    border: 2px solid var(--component-main-color);
+    font-size: 17px;
+    text-align: center;
+}
+
+.memo_field textarea {
+    height: 70%;
+    width: 60%;
+    padding: 5px;
+    border-radius: 12px;
+    resize: none;
+    border: 2px solid var(--component-main-color);
+    font-size: 17px;
+    text-align: center;
+}
+
+.event_info__body .buttons {
+    flex-grow: 1;
+    width: 70%;
+    padding: 0 15% 0 15%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.event_info__body .buttons .submit {
+    height: 50%;
+    width: 35%;
+    cursor: pointer;
+    border: 2px solid var(--component-main-color);
+    background-color: var(--component-main-light-color);
+    border-radius: 13px;
+    padding: 1px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--component-innertext-color);
+}
+
+.event_info__body .buttons .submit:hover {
+    background-color: var(--component-main-color);
+    color: var(--component-innertext-select-color);
+}
+
+.event_info__body .buttons .remove {
+    height: 50%;
+    width: 35%;
+    cursor: pointer;
+    border: 2px solid var(--button-negative-color);
+    background-color: var(--button-negative-light-color);
+    border-radius: 13px;
+    padding: 1px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--component-innertext-color);
+}
+
+.event_info__body .buttons .remove:hover {
+    background-color: var(--button-negative-color);
+    color: var(--component-innertext-select-color);
+}

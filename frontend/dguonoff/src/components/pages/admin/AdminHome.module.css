@@ -88,6 +88,10 @@
   user-select: none;
 }
 
+.sidebar__logout_text:hover {
+  color: var(--button-text-light-color);
+}
+
 
 
 /* mainContent's components  */

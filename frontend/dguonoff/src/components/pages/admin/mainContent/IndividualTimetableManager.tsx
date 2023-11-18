@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styles from "./FixedTimetableManager.module.css";
+import styles from "./IndividualTimetableManager.module.css";
 import Building from "../../../../types/Building";
 import Facility from "../../../../types/Facility";
 import { Day } from "../../../../types/Day";
@@ -8,11 +8,10 @@ import FacilityTimetable from "./commons/FacilityTimetable";
 import FacilityEventInfo from "./commons/FacilityEventInfo";
 
 
-/** 고정 시간표 관리 */
-export default function FixedTimetableManager() {
+/** 개별 시간표 관리 */
+export default function IndividualTimetableManager() {
     // State
-    const [startDate, setStartDate] = useState<Date>(new Date());
-    const [endDate, setEndDate] = useState<Date>(new Date());
+    const [date, setDate] = useState<Date>(new Date());
     const [buildings, setBuildings] = useState<Building[]>([]);
     const [selectedBuilding, setSelectedBuilding] = useState<Building>(new Building());
     const [facilities, setFacilities] = useState<Facility[]>([]);
@@ -30,26 +29,16 @@ export default function FixedTimetableManager() {
 
     // Redner
     return (
-        <div className={styles.fixedTimetableManager}>
+        <div className={styles.individualTimetableManager}>
             <div className={styles.search_filter}>
                 <div className={styles.period}>
-                    <label htmlFor="start-date">적용 기간</label>
+                    <label htmlFor="date">선택 날짜</label>
                     <input
                         type="date"
-                        id="start-date"
-                        name="start-date"
-                        value={startDate.toISOString().split('T')[0]}
-                        onChange={(e) => { setStartDate(new Date(e.target.value)); }}
-                    />
-
-                    <span>~</span>
-
-                    <input
-                        type="date"
-                        id="end-date"
-                        name="end-date"
-                        value={endDate.toISOString().split('T')[0]}
-                        onChange={(e) => { setEndDate(new Date(e.target.value)); }}
+                        id="date"
+                        name="date"
+                        value={date.toISOString().split('T')[0]}
+                        onChange={(e) => { setDate(new Date(e.target.value)); }}
                     />
                 </div>
 
@@ -69,7 +58,6 @@ export default function FixedTimetableManager() {
 
                 <div className={styles.buttons}>
                     <button className={styles.search}>조회</button>
-                    <button className={styles.register}>고정 시간표 등록</button>
                 </div>
             </div>
 
@@ -87,7 +75,7 @@ export default function FixedTimetableManager() {
                 </div>
                 <div className={styles.event_info}>
                     <FacilityEventInfo
-                        submitType={"register"}
+                        submitType={"modify"}
                     />
                 </div>
             </div>
