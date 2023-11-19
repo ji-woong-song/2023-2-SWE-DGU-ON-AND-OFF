@@ -1,0 +1,80 @@
+.adminSignup {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+/* adminSignup's components */
+.container {
+    height: 80%;
+    width: 100%;
+    margin-bottom: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+
+/* container's components */
+.title {
+    font-size: 25px;
+    font-weight: 600;
+    margin-bottom: 60px;
+}
+
+.login_info,
+.user_info {
+    height: 200px;
+    width: 100%;
+    margin-bottom: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.login_info label,
+.user_info label {
+    height: 30px;
+    width: 360px;
+    margin-bottom: 5px;
+    font-size: 15px;
+    font-weight: 600;
+    user-select: none;
+}
+
+.login_info input,
+.user_info input {
+    height: 30px;
+    width: 350px;
+    padding: 5px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    border: 2px solid var(--component-main-color);
+    font-size: 15px;
+}
+
+.signup_field button {
+    height: 40px;
+    width: 365px;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-top: 10px;
+    border: 2px solid var(--component-main-color);
+    background-color: var(--component-main-light-color);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--component-innertext-color);
+    user-select: none;
+}
+
+.signup_field button:hover {
+    background-color: var(--component-main-color);
+    color: var(--component-innertext-select-color);
+}

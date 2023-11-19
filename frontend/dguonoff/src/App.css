@@ -1,38 +1,27 @@
-.App {
-  text-align: center;
-}
+:root {
+    /* component */
+    --component-main-color: #FBAF3E;
+    --component-main-light-color: #ffe7c2;
+    --component-inner-color: white;
+    --component-inner-select-color: black;
+    --component-innertext-color: black;
+    --component-innertext-select-color: white;
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
+    /* button */
+    --button-text-light-color: #ffffff;
+    --button-text-medium-color: #6e6e6e;
+    --button-text-dark-color: #000000;
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
+    --button-positive-color: #08b66d;
+    --button-positive-light-color: #7be6b9;
 
-.App-link {
-  color: #61dafb;
-}
+    --button-negative-color: #ff7b7b;
+    --button-negative-light-color: #ffbaba;
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    --button-blank-color: #616161;
+    --button-blank-light-color: #bfbfbf;
+
+    --button-gray-color: #D2D2D2;
+    --button-gray-light-color: #f9f9f9;
 }
