@@ -40,7 +40,7 @@ public class MasterAdminController {
 
     } catch (UserNotFoundException e) {
         log.error(e.getMessage());
-        return new ResponseEntity(HttpStatus.NOT_FOUND);
+        return new ResponseEntity(e.getMessage(), e.getStatus());
     }
 
     String successMessage = String.format(SUCCESS_EMPOWERMENT.getMessage(), userId);
