@@ -25,7 +25,7 @@ public class AuthController {
         }catch (IllegalArgumentException exception) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body("fail");
+                    .body(exception.getMessage());
         }
     }
 
