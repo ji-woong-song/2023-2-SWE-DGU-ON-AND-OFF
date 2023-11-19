@@ -1,15 +1,12 @@
 package backend.spectrum.dguonoff.domain.user.exception;
 
+import backend.spectrum.dguonoff.global.error.Exception.BusinessException;
+import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
-public class UserNotFoundException extends RuntimeException {
-
-    private final HttpStatus status;
-
-    public UserNotFoundException(ResponseEntity errorCode) {
-        super(errorCode.getMessage());
-        status = errorCode.getStatus();
+public class UserNotFoundException extends BusinessException {
+    public UserNotFoundException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }
