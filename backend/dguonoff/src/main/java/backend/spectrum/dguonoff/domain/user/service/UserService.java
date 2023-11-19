@@ -1,14 +1,12 @@
 package backend.spectrum.dguonoff.domain.user.service;
 
-import backend.spectrum.dguonoff.domain.user.domain.Role;
-import backend.spectrum.dguonoff.domain.user.domain.User;
+import backend.spectrum.dguonoff.domain.user.entity.Role;
+import backend.spectrum.dguonoff.domain.user.entity.User;
 import backend.spectrum.dguonoff.domain.user.exception.AdminUserNotFoundException;
 import backend.spectrum.dguonoff.domain.user.exception.ResponseEntity;
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class UserService {

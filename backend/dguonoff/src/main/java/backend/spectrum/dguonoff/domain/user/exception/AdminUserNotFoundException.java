@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 public class AdminUserNotFoundException extends RuntimeException{
     private final HttpStatus status;
 
-        public AdminUserNotFoundException(ResponseEntity errorCode) {
-            super(errorCode.getMessage());
-            status = errorCode.getStatus();
-        }
+    public AdminUserNotFoundException(ResponseEntity errorCode) {
+        super(errorCode.getMessage());
+        status = errorCode.getStatus();
+    }
 }

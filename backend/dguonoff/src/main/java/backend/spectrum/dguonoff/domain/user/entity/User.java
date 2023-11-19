@@ -1,4 +1,4 @@
-package backend.spectrum.dguonoff.domain.user.domain;
+package backend.spectrum.dguonoff.domain.user.entity;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

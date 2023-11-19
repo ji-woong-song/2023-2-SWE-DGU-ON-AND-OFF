@@ -1,6 +1,6 @@
-package backend.spectrum.dguonoff.domain.admin.api;
+package backend.spectrum.dguonoff.domain.user.api;
 
-import backend.spectrum.dguonoff.domain.user.domain.User;
+import backend.spectrum.dguonoff.domain.user.entity.User;
 import backend.spectrum.dguonoff.domain.user.dto.EmpowermentParams;
 import backend.spectrum.dguonoff.domain.user.exception.AdminUserNotFoundException;
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
