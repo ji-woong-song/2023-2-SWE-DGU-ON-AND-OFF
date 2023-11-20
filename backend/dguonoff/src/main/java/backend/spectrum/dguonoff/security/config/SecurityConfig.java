@@ -1,4 +1,4 @@
-package backend.spectrum.dguonoff.auth.security;
+package backend.spectrum.dguonoff.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
