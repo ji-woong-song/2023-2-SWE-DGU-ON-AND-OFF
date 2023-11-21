@@ -22,23 +22,25 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
     private final JwtAuthTokenProvider tokenProvider;
     @Bean
-    public AuthenticationManager authorizationManager(AuthenticationConfiguration configuration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .httpBasic().disable()
+//                .httpBasic().disable()
                 .csrf().disable()
                 .cors().and()
                 .headers().frameOptions().disable().and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .authorizeRequests()
-                .antMatchers("/auth/login").permitAll()
-                .antMatchers("/**").authenticated()
-                .anyRequest().authenticated().and()
+                .antMatchers("/auth/**").permitAll()
+                .antMatchers("/api/**").authenticated()
+                .anyRequest().authenticated()
+                .and()
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

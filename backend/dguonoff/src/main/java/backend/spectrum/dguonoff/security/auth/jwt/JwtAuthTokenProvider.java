@@ -34,6 +34,7 @@ public class JwtAuthTokenProvider implements AuthTokenProvider<JwtAuthToken> {
 
     @Override
     public JwtAuthToken createAuthToken(String id, String role, Map<String, String> claims, Date expiredDate) {
+        System.out.println("createAuthToken");
         return new JwtAuthToken(id, key, role, claims, expiredDate);
     }
 

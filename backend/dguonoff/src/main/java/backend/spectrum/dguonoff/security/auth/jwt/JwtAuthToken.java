@@ -30,8 +30,8 @@ public class JwtAuthToken implements AuthToken<Claims> {
         this.token = createJwtToken(id, role, claims, expiredDate).get();
     }
 
-    public String getToken(JwtAuthToken token) {
-        return token.token;
+    public String getToken() {
+        return token;
     }
 
     @Override

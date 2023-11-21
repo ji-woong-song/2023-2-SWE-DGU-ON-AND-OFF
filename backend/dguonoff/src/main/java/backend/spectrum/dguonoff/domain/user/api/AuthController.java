@@ -18,10 +18,12 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity login(@RequestBody LoginRequest loginRequest) {
         try{
-            LoginResponse response = userService.login(loginRequest);
-            return ResponseEntity.ok(response.getName());
+            System.out.println("로그인 컨트롤러");
+            String token = userService.login(loginRequest);
+            System.out.println("로그인 후 ");
+            return ResponseEntity.ok(new LoginResponse(token));
         }catch (IllegalArgumentException exception) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
