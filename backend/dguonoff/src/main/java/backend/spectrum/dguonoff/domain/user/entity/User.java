@@ -19,13 +19,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
     @Id
-    private Long id;
+    private String id;
 
     @Column(nullable = false, length = 512)
     private String password;
 
     @Column(nullable = false, length = 32)
     private String name;
+
+    @Column(nullable = false, length = 128)
+    private String email;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT 'NORMAL'")

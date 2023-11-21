@@ -6,5 +6,6 @@ import backend.spectrum.dguonoff.domain.user.dto.SignUpRequest;
 
 public interface UserAuthService {
     String login(LoginRequest dto);
+    void signUp(SignUpRequest dto);
     AllUserResponse getAllUser();
 }

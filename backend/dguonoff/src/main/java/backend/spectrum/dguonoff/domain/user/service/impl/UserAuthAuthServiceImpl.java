@@ -1,5 +1,6 @@
 package backend.spectrum.dguonoff.domain.user.service.impl;
 
+import backend.spectrum.dguonoff.domain.user.dto.SignUpRequest;
 import backend.spectrum.dguonoff.domain.user.entity.User;
 import backend.spectrum.dguonoff.domain.user.dto.AllUserResponse;
 import backend.spectrum.dguonoff.domain.user.dto.LoginRequest;
@@ -9,9 +10,6 @@ import backend.spectrum.dguonoff.domain.user.service.UserAuthService;
 import backend.spectrum.dguonoff.security.auth.jwt.CustomPasswordAuthenticationToken;
 import backend.spectrum.dguonoff.security.auth.jwt.JwtAuthToken;
 import backend.spectrum.dguonoff.security.auth.jwt.JwtAuthTokenProvider;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,8 +43,22 @@ public class UserAuthAuthServiceImpl implements UserAuthService {
         }
     }
 
-    public String createToken(CustomPasswordAuthenticationToken token) {
-        Date expiredDate = Date.from(LocalDateTime.now().plusSeconds(180).atZone(ZoneId.systemDefault()).toInstant());
+    @Override
+    public void signUp(SignUpRequest dto) throws IllegalArgumentException {
+        Optional<User> optionalUser = userRepository.findById(dto.getId());
+        if (optionalUser.isPresent())
+            throw new IllegalArgumentException("중복된 id를 가진 유저가 있습니다.");
+        User newUser = User.builder()
+                .id(dto.getId())
+                .name(dto.getName())
+                .password(dto.getPassword())
+                .email(dto.getEmail())
+                .role(UserRole.NORMAL)
+                .build();
+        userRepository.save(newUser);
+    }
+
+    private String createToken(CustomPasswordAuthenticationToken token) {
         Map<String, String> claims = Map.of(
                 "id", token.getId(),
                 "name", token.getName(),

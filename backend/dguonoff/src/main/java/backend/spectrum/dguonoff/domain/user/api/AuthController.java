@@ -30,4 +30,15 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/signUp")
+    public ResponseEntity signUp(@RequestBody SignUpRequest signUpRequest) {
+        try {
+            userAuthService.signUp(signUpRequest);
+            return ResponseEntity.ok("SUCCESS");
+        }catch (IllegalArgumentException exception) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(exception.getMessage());
+        }
+    }
 }
