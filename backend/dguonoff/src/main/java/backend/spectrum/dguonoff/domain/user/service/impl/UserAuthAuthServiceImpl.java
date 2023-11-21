@@ -2,7 +2,6 @@ package backend.spectrum.dguonoff.domain.user.service.impl;
 
 import backend.spectrum.dguonoff.domain.user.dto.SignUpRequest;
 import backend.spectrum.dguonoff.domain.user.entity.User;
-import backend.spectrum.dguonoff.domain.user.dto.AllUserResponse;
 import backend.spectrum.dguonoff.domain.user.dto.LoginRequest;
 import backend.spectrum.dguonoff.domain.user.entity.enumeration.UserRole;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
@@ -10,10 +9,8 @@ import backend.spectrum.dguonoff.domain.user.service.UserAuthService;
 import backend.spectrum.dguonoff.security.auth.jwt.CustomPasswordAuthenticationToken;
 import backend.spectrum.dguonoff.security.auth.jwt.JwtAuthToken;
 import backend.spectrum.dguonoff.security.auth.jwt.JwtAuthTokenProvider;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -71,12 +68,5 @@ public class UserAuthAuthServiceImpl implements UserAuthService {
                 claims
         );
         return jwtAuthToken.getToken();
-    }
-
-    @Override
-    public AllUserResponse getAllUser() {
-        List<String> userNameList = userRepository.findAll().stream()
-                .map(User::getName).collect(Collectors.toList());
-        return new AllUserResponse(userNameList);
     }
 }

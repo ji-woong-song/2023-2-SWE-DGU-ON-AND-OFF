@@ -2,6 +2,7 @@ package backend.spectrum.dguonoff.domain.user.api;
 
 import backend.spectrum.dguonoff.domain.user.dto.AllUserResponse;
 import backend.spectrum.dguonoff.domain.user.service.UserAuthService;
+import backend.spectrum.dguonoff.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserAuthService userAuthService;
+    private final UserService userService;
 
     /**
      * login 인증 여부를 Test하기 위한 메서드
@@ -26,7 +27,7 @@ public class UserController {
      */
     @GetMapping("/all")
     public ResponseEntity<AllUserResponse> findAllUsers(Authentication authentication) {
-        AllUserResponse allUser = userAuthService.getAllUser();
+        AllUserResponse allUser = userService.getAllUser();
         return ResponseEntity.ok(allUser);
     }
 }
