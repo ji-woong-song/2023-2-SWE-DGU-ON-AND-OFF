@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Getter
 @Setter
 public class CustomPasswordAuthenticationToken extends UsernamePasswordAuthenticationToken {
-    private Long id;
+    private String id;
     private String role;
     private String name;
 

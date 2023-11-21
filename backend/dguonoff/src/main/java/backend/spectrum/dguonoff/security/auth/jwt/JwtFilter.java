@@ -12,7 +12,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class JwtFilter extends OncePerRequestFilter {
-    private static final String AUTHORIZATION_HEADER = "x-auth-token";
+    private static final String AUTHORIZATION_HEADER = "Bearer ";
     private final JwtAuthTokenProvider tokenProvider;
 
     public JwtFilter(JwtAuthTokenProvider tokenProvider) {

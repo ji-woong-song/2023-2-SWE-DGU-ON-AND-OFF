@@ -2,7 +2,8 @@ package backend.spectrum.dguonoff.domain.user.api;
 
 import backend.spectrum.dguonoff.domain.user.dto.LoginRequest;
 import backend.spectrum.dguonoff.domain.user.dto.LoginResponse;
-import backend.spectrum.dguonoff.domain.user.service.UserService;
+import backend.spectrum.dguonoff.domain.user.dto.SignUpRequest;
+import backend.spectrum.dguonoff.domain.user.service.UserAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
-    private final UserService userService;
+    private final UserAuthService userAuthService;
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequest loginRequest) {
         try{
-            System.out.println("로그인 컨트롤러");
-            String token = userService.login(loginRequest);
-            System.out.println("로그인 후 ");
+            String token = userAuthService.login(loginRequest);
             return ResponseEntity.ok(new LoginResponse(token));
         }catch (IllegalArgumentException exception) {
             return ResponseEntity

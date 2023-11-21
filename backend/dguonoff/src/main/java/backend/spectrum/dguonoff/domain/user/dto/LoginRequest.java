@@ -6,6 +6,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class LoginRequest {
-    private Long id;
+    private String id;
     private String password;
 }

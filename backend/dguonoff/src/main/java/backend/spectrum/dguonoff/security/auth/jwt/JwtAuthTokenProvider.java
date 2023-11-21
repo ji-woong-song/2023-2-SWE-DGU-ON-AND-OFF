@@ -7,6 +7,8 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -24,6 +26,8 @@ import org.springframework.stereotype.Component;
 public class JwtAuthTokenProvider implements AuthTokenProvider<JwtAuthToken> {
     @Value("${jwt.base64.secret}")
     private String base64Secret;
+    @Value("${jwt.expiration}")
+    private Long expiration;
     private Key key;
 
     @PostConstruct
@@ -33,8 +37,13 @@ public class JwtAuthTokenProvider implements AuthTokenProvider<JwtAuthToken> {
     }
 
     @Override
-    public JwtAuthToken createAuthToken(String id, String role, Map<String, String> claims, Date expiredDate) {
-        System.out.println("createAuthToken");
+    public JwtAuthToken createAuthToken(String id, String role, Map<String, String> claims) {
+        Date expiredDate = Date.from(
+                LocalDateTime.now()
+                        .plusSeconds(expiration)
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()
+        );
         return new JwtAuthToken(id, key, role, claims, expiredDate);
     }
 

@@ -19,8 +19,7 @@ public class CustomPasswordAuthenticationManager implements AuthenticationProvid
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        System.out.println("custom provider");
-        Optional<User> optionalUser = userRepository.findById(Long.parseLong(authentication.getPrincipal().toString()));
+        Optional<User> optionalUser = userRepository.findById(authentication.getPrincipal().toString());
         if (optionalUser.isEmpty()) {
             throw new BadCredentialsException("없는 id 입니다.");
         }
