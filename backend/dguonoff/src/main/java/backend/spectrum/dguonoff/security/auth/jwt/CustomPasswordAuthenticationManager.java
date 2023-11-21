@@ -12,6 +12,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
+/**
+ * 로그인 시, DB와 연결되어 password 확인하고
+ * 인증을 위한 토큰을 만드는 작업을 하는 객체
+ */
 @Component
 @RequiredArgsConstructor
 public class CustomPasswordAuthenticationManager implements AuthenticationProvider {

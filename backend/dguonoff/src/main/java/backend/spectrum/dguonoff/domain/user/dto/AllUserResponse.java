@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * 테스트 api 반환 DTO
+ */
 @Getter
 @Builder
 @AllArgsConstructor

@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
+/**
+ * 로그인, 회원가입등 인증관련 api
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")

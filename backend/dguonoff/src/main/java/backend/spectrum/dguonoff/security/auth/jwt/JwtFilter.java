@@ -13,6 +13,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/**
+ * Authorization 헤더에 있는 토큰 값을 읽어와
+ * Spring에서 사용하는 인증 객체로 만들어주는 Filter
+ */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
     @Value("${jwt.header}")
@@ -25,6 +29,8 @@ public class JwtFilter extends OncePerRequestFilter {
         this.tokenProvider = tokenProvider;
     }
 
+    // 헤더에 있는 JWT 토큰의 유효성을 검사하고, 유효하다면,
+    // spring에서 사용하는 인증 객체로 변환해준다.
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -39,6 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    // 헤더에서 값을 읽고 형식을 확인 하는 method
     private Optional<String> resolveToken(HttpServletRequest request) {
         String authHeader = request.getHeader(authHeaderName);
         if (!StringUtils.hasText(authHeader))

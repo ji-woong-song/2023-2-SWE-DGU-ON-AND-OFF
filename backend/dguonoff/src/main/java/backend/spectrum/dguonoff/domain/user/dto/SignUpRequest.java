@@ -3,6 +3,9 @@ package backend.spectrum.dguonoff.domain.user.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 회원 가입 요청 dto
+ */
 @Getter
 @AllArgsConstructor
 public class SignUpRequest {

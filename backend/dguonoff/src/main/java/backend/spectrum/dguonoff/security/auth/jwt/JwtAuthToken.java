@@ -14,6 +14,10 @@ import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 토큰을 만들기 위한 key 값과 만들어진 토큰을 가진 객체
+ * getData로 토큰안의 데이터를 가져올 수 있다.
+ */
 @Slf4j
 public class JwtAuthToken implements AuthToken<Claims> {
     private final String token;
