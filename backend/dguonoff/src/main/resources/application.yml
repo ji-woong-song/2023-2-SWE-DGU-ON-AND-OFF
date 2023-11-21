@@ -6,13 +6,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
-
-  security:
-    user:
-      name: user
-      password: password
 
 server:
   port: ${APP_SERVER_PORT}
@@ -20,4 +15,6 @@ server:
 jwt:
   base64:
     secret: ${JWT_SECRET_KEY}
+  prefix: ${JWT_TOKEN_PREFIX}
+  header: ${JWT_TOKEN_HEADER}
   expiration: ${JWT_EXPIRATION_MILLISECOND}

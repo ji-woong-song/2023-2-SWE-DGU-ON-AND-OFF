@@ -4,6 +4,7 @@ import backend.spectrum.dguonoff.domain.user.dto.AllUserResponse;
 import backend.spectrum.dguonoff.domain.user.service.UserAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +16,7 @@ public class UserController {
     private final UserAuthService userAuthService;
 
     @GetMapping("/all")
-    public ResponseEntity<AllUserResponse> findAllUsers() {
+    public ResponseEntity<AllUserResponse> findAllUsers(Authentication authentication) {
         AllUserResponse allUser = userAuthService.getAllUser();
         return ResponseEntity.ok(allUser);
     }

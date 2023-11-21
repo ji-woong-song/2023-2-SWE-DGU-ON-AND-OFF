@@ -6,13 +6,19 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@Component
 public class JwtFilter extends OncePerRequestFilter {
-    private static final String AUTHORIZATION_HEADER = "Bearer ";
+    @Value("${jwt.header}")
+    private String authHeaderName;
+    @Value("${jwt.prefix}")
+    private String prefix;
     private final JwtAuthTokenProvider tokenProvider;
 
     public JwtFilter(JwtAuthTokenProvider tokenProvider) {
@@ -34,11 +40,12 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private Optional<String> resolveToken(HttpServletRequest request) {
-        String authHeader = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(authHeader)) {
-            return Optional.of(authHeader);
-        }
-        else
+        String authHeader = request.getHeader(authHeaderName);
+        if (!StringUtils.hasText(authHeader))
             return Optional.empty();
+        String[] str = authHeader.split(" ");
+        if (str.length != 2 || !str[0].equals(prefix) || str[1].length() == 0)
+            return Optional.empty();
+        return Optional.of(str[1]);
     }
 }
