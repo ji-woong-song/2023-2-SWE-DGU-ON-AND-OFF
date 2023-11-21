@@ -25,7 +25,7 @@ public class UserService {
         return user;
     }
 
-    //관리자 조회 및 권한 확인 함수
+    //마스터 관리자 조회 및 권한 확인 함수
     public void checkMasterAdmin(Long userId) {
         User user = userRepository
                 .findById(userId)
