@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class EmpowermentParams {
-    Long userId;
-    Long adminId;
+    String userId;
+    String adminId;
 }

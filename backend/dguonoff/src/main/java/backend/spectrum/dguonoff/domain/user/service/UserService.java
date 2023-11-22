@@ -17,7 +17,7 @@ public class UserService {
     }
 
     //유저 조회 함수
-    public User findUser(Long userId) {
+    public User findUser(String userId) {
         User user = userRepository
                 .findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_EXIST_USER));
@@ -26,7 +26,7 @@ public class UserService {
     }
 
     //마스터 관리자 조회 및 권한 확인 함수
-    public void checkMasterAdmin(Long userId) {
+    public void checkMasterAdmin(String userId) {
         User user = userRepository
                 .findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_EXIST_MASTER_ADMIN));
