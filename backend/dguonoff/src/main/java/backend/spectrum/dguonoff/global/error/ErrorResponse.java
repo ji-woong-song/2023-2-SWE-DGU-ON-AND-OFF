@@ -10,7 +10,7 @@ public class ErrorResponse {
 
     public ErrorResponse(ErrorCode code) {
         this.message = code.getMessage();
-        this.code = code.getCode();
+        this.code = code.name();
     }
 
 }
