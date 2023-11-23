@@ -9,10 +9,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, String> {
     @Transactional
     @Modifying
     @Query("update User u set u.role = 'ADMIN' where u.id = ?1")
-    int changeRoleToAdmin(@NonNull Long id);
+    int changeRoleToAdmin(@NonNull String id);
 
 }

@@ -26,8 +26,8 @@ public class MasterAdminController {
     //관리자 권한 부여 기능
     @PostMapping("/empowerment")
     public ResponseEntity<String> grantAdminAuthority(@RequestBody EmpowermentParams empParams){
-        Long adminId = empParams.getAdminId();
-        Long userId = empParams.getUserId();
+        String adminId = empParams.getAdminId();
+        String userId = empParams.getUserId();
 
         userService.checkMasterAdmin(adminId);
         User targetUser = userService.findUser(userId);
