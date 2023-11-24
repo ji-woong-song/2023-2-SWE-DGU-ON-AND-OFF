@@ -4,25 +4,32 @@
 }
 
 .table__header {
-    width: 98%;
-    max-width: 98%;
+    width: calc(100% - 17px);
+    border-right-width: 17px;
+    border-right-style: solid;
+    max-width: 100%;
 }
 
 .table__headers_columns {
     display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .table__body {
     position: relative;
     width: 100%;
-    overflow-y: scroll;
 }
 
 .table__body_rows {
     width: 100%;
+
 }
 
 .virtualizedTable_item {
     height: 100%;
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

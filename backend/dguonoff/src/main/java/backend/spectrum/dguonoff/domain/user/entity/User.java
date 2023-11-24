@@ -1,6 +1,5 @@
 package backend.spectrum.dguonoff.domain.user.entity;
 
-import backend.spectrum.dguonoff.domain.user.entity.enumeration.UserRole;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -21,16 +20,20 @@ public class User {
     @Id
     private String id;
 
-    @Column(nullable = false, length = 512)
+    @Column(name = "password", length = 512, nullable = false)
     private String password;
 
-    @Column(nullable = false, length = 32)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, columnDefinition = "VARCHAR(16) DEFAULT 'NORMAL'")
+    private Role role;
+
+    @Column(name = "name", nullable = false, length = 20)
     private String name;
 
-    @Column(nullable = false, length = 128)
-    private String email;
+    @Column(name = "major", length = 64)
+    private String major;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(16) DEFAULT 'NORMAL'")
-    private UserRole role;
+    @Column(name = "email", nullable = false, length = 255)
+    private String email;
 }
+

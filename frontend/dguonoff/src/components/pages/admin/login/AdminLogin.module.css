@@ -1,0 +1,115 @@
+.adminLogin {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+/* adminLogin's components */
+.container {
+    height: 60%;
+    width: 100%;
+    margin-bottom: 8%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+
+/* adminLogin's components */
+.logo {
+    height: 200px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login_field {
+    height: 200px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.signup_field {
+    height: 50px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+
+
+/* logo's components */
+.logo img {
+    height: 350px;
+    width: auto;
+    object-fit: cover;
+}
+
+
+
+/* login_field's components */
+.login_field input {
+    height: 30px;
+    width: 350px;
+    padding: 5px;
+    border-radius: 10px;
+    border: 2px solid var(--component-main-color);
+    font-size: 15px;
+}
+
+.login_field button {
+    height: 40px;
+    width: 365px;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-top: 10px;
+    border: 2px solid var(--component-main-color);
+    background-color: var(--component-main-light-color);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--component-innertext-color);
+    user-select: none;
+}
+
+.login_field button:hover {
+    background-color: var(--component-main-color);
+    color: var(--component-innertext-select-color);
+}
+
+
+
+/* signup_field's components */
+.signup_field .text {
+    width: 260px;
+    font-size: 16px;
+    user-select: none;
+    color: var(--button-text-medium-color);
+}
+
+.signup_field .signup {
+    width: 80px;
+    font-size: 16px;
+    font-weight: 600;
+    user-select: none;
+    cursor: pointer;
+    color: var(--button-text-dark-color);
+}
+
+.signup_field .signup:hover {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--component-main-color);
+}

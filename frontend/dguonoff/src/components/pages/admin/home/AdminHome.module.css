@@ -1,0 +1,93 @@
+.adminHome {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+}
+
+
+
+/* adminHome's components */
+.sidebar {
+  height: calc(100% - 2px);
+  width: 300px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  border: 1px solid var(--component-main-color);
+  background-color: var(--component-main-color);
+}
+
+.mainContent {
+  height: 100%;
+  width: calc(100% - 300px - 2px);
+}
+
+
+
+/* sidebar's components */
+.sidebar__menus {
+  height: calc(100% - 60px - 80px);
+  width: 100%;
+  margin-top: 60px;
+}
+
+.sidebar__logout {
+  height: 80px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+/* sidebar__menus's components */
+.sidebar__menu {
+  height: 60px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.sidebar__menu_focus {
+  height: 60%;
+  width: 5px;
+  margin-left: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--component-inner-color);
+  background-color: var(--component-inner-color);
+}
+
+.sidebar__menu_text {
+  height: 60%;
+  flex-grow: 1;
+  margin-left: 10px;
+  margin-right: 20px;
+  font-size: 24px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+
+
+/* sidebar__logout's components */
+.sidebar__logout_text {
+  height: 60%;
+  margin-left: 10px;
+  margin-right: 20px;
+  font-size: 24px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.sidebar__logout_text:hover {
+  color: var(--button-text-light-color);
+}
