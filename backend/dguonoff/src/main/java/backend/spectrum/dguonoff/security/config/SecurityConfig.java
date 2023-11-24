@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.security.config;
 
-import backend.spectrum.dguonoff.security.auth.jwt.JwtAuthTokenProvider;
+import backend.spectrum.dguonoff.security.auth.jwt.JwtExceptionFilter;
 import backend.spectrum.dguonoff.security.auth.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtFilter jwtFilter;
+    private final JwtExceptionFilter jwtExceptionFilter;
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
@@ -42,12 +43,12 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // build 되기 전에 필터 적용
+                .addFilterBefore(jwtExceptionFilter, JwtFilter.class)
                 .build();
     }
 
-    /**
-     * Cors정책 설정 정의 메서드
-     * @return
+    /*
+        CORS 정책 설정 정의 메서드
      */
     @Bean
     CorsConfigurationSource corsConfigurationSource() {

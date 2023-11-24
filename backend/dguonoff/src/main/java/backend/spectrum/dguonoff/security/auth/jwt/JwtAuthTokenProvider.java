@@ -44,7 +44,6 @@ public class JwtAuthTokenProvider implements AuthTokenProvider<JwtAuthToken> {
      * @param id 사용자 id (db에서도 PK임)
      * @param role 사용자 역할 (normal, admin, master)
      * @param claims 기타 정보들
-     * @return
      */
     @Override
     public JwtAuthToken createAuthToken(String id, String role, Map<String, String> claims) {
@@ -80,6 +79,6 @@ public class JwtAuthTokenProvider implements AuthTokenProvider<JwtAuthToken> {
             User principal = new User(claims.getSubject(), "", authorities);
             return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
         }else
-            throw new JwtException("token error");
+            throw new JwtException("JWT 토큰이 적절하지 않습니다.");
     }
 }

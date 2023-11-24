@@ -18,6 +18,12 @@ public enum ErrorCode {
     //Common
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "허용되지 않은 메소드입니다."),
     SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러가 발생하였습니다."),
+
+    //Jwt
+    JWT_EXPIRED(HttpStatus.FORBIDDEN, "JWT 토큰이 만료되었습니다."),
+    JWT_INVALID_SIGNATURE(HttpStatus.FORBIDDEN, "JWT 시그니처가 잘못되었습니다."),
+    JWT_MALFORMED(HttpStatus.FORBIDDEN,"JWT 토큰이 유효하지 않습니다."),
+    JWT_UNSUPPORTED(HttpStatus.FORBIDDEN, "지원하지 않는 JWT 토큰 형식입니다."),
     ;
 
     private final HttpStatus status;

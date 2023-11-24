@@ -1,8 +1,11 @@
 package backend.spectrum.dguonoff.security.auth.jwt;
 
+import backend.spectrum.dguonoff.global.error.Exception.JwtTokenException;
+import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import backend.spectrum.dguonoff.security.auth.AuthToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -53,16 +56,20 @@ public class JwtAuthToken implements AuthToken<Claims> {
                     .getBody();
         }catch (SecurityException e) {
             log.error("Invalid JWT signature.");
+            throw new JwtTokenException(ErrorCode.JWT_INVALID_SIGNATURE);
         }catch (ExpiredJwtException e) {
             log.error("Expired JWT token.");
+            throw new JwtTokenException(ErrorCode.JWT_EXPIRED);
         }catch (MalformedJwtException e) {
             log.error("Invalid JWT token.");
+            throw new JwtTokenException(ErrorCode.JWT_MALFORMED);
         }catch (UnsupportedJwtException e) {
             log.error("Unsupported JWT token.");
+            throw new JwtTokenException(ErrorCode.JWT_UNSUPPORTED);
         } catch (IllegalArgumentException e) {
             log.error("JWT token compact of handler are invalid.");
+            throw new JwtException("JWT token compact of handler are invalid.");
         }
-        return null;
     }
 
     private Optional<String> createJwtToken(String id, String role,
