@@ -1,6 +1,6 @@
-package backend.spectrum.dguonoff.security.auth.jwt;
+package backend.spectrum.dguonoff.security.error.handler;
 
-import backend.spectrum.dguonoff.global.error.Exception.JwtTokenException;
+import backend.spectrum.dguonoff.security.error.exception.JwtTokenException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.HashMap;

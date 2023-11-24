@@ -1,4 +1,4 @@
-package backend.spectrum.dguonoff.domain.user.service;
+package backend.spectrum.dguonoff.security.service;
 
 import backend.spectrum.dguonoff.domain.user.dto.SignUpRequest;
 import backend.spectrum.dguonoff.domain.user.entity.Role;

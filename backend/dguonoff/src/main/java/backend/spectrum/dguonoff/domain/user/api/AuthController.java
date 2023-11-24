@@ -3,7 +3,7 @@ package backend.spectrum.dguonoff.domain.user.api;
 import backend.spectrum.dguonoff.domain.user.dto.LoginRequest;
 import backend.spectrum.dguonoff.domain.user.dto.LoginResponse;
 import backend.spectrum.dguonoff.domain.user.dto.SignUpRequest;
-import backend.spectrum.dguonoff.domain.user.service.UserAuthService;
+import backend.spectrum.dguonoff.security.service.UserAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package backend.spectrum.dguonoff.global.error.Exception;
+package backend.spectrum.dguonoff.security.error.exception;
 
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import io.jsonwebtoken.JwtException;

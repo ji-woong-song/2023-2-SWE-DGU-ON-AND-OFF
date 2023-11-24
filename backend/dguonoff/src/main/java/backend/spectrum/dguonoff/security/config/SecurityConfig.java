@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.security.config;
 
-import backend.spectrum.dguonoff.security.auth.jwt.JwtExceptionFilter;
+import backend.spectrum.dguonoff.security.error.handler.JwtExceptionFilter;
 import backend.spectrum.dguonoff.security.auth.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +39,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/auth/**").permitAll()    // auth로 시작하는 uri는 인증 필요 없음
+                .antMatchers("/admin/**").hasAuthority("MASTER") // master api는 role master인 사용자만 허용
                 .antMatchers("/api/**").authenticated() // api로 시작하는 uri에 대해서 인증 필요
                 .anyRequest().authenticated()
                 .and()

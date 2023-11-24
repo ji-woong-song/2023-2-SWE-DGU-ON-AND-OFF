@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.security.auth.jwt;
 
-import backend.spectrum.dguonoff.global.error.Exception.JwtTokenException;
+import backend.spectrum.dguonoff.security.error.exception.JwtTokenException;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import backend.spectrum.dguonoff.security.auth.AuthToken;
 import io.jsonwebtoken.Claims;
