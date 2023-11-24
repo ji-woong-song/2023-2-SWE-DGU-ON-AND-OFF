@@ -4,6 +4,7 @@ import backend.spectrum.dguonoff.domain.user.entity.User;
 import backend.spectrum.dguonoff.domain.user.dto.EmpowermentParams;
 import backend.spectrum.dguonoff.domain.user.service.UserService;
 import backend.spectrum.dguonoff.global.statusCode.CommonCode;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,10 +27,11 @@ public class MasterAdminController {
     //관리자 권한 부여 기능
     @PostMapping("/empowerment")
     public ResponseEntity<String> grantAdminAuthority(@RequestBody EmpowermentParams empParams){
-        String adminId = empParams.getAdminId();
+//        String adminId = empParams.getAdminId();
+//        String adminId = principal.getName();
         String userId = empParams.getUserId();
 
-        userService.checkMasterAdmin(adminId);
+//        userService.checkMasterAdmin(adminId);
         User targetUser = userService.findUser(userId);
         userService.changeRoleToAdmin(targetUser);
 
