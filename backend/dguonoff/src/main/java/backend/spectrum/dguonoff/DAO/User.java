@@ -1,13 +1,17 @@
-package backend.spectrum.dguonoff.domain.user.entity;
+package backend.spectrum.dguonoff.DAO;
 
+import backend.spectrum.dguonoff.DAO.model.Role;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@Table(name = "User")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,4 +37,18 @@ public class User {
     @Column(name = "email", length = 255)
     private String email;
 
+    @OneToMany(mappedBy = "userId")
+    private List<Bookmark> bookmarks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "hotUserId")
+    private List<Reservation> reservations = new ArrayList<>();
+
+    public User(long id, String password, Role normal, String userA, String cse, String email) {
+        this.id = id;
+        this.password = password;
+        this.role = normal;
+        this.name = userA;
+        this.major = cse;
+        this.email = email;
+    }
 }

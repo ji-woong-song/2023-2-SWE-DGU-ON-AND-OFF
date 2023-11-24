@@ -1,9 +1,8 @@
 package backend.spectrum.dguonoff.domain.user.api;
 
-import backend.spectrum.dguonoff.domain.user.entity.User;
+import backend.spectrum.dguonoff.DAO.User;
 import backend.spectrum.dguonoff.domain.user.dto.EmpowermentParams;
 import backend.spectrum.dguonoff.domain.user.service.UserService;
-import backend.spectrum.dguonoff.global.statusCode.CommonCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

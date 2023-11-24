@@ -1,7 +1,7 @@
 package backend.spectrum.dguonoff.domain.user.service;
 
-import backend.spectrum.dguonoff.domain.user.entity.Role;
-import backend.spectrum.dguonoff.domain.user.entity.User;
+import backend.spectrum.dguonoff.DAO.User;
+import backend.spectrum.dguonoff.DAO.model.Role;
 import backend.spectrum.dguonoff.domain.user.exception.InvalidAccessException;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;

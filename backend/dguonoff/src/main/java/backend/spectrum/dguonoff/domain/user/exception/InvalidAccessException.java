@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.domain.user.exception;
 
-import backend.spectrum.dguonoff.domain.user.entity.Role;
+import backend.spectrum.dguonoff.DAO.model.Role;
 import backend.spectrum.dguonoff.global.error.Exception.BusinessException;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 
