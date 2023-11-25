@@ -37,6 +37,4 @@ out/
 .vscode/
 
 
-### Database ###
-application.yml
-db.properties
+/.env
