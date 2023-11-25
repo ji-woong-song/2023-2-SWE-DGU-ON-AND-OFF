@@ -1,10 +1,12 @@
 package backend.spectrum.dguonoff.security.service;
 
+import backend.spectrum.dguonoff.domain.user.dto.LoginRequest;
 import backend.spectrum.dguonoff.domain.user.dto.SignUpRequest;
 import backend.spectrum.dguonoff.domain.user.entity.Role;
 import backend.spectrum.dguonoff.domain.user.entity.User;
-import backend.spectrum.dguonoff.domain.user.dto.LoginRequest;
+import backend.spectrum.dguonoff.domain.user.exception.UserDuplicateException;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
+import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import backend.spectrum.dguonoff.security.auth.jwt.CustomPasswordAuthenticationToken;
 import backend.spectrum.dguonoff.security.auth.jwt.JwtAuthToken;
 import backend.spectrum.dguonoff.security.auth.jwt.JwtAuthTokenProvider;
@@ -38,10 +40,10 @@ public class UserAuthService {
         }
     }
 
-    public void signUp(SignUpRequest dto) throws IllegalArgumentException {
+    public void signUp(SignUpRequest dto) throws UserDuplicateException {
         Optional<User> optionalUser = userRepository.findById(dto.getId());
         if (optionalUser.isPresent())
-            throw new IllegalArgumentException("중복된 id를 가진 유저가 있습니다.");
+            throw new UserDuplicateException(ErrorCode.USER_ID_DUPLICATE);
         User newUser = User.builder()
                 .id(dto.getId())
                 .name(dto.getName())
