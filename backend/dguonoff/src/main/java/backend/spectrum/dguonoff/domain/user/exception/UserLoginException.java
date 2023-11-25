@@ -1,4 +1,4 @@
-package backend.spectrum.dguonoff.security.error.exception;
+package backend.spectrum.dguonoff.domain.user.exception;
 
 import backend.spectrum.dguonoff.global.error.Exception.BusinessException;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;

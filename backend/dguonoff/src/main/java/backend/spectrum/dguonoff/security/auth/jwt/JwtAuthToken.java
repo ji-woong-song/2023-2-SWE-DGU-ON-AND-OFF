@@ -11,6 +11,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.impl.DefaultClaims;
+import io.jsonwebtoken.security.SignatureException;
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class JwtAuthToken implements AuthToken<Claims> {
     }
 
     @Override
-    public boolean validate() {
+    public boolean validate() throws JwtTokenException{
         return getData() != null;
     }
 
@@ -54,7 +55,7 @@ public class JwtAuthToken implements AuthToken<Claims> {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-        }catch (SecurityException e) {
+        }catch (SignatureException e) {
             log.error("Invalid JWT signature.");
             throw new JwtTokenException(ErrorCode.JWT_INVALID_SIGNATURE);
         }catch (ExpiredJwtException e) {

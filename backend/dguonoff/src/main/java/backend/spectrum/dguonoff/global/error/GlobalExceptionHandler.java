@@ -5,6 +5,7 @@ import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,6 +29,14 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse(e.getErrorCode());
         HttpStatus errorStatus = e.getErrorCode().getStatus();
         return new ResponseEntity<>(response, errorStatus);
+    }
+
+    //로그인 관련 예외 처리
+    @ExceptionHandler(AuthenticationException.class)
+    protected ResponseEntity<ErrorResponse> handleAuthenticationException(final AuthenticationException e) {
+        log.error("[ERROR]: handle Authentication", e);
+        ErrorResponse response = new ErrorResponse(e.getMessage(), "LOGIN_FAIL");
+        return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
     }
 
     //그 외 모든 예외 처리

@@ -5,7 +5,6 @@ import backend.spectrum.dguonoff.domain.user.dto.LoginResponse;
 import backend.spectrum.dguonoff.domain.user.dto.SignUpRequest;
 import backend.spectrum.dguonoff.security.service.UserAuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
