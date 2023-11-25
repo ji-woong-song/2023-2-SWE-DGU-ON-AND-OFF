@@ -10,6 +10,7 @@ import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import backend.spectrum.dguonoff.security.auth.jwt.CustomPasswordAuthenticationToken;
 import backend.spectrum.dguonoff.security.auth.jwt.JwtAuthToken;
 import backend.spectrum.dguonoff.security.auth.jwt.JwtAuthTokenProvider;
+import backend.spectrum.dguonoff.security.error.exception.UserLoginException;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class UserAuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtAuthTokenProvider tokenProvider;
 
-    public String login(LoginRequest dto) throws IllegalArgumentException{
+    public String login(LoginRequest dto) throws RuntimeException {
         CustomPasswordAuthenticationToken token = new CustomPasswordAuthenticationToken(
                 dto.getId(), dto.getPassword()
         );
@@ -35,8 +36,11 @@ public class UserAuthService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             return createToken((CustomPasswordAuthenticationToken) authentication);
         }catch (AuthenticationException e) {
-            System.out.println(e.getMessage());
-            return null;
+            if (e.getMessage().equals(ErrorCode.NOT_EXIST_USER.getMessage()))
+                throw new UserLoginException(ErrorCode.NOT_EXIST_USER);
+            else if (e.getMessage().equals(ErrorCode.USER_PASSWORD_NOT_MATCHED.getMessage()))
+                throw new UserLoginException(ErrorCode.USER_PASSWORD_NOT_MATCHED);
+            else throw new RuntimeException(e.getMessage());
         }
     }
 

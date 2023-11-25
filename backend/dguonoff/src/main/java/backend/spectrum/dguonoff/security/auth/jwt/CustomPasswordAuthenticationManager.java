@@ -2,6 +2,7 @@ package backend.spectrum.dguonoff.security.auth.jwt;
 
 import backend.spectrum.dguonoff.domain.user.entity.User;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
+import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import java.util.Collections;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,11 @@ public class CustomPasswordAuthenticationManager implements AuthenticationProvid
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         Optional<User> optionalUser = userRepository.findById(authentication.getPrincipal().toString());
         if (optionalUser.isEmpty()) {
-            throw new BadCredentialsException("없는 id 입니다.");
+            throw new BadCredentialsException(ErrorCode.NOT_EXIST_USER.getMessage());
         }
         User user = optionalUser.get();
         if (!authentication.getCredentials().equals(user.getPassword())) {
-            throw new BadCredentialsException("비밀번호 오류입니다.");
+            throw new BadCredentialsException(ErrorCode.USER_PASSWORD_NOT_MATCHED.getMessage());
         }
         CustomPasswordAuthenticationToken token = new CustomPasswordAuthenticationToken(
                 user.getId(), user.getPassword(),

@@ -15,6 +15,7 @@ public enum ErrorCode {
     NO_AUTH(HttpStatus.FORBIDDEN, "권한이 없는 유저입니다."),
 
     USER_ID_DUPLICATE(HttpStatus.NOT_ACCEPTABLE, "id가 중복되었습니다."),
+    USER_PASSWORD_NOT_MATCHED(HttpStatus.NOT_ACCEPTABLE, "비밀번호가 틀렸습니다."),
 
     //Common
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "허용되지 않은 메소드입니다."),

@@ -24,25 +24,13 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequest loginRequest) {
-        try{
-            String token = userAuthService.login(loginRequest);
-            return ResponseEntity.ok(new LoginResponse(token));
-        }catch (IllegalArgumentException exception) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(exception.getMessage());
-        }
+        String token = userAuthService.login(loginRequest);
+        return ResponseEntity.ok(new LoginResponse(token));
     }
 
     @PostMapping("/signUp")
     public ResponseEntity signUp(@RequestBody SignUpRequest signUpRequest) {
-        try {
-            userAuthService.signUp(signUpRequest);
-            return ResponseEntity.ok("SUCCESS");
-        }catch (IllegalArgumentException exception) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(exception.getMessage());
-        }
+        userAuthService.signUp(signUpRequest);
+        return ResponseEntity.ok("SUCCESS");
     }
 }
