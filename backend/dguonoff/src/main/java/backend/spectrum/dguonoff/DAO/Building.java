@@ -1,4 +1,4 @@
-package backend.spectrum.dguonoff.domain.facility.entity;
+package backend.spectrum.dguonoff.DAO;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,7 @@ public class Building {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "building_name")
+    @OneToMany(mappedBy = "buildingName")
     private List<Facility> facilities = new ArrayList<>();
 
 }

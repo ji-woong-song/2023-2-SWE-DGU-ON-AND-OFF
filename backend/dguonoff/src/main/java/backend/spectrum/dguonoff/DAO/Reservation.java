@@ -1,16 +1,11 @@
 package backend.spectrum.dguonoff.DAO;
 
-import backend.spectrum.dguonoff.domain.facility.entity.Facility;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "Reservation")

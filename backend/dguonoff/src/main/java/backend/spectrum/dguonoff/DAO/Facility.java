@@ -1,6 +1,5 @@
-package backend.spectrum.dguonoff.domain.facility.entity;
+package backend.spectrum.dguonoff.DAO;
 
-import backend.spectrum.dguonoff.DAO.Reservation;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,8 +33,9 @@ public class Facility {
     @Column(name = "floor")
     private Integer floor;
 
-    @Column(name = "building_name", length = 255, nullable = false)
-    private String buildingName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private Building buildingName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
@@ -43,7 +43,7 @@ public class Facility {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    private Building building_name;
+    private Building building;
 
     @OneToMany(mappedBy = "facility")
     private List<Reservation> reservations = new ArrayList<>();

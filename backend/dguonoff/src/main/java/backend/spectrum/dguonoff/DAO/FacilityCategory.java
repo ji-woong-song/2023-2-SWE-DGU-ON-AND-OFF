@@ -1,4 +1,4 @@
-package backend.spectrum.dguonoff.domain.facility.entity;
+package backend.spectrum.dguonoff.DAO;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
