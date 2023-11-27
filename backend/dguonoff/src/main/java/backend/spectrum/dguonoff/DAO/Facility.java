@@ -35,10 +35,6 @@ public class Facility {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    private Building buildingName;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
     private FacilityCategory category;
 
     @ManyToOne(fetch = FetchType.LAZY)
