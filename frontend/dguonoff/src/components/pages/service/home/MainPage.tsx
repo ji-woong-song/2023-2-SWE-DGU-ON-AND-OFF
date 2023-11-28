@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Container, IconButton, Toolbar, Button } from "@mui/material";
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import styles from "./MainPage.module.css";
+import styles from "../Service.module.css";
 import GrayBorderBox from "../../../../modules/GrayBorderBox";
 import GrayCircle from "../../../../modules/GrayCircle";
 import { Business, LocalLibrary, FilterHdr } from '@mui/icons-material';
