@@ -1,0 +1,34 @@
+.mainTitle {
+    font-size: 24px;
+    font-weight: bold;
+    flex-grow: 1;
+}
+
+.boxTitle{
+    font-size: 18px;
+    font-weight: bold;
+    flex-grow: 1;
+}
+
+.menuTitle{
+    font-size: 12px;
+    word-wrap: break-word; /* 긴 단어가 줄바꿈될 수 있도록 설정 */
+    max-width: 100%; /* 최대 너비 설정 */
+    padding-top : 6px;
+}
+
+.menuContainer {
+    display: flex; /* Flexbox 사용 */
+    align-items: center; /* 세로축에서 중앙 정렬 */
+    flex-direction: column; /* 아이템을 수직으로 정렬 */
+}
+
+.usingFacilityTitle{
+    font-size : 18px;
+    font-weight: bold;
+}
+
+.usingTime{
+    font-size : 18px;
+    color : '#646464';
+}
