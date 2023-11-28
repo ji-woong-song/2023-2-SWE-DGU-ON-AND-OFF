@@ -23,13 +23,11 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: |
-         cd backend/dguonoff
-         chmod +x backend/dguonoff/gradlew
+         cd backend/dguonoff && chmod +x gradlew
 
       - name: Build with Gradle
         run: |
-         cd backend/dguonoff
-         ./gradlew clean build
+         cd backend/dguonoff && ./gradlew clean build
         env:
           DB_DOMAIN: ${{secrets.DB_DOMAIN}}
           DB_PORT: ${{secrets.DB_PORT}}
