@@ -10,8 +10,8 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        #      naming:
-        #        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+            #      naming:
+      #        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
         dialect: org.hibernate.dialect.MySQL57Dialect
         show_sql: true
         format_sql: true

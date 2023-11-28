@@ -1,0 +1,112 @@
+.mainTitle {
+    font-size: 24px;
+    font-weight: bold;
+    flex-grow: 1;
+}
+
+.boxTitle{
+    font-size: 18px;
+    font-weight: bold;
+    flex-grow: 1;
+}
+
+.menuTitle{
+    font-size: 12px;
+    word-wrap: break-word; /* 긴 단어가 줄바꿈될 수 있도록 설정 */
+    max-width: 100%; /* 최대 너비 설정 */
+    padding-top : 6px;
+}
+
+.menuContainer {
+    display: flex; /* Flexbox 사용 */
+    align-items: center; /* 세로축에서 중앙 정렬 */
+    flex-direction: column; /* 아이템을 수직으로 정렬 */
+}
+
+.usingFacilityTitle{
+    font-size : 18px;
+    font-weight: bold;
+}
+
+.usingTime{
+    font-size : 18px;
+    color : '#646464';
+}
+
+.infoFacility{
+    padding-top: 40px;
+    padding-bottom: 24px;
+}
+
+.infoMenuTitle{
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.infoMenuContent{
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.inputBox{
+    width: 100%;        /* 너비 설정 */
+    padding: 10px;      /* 안쪽 여백 설정 */
+    margin: 9px 0;      /* 위아래 마진 설정 */
+    box-sizing: border-box; /* 박스 크기 계산 방법 설정 */
+    border: 1px solid #D7D4D4;
+    border-radius: 6px; 
+}
+
+.firstUse{
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    text-align: center;
+    
+    color: #9A9A9A;
+}
+/* 동국 ON/OFF 사용이 처음이신가요? */
+
+.signupHref{
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 19px;
+    text-align: center;
+
+    color: #000000;
+}
+
+.loginButton{
+    margin : 30px 0;
+    width: 100%;
+    height: 40px;
+    border : none;
+    background: #FBAF3E;
+    border-radius: 6px;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: center;
+
+    color: #FFFFFF;
+}
+
+.signupSubTitle{
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 17px;
+
+    color: #000000;
+}
+
+
