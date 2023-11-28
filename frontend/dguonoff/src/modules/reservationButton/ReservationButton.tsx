@@ -14,6 +14,7 @@ const ReservationButton: React.FC<ReservationButtonProps> = ({ onClick }) => {
         onClick={onClick}
       />
         예약하기
+      </button>
     </div>
   );
 };
