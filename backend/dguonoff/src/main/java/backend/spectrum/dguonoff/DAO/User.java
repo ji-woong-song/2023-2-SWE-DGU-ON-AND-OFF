@@ -16,25 +16,27 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
-
     @Id
     @Column(name = "id", nullable = false)
-    private Long id;
+    private String id;
+
+    @Column(name = "sid", length = 20, nullable = false)
+    private String sid;
 
     @Column(name = "password", length = 512, nullable = false)
     private String password;
 
-    @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, columnDefinition = "VARCHAR(16) DEFAULT 'NORMAL'")
     private Role role;
 
-    @Column(name = "name", length = 20, nullable = false)
+    @Column(name = "name", nullable = false, length = 20)
     private String name;
 
     @Column(name = "major", length = 64)
     private String major;
 
-    @Column(name = "email", length = 255)
+    @Column(name = "email", nullable = false, length = 255)
     private String email;
 
     @OneToMany(mappedBy = "userId")
@@ -43,12 +45,14 @@ public class User {
     @OneToMany(mappedBy = "hotUserId")
     private List<Reservation> reservations = new ArrayList<>();
 
-    public User(long id, String password, Role normal, String userA, String cse, String email) {
+    public User(String id, String sid, String password, Role role, String name, String major, String email) {
         this.id = id;
+        this.sid = sid;
         this.password = password;
-        this.role = normal;
-        this.name = userA;
-        this.major = cse;
+        this.role = role;
+        this.name = name;
+        this.major = major;
         this.email = email;
     }
 }
+

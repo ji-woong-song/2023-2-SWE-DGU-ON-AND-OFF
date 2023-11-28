@@ -19,7 +19,7 @@ public class Building {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "building_name")
+    @OneToMany(mappedBy = "building")
     private List<Facility> facilities = new ArrayList<>();
 
 }

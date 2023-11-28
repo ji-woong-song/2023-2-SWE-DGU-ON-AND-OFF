@@ -10,7 +10,12 @@ public class ErrorResponse {
 
     public ErrorResponse(ErrorCode code) {
         this.message = code.getMessage();
-        this.code = code.getCode();
+        this.code = code.name();
+    }
+
+    public ErrorResponse(String message, String code) {
+        this.message = message;
+        this.code = code;
     }
 
 }

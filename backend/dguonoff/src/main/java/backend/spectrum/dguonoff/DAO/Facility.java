@@ -1,5 +1,6 @@
 package backend.spectrum.dguonoff.DAO;
 
+import backend.spectrum.dguonoff.DAO.identifier.FacilityPK;
 import backend.spectrum.dguonoff.DAO.model.FacilityStatus;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,12 +18,16 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Facility {
 
-    @Id
-    @Column(name = "id", nullable = false)
-    private String id;
+    @EmbeddedId
+    private FacilityPK id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    @MapsId("buildingName")
+    private Building building;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(15) DEFAULT 'EMPTY'")
     private FacilityStatus state;
 
     @Column(name = "name", length = 255, nullable = false)
@@ -34,18 +39,13 @@ public class Facility {
     @Column(name = "floor")
     private Integer floor;
 
-    @Column(name = "building_name", length = 255, nullable = false)
-    private String buildingName;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private FacilityCategory category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Building building_name;
-
     @OneToMany(mappedBy = "facility")
     private List<Reservation> reservations = new ArrayList<>();
 
+    @Column(name = "isBookable", columnDefinition = "BOOLEAN default FALSE")
+    private Boolean isBookable;
 }

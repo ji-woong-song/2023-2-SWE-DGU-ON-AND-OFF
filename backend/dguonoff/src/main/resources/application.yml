@@ -1,23 +1,18 @@
 spring:
-  config:
-    import:
-      - db.properties
-  server:
-    address: localhost
-    port: 8080
   datasource:
+    url: jdbc:mysql://${DB_DOMAIN}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    password: ${db.password}
-    url: ${db.url}
-    username: ${db.user}
   jpa:
     hibernate:
-      #      naming:
-      #        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-      ddl-auto: validate
+      ddl-auto: ${DB_DDL_MODE}
+    show-sql: true
     properties:
       hibernate:
-        #        dialect: org.hibernate.dialect.MySQLDialect
+            #      naming:
+      #        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+#        dialect: org.hibernate.dialect.MySQL57Dialect
         show_sql: true
         format_sql: true
         use_sql_comments: true
@@ -25,8 +20,17 @@ spring:
         persistence:
           persistence-unit-name: jpa-test
     generate-ddl: true
-    show-sql: true
 
+server:
+  port: ${APP_SERVER_PORT}
+  address: ${APP_SERVER_ADDRESS}
+
+jwt:
+  base64:
+    secret: ${JWT_SECRET_KEY}
+  prefix: ${JWT_TOKEN_PREFIX}
+  header: ${JWT_TOKEN_HEADER}
+  expiration: ${JWT_EXPIRATION_MILLISECOND}
 
 logging:
   level:

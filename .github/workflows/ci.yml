@@ -1,0 +1,43 @@
+# 1 워크플로의 이름 지정
+name: CI
+
+# 2 워크플로가 시작될 조건 지정
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04 # 3 실행 환경 지정
+    #4 실행스텝지정
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '11'
+#      - name : Change workFlow directory
+#        run : |
+#          cd backend/dguonoff
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x backend/dguonoff/gradlew
+
+      - name: Build with Gradle
+        run: backend/dguonoff/gradlew clean build
+        env:
+          DB_DOMAIN: ${{secrets.DB_DOMAIN}}
+          DB_PORT: ${{secrets.DB_PORT}}
+          DB_NAME: ${{secrets.DB_NAME}}
+          DB_USERNAME: ${{secrets.DB_USERNAME}}
+          DB_PASSWORD: ${{secrets.DB_PASSWORD}}
+          DB_DDL_MODE: ${{secrets.DB_DDL_MODE}}
+
+          JWT_SECRET_KEY: ${{secrets.JWT_SECRET_KEY}}
+          JWT_EXPIRATION_MILLISECOND: ${{secrets.JWT_EXPIRATION_MILLISECOND}}
+          JWT_TOKEN_PREFIX: ${{secrets.JWT_TOKEN_PREFIX}}
+          JWT_TOKEN_HEADER: ${{secrets.JWT_TOKEN_HEADER}}
+
+          APP_SERVER_PORT: ${{secrets.APP_SERVER_PORT}}
+          APP_SERVER_ADDRESS: ${{secrets.APP_SERVER_ADDRESS}}
