@@ -19,7 +19,22 @@ jobs:
           java-version: '11'
 
       - name: Grant execute permission for gradlew
-        run: chmod +x ./backend/dguonoff/gradlew
+        run: chmod +x backend/dguonoff/gradlew
 
       - name: Build with Gradle
-        run: .backend/dguonoff/gradlew clean build
+        run: backend/dguonoff/gradlew clean build
+        env:
+          DB_DOMAIN: ${{secrets.DB_DOMAIN}}
+          DB_PORT: ${{secrets.DB_PORT}}
+          DB_NAME: ${{secrets.DB_NAME}}
+          DB_USERNAME: ${{secrets.DB_USERNAME}}
+          DB_PASSWORD: ${{secrets.DB_PASSWORD}}
+          DB_DDL_MODE: ${{secrets.DB_DDL_MODE}}
+
+          JWT_SECRET_KEY: ${{secrets.JWT_SECRET_KEY}}
+          JWT_EXPIRATION_MILLISECOND: ${{secrets.JWT_EXPIRATION_MILLISECOND}}
+          JWT_TOKEN_PREFIX: ${{secrets.JWT_TOKEN_PREFIX}}
+          JWT_TOKEN_HEADER: ${{secrets.JWT_TOKEN_HEADER}}
+
+          APP_SERVER_PORT: ${{secrets.APP_SERVER_PORT}}
+          APP_SERVER_ADDRESS: ${{secrets.APP_SERVER_ADDRESS}}
