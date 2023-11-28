@@ -2,9 +2,15 @@ import { useEffect, useState } from "react";
 import { Box, Container, IconButton, Toolbar, Button, Grid } from "@mui/material";
 import styles from "../Service.module.css";
 import GrayBorderBox from "../../../../modules/GrayBorderBox";
+import ReservationButton from "../../../../modules/reservationButton/ReservationButton";
 
 export default function ReservationInfo() {
     const title : string = "예약 정보";
+
+    const onTapCancel = () => {
+        console.log("cancel clicked");
+    };
+
     return (
         <Container>
             <Toolbar>
@@ -45,6 +51,7 @@ export default function ReservationInfo() {
                 }}>
                     <div className={styles.infoMenuContent}>이것은 메모입니다.</div>
                 </GrayBorderBox>    
+                <ReservationButton onClick={onTapCancel} buttonTitle="예약 취소"/>
             </Container>
         </Container>
     )
