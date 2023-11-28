@@ -12,7 +12,7 @@ const ReservationButton: React.FC<ReservationButtonProps> = ({ onClick }) => {
       <button
         className={styles.reservationButton} // CSS 모듈 클래스 적용
         onClick={onClick}
-      />
+      >
         예약하기
       </button>
     </div>
