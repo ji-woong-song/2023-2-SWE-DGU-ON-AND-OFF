@@ -13,10 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/facility")
 @RequiredArgsConstructor
 public class FacilityController {
-    private final FacilityService facilityService;
-    @GetMapping("/names")
-    public ResponseEntity<BuildingNameResponse> getBuildingNames() {
-        List<String> allBuildingNames = facilityService.getAllBuildingNames();
-        return ResponseEntity.ok(new BuildingNameResponse(allBuildingNames));
-    }
+
+
 }
