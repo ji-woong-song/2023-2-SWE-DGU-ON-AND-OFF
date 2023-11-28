@@ -13,6 +13,7 @@ const ReservationButton: React.FC<ReservationButtonProps> = ({ onClick, buttonTi
       <button
         className={styles.reservationButton} // CSS 모듈 클래스 적용
         onClick={onClick}
+        type='submit'
       >
         {buttonTitle ?? "예약 하기"}
       </button>
