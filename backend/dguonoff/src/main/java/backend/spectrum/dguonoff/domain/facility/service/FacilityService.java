@@ -25,7 +25,7 @@ public class FacilityService {
     }
 
     public FloorFacilityListResponse getFacilityList(String buildingName, Integer floor, Boolean bookable) {
-        List<Facility> facilities = facilityRepository.findAllByBuildingAndFloorAndIsBookable(
+        List<Facility> facilities = facilityRepository.findAllByBuilding_NameAndFloorAndIsBookable(
                 buildingName, floor, bookable);
         List<FacilityOutlineDTO> outlines = facilities.stream().map(
                 facility ->

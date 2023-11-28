@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FacilityRepository extends JpaRepository<Facility, FacilityPK> {
-    List<Facility> findAllByBuildingAndFloorAndIsBookable(String buildingName, Integer floor, Boolean bookable);
+    List<Facility> findAllByBuilding_NameAndFloorAndIsBookable(String buildingName, Integer floor, Boolean bookable);
 }
