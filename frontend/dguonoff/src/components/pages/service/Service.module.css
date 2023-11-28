@@ -32,3 +32,24 @@
     font-size : 18px;
     color : '#646464';
 }
+
+.infoFacility{
+    padding-top: 40px;
+    padding-bottom: 24px;
+}
+
+.infoMenuTitle{
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.infoMenuContent{
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
+    color: rgba(0, 0, 0, 0.5);
+}

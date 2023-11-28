@@ -5,6 +5,7 @@ import AdminLogin from './components/pages/admin/login/AdminLogin';
 import AdminSignup from './components/pages/admin/signup/AdminSignup';
 import MainPage from './components/pages/service/home/MainPage';
 import useModalCreater from './modules/modal/Modal';
+import ReservationInfo from './components/pages/service/information/ReservationInfo';
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<MainPage/>} />
+          <Route path="/ReservationInfo" element={<ReservationInfo/>} />
           <Route path="/admin" element={<AdminHome />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/signup" element={<AdminSignup />} />
