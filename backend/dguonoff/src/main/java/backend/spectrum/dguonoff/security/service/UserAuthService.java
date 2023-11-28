@@ -2,8 +2,8 @@ package backend.spectrum.dguonoff.security.service;
 
 import backend.spectrum.dguonoff.domain.user.dto.LoginRequest;
 import backend.spectrum.dguonoff.domain.user.dto.SignUpRequest;
-import backend.spectrum.dguonoff.domain.user.entity.Role;
-import backend.spectrum.dguonoff.domain.user.entity.User;
+import backend.spectrum.dguonoff.DAO.User;
+import backend.spectrum.dguonoff.DAO.model.Role;
 import backend.spectrum.dguonoff.domain.user.exception.UserDuplicateException;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
@@ -39,13 +39,7 @@ public class UserAuthService {
         Optional<User> optionalUser = userRepository.findById(dto.getId());
         if (optionalUser.isPresent())
             throw new UserDuplicateException(ErrorCode.USER_ID_DUPLICATE);
-        User newUser = User.builder()
-                .id(dto.getId())
-                .name(dto.getName())
-                .password(dto.getPassword())
-                .email(dto.getEmail())
-                .role(Role.NORMAL)
-                .build();
+        User newUser = new User(dto.getId(),dto.getSid(), dto.getPassword(), Role.NORMAL, dto.getName(), dto.getMajor(), dto.getEmail());
         userRepository.save(newUser);
     }
 

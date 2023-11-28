@@ -1,6 +1,7 @@
 package backend.spectrum.dguonoff.DAO;
 
 import backend.spectrum.dguonoff.DAO.identifier.FacilityPK;
+import backend.spectrum.dguonoff.DAO.model.FacilityStatus;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

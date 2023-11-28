@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.security.auth.jwt;
 
-import backend.spectrum.dguonoff.domain.user.entity.User;
+import backend.spectrum.dguonoff.DAO.User;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import java.util.Collections;

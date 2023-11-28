@@ -1,4 +1,5 @@
 package backend.spectrum.dguonoff.DAO;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FacilityCategory {
+
     @Id
     @Column(name = "name", nullable = false)
     private String name;
@@ -36,4 +38,6 @@ public class FacilityCategory {
 
     @Column(name = "reservation_deadline")
     private Integer reservationDeadline;
+
+
 }

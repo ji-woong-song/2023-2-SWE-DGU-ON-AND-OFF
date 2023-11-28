@@ -1,7 +1,7 @@
 package backend.spectrum.dguonoff.Service;
 
-import backend.spectrum.dguonoff.domain.user.entity.Role;
-import backend.spectrum.dguonoff.domain.user.entity.User;
+import backend.spectrum.dguonoff.DAO.User;
+import backend.spectrum.dguonoff.DAO.model.Role;
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.domain.user.service.UserService;
@@ -27,8 +27,8 @@ public class UserServiceTest {
 
     @BeforeEach
     void setUp() { // 테스트에 필요한 초기 데이터를 설정
-        userA = new User("100N", "1234", Role.NORMAL, "userA", "CSE", "user@test.com");
-        masterA = new User("200M", "1234", Role.MASTER, "MasterA", "CSE", "master@test.com");
+        userA = new User("100N", "1234","1234", Role.NORMAL, "userA", "CSE", "user@test.com");
+        masterA = new User("200M", "1234", "1234",Role.MASTER, "MasterA", "CSE", "master@test.com");
 
         userRepository.save(userA);
         userRepository.save(masterA);
