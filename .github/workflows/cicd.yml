@@ -8,7 +8,7 @@ on:
   pull_request:
     branches: [ main ]
 env:
-  RESOURCE_PATH: ./backend/dguonoff/src/main/resources/application.yml
+  RESOURCE_PATH: backend/dguonoff/src/main/resources/application.yml
 
 
 jobs:
