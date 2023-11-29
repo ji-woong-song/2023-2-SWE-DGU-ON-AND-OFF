@@ -30,12 +30,10 @@ jobs:
         with :
           files: ${{ env.RESOURCE_PATH }}
         env:
-          DB_DOMAIN: ${{ secrets.DB_DOMAIN }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_DDL_MODE: ${{ secrets.DB_DDL_MODE }}
+          spring.datasource.url: jdbc:mysql://${{ secrets.DB_DOMAIN }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
+          spring.datasource.username: ${{ secrets.DB_USERNAME }}
+          spring.datasource.password: ${{ secrets.DB_PASSWORD }}
+          spring.datasource.driver-class-name: ${{ secrets.DB_DDL_MODE }}
 
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           JWT_EXPIRATION_MILLISECOND: ${{ secrets.JWT_EXPIRATION_MILLISECOND }}
