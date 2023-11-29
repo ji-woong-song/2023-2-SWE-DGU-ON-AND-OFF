@@ -44,17 +44,12 @@ jobs:
           APP_SERVER_ADDRESS: ${{ secrets.APP_SERVER_ADDRESS }}
 
       - name: Grant execute permission for gradlew
-        run: |
-         cd backend/dguonoff && chmod +x gradlew && echo ${APP_SERVER_PORT} ${env.APP_SERVER_PORT}
-      - name: Build with Gradle
-        run: |
-         cd backend/dguonoff && ./gradlew clean build -x test
+        run: chmod +x gradlew && echo ${{secrets.APP_SERVER_PORT}}
+        working-directory: backend/dguonoff
 
-      - name: create server env file
-        run: |
-          cd backend/dguonoff
-          touch .env
-          
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+        working-directory: backend/dguonoff
 
       # (4) AWS인증 (IAM사용자 Access Key, Secret Key활용)
       - name: Configure AWS credentials
