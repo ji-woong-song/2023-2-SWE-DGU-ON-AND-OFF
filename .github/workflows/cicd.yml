@@ -32,21 +32,12 @@ jobs:
           spring.datasource.username: ${{ secrets.DB_USERNAME }}
           spring.datasource.password: ${{ secrets.DB_PASSWORD }}
           spring.datasource.driver-class-name: ${{ secrets.DB_DDL_MODE }}
-
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          JWT_EXPIRATION_MILLISECOND: ${{ secrets.JWT_EXPIRATION_MILLISECOND }}
-          JWT_TOKEN_PREFIX: ${{ secrets.JWT_TOKEN_PREFIX }}
-          JWT_TOKEN_HEADER: ${{ secrets.JWT_TOKEN_HEADER }}
-
-          server:
-            port: ${{ secrets.APP_SERVER_PORT }}
-            address: ${{ secrets.APP_SERVER_ADDRESS }}
-          jwt:
-            base64:
-              secret: ${{ secrets.JWT_SECRET_KEY }}
-            prefix: ${{ secrets.JWT_EXPIRATION_MILLISECOND }}
-            header: ${{ secrets.JWT_TOKEN_PREFIX }}
-            expiration: ${{ secrets.JWT_TOKEN_HEADER }}
+          server.port: ${{ secrets.APP_SERVER_PORT }}
+          server.address: ${{ secrets.APP_SERVER_ADDRESS }}
+          jwt.base64.secret: ${{ secrets.JWT_SECRET_KEY }}
+          jwt.prefix: ${{ secrets.JWT_EXPIRATION_MILLISECOND }}
+          jwt.header: ${{ secrets.JWT_TOKEN_PREFIX }}
+          jwt.expiration: ${{ secrets.JWT_TOKEN_HEADER }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew && echo ${{secrets.APP_SERVER_PORT}}
