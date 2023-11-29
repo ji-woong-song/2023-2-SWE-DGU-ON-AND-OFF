@@ -23,7 +23,6 @@ spring:
 
 server:
   port: ${APP_SERVER_PORT}
-  address: ${APP_SERVER_ADDRESS}
 
 jwt:
   base64:
