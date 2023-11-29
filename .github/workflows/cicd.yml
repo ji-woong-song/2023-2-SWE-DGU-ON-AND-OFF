@@ -8,20 +8,9 @@ on:
   pull_request:
     branches: [ main ]
 env:
-  DB_DOMAIN: ${{ secrets.DB_DOMAIN }}
-  DB_PORT: ${{ secrets.DB_PORT }}
-  DB_NAME: ${{ secrets.DB_NAME }}
-  DB_USERNAME: ${{ secrets.DB_USERNAME }}
-  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-  DB_DDL_MODE: ${{ secrets.DB_DDL_MODE }}
+  RESOURCE_PATH: ./backend/dguonoff/src/main/resources/application.yml
 
-  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-  JWT_EXPIRATION_MILLISECOND: ${{ secrets.JWT_EXPIRATION_MILLISECOND }}
-  JWT_TOKEN_PREFIX: ${{ secrets.JWT_TOKEN_PREFIX }}
-  JWT_TOKEN_HEADER: ${{ secrets.JWT_TOKEN_HEADER }}
 
-  APP_SERVER_PORT: ${{ secrets.APP_SERVER_PORT }}
-  APP_SERVER_ADDRESS: ${{ secrets.APP_SERVER_ADDRESS }}
 jobs:
   build:
     runs-on: ubuntu-22.04 # 3 실행 환경 지정
@@ -36,14 +25,38 @@ jobs:
 #      - name : Change workFlow directory
 #        run : |
 #          cd backend/dguonoff
+      - name : set yml file
+        uses : microsoft/variable-substitution@v1
+        with :
+          files: ${{ env.RESOURCE_PATH }}
+        env:
+          DB_DOMAIN: ${{ secrets.DB_DOMAIN }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DDL_MODE: ${{ secrets.DB_DDL_MODE }}
+
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          JWT_EXPIRATION_MILLISECOND: ${{ secrets.JWT_EXPIRATION_MILLISECOND }}
+          JWT_TOKEN_PREFIX: ${{ secrets.JWT_TOKEN_PREFIX }}
+          JWT_TOKEN_HEADER: ${{ secrets.JWT_TOKEN_HEADER }}
+
+          APP_SERVER_PORT: ${{ secrets.APP_SERVER_PORT }}
+          APP_SERVER_ADDRESS: ${{ secrets.APP_SERVER_ADDRESS }}
 
       - name: Grant execute permission for gradlew
         run: |
-         cd backend/dguonoff && chmod +x gradlew && echo env.APP_SERVER_PORT
+         cd backend/dguonoff && chmod +x gradlew && echo ${APP_SERVER_PORT} ${env.APP_SERVER_PORT}
       - name: Build with Gradle
         run: |
          cd backend/dguonoff && ./gradlew clean build -x test
 
+      - name: create server env file
+        run: |
+          cd backend/dguonoff
+          touch .env
+          
 
       # (4) AWS인증 (IAM사용자 Access Key, Secret Key활용)
       - name: Configure AWS credentials
