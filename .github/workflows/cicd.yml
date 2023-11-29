@@ -39,8 +39,7 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: |
-         cd backend/dguonoff && chmod +x gradlew
-
+         cd backend/dguonoff && chmod +x gradlew && echo env.APP_SERVER_PORT
       - name: Build with Gradle
         run: |
          cd backend/dguonoff && ./gradlew clean build -x test
