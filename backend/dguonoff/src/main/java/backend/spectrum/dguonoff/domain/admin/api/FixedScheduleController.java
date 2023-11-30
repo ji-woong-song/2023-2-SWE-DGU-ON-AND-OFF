@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/fixedTimeTables")
+@RequestMapping("/api/fixedSchedules")
 public class FixedScheduleController {
     private final FixedScheduleService fixedScheduleService;
 
