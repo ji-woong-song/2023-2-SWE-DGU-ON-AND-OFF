@@ -74,4 +74,12 @@ public class FixedScheduleService {
                 .scheduleId(fixedSchedule.getId())
                 .build();
     }
+
+    @Transactional
+    public String removeSchedule(Long scheduleId) {
+        FixedSchedule fixedSchedule = this.fixedScheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_SCHEDULE));
+        this.fixedScheduleRepository.delete(fixedSchedule);
+        return "success";
+    }
 }

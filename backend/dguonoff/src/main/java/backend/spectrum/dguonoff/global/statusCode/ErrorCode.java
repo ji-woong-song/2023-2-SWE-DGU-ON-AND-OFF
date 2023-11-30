@@ -27,6 +27,9 @@ public enum ErrorCode {
     // Reservation
     EXIST_OVERLAPPED_INTERVAL(HttpStatus.CONFLICT, "겹치는 기간이 있습니다."),
 
+    // FixedSchedule
+    NOT_EXIST_SCHEDULE(HttpStatus.NOT_FOUND, "원하는 고정시간표가 없습니다"),
+
     //Jwt
     JWT_EXPIRED(HttpStatus.FORBIDDEN, "JWT 토큰이 만료되었습니다."),
     JWT_INVALID_SIGNATURE(HttpStatus.FORBIDDEN, "JWT 시그니처가 잘못되었습니다."),

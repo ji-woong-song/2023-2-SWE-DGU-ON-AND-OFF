@@ -3,13 +3,17 @@ package backend.spectrum.dguonoff.DAO;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
@@ -30,20 +34,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FixedSchedule {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fixed_schedule_id", nullable = false)
     private Long id;
-
-    @Column(name = "event_title", nullable = false)
-    private String eventTitle;
-
-    @Column(name = "host_user", nullable = false)
-    private String hostUser;
-
-    @Column(name = "purpose", nullable = false)
-    private String purpose;
-
-    @Column(name = "outline", nullable = false)
-    private String outline;
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
@@ -66,4 +59,11 @@ public class FixedSchedule {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User reservationAdmin;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Event event;
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
 }
