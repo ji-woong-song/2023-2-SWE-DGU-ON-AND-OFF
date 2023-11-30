@@ -23,21 +23,34 @@ jobs:
           distribution: 'corretto'
           java-version: '11'
 
-      - name: Generate Environment Variables File for Production
+      - name: Generate Envirvonment Variables File for Production
         run: |
-          echo "DB_DOMAIN=${{secrets.DB_DOMAIN}}" >> .env
-          echo "DB_PORT=${{secrets.DB_PORT}}" >> .env
-          echo "DB_NAME=${{secrets.DB_NAME}}" >> .env
-          echo "DB_USERNAME = ${{ secrets.DB_USERNAME }}" >> .env
-          echo "DB_PASSWORD = ${{ secrets.DB_PASSWORD }}" >> .env
-          echo "DB_DDL_MODE = ${{ secrets.DB_DDL_MODE }}" >> .env
-          echo "APP_SERVER_PORT = ${{ secrets.APP_SERVER_PORT }}" >> .env
-          echo "APP_SERVER_ADDRESS = ${{ secrets.APP_SERVER_ADDRESS }}" >> .env
-          echo "JWT_SECRET_KEY = ${{ secrets.JWT_SECRET_KEY }}" >> .env
-          echo "JWT_EXPIRATION_MILLISECOND = ${{ secrets.JWT_EXPIRATION_MILLISECOND }}" >> .env
-          echo "JWT_TOKEN_PREFIX = ${{ secrets.JWT_TOKEN_PREFIX }}" >> .env
-          echo "JWT_TOKEN_HEADER = ${{ secrets.JWT_TOKEN_HEADER }}" >> .env
+          echo "DB_DOMAIN=$DB_DOMAIN" >> .env
+          echo "DB_PORT=$DB_PORT" >> .env
+          echo "DB_NAME=$DB_NAME" >> .env
+          echo "DB_USERNAME = $DB_USERNAME" >> .env
+          echo "DB_PASSWORD = $DB_PASSWORD" >> .env
+          echo "DB_DDL_MODE = $DB_DDL_MODE" >> .env
+          echo "APP_SERVER_PORT = $APP_SERVER_PORT" >> .env
+          echo "APP_SERVER_ADDRESS = $APP_SERVER_ADDRESS" >> .env
+          echo "JWT_SECRET_KEY = $JWT_SECRET_KEY" >> .env
+          echo "JWT_EXPIRATION_MILLISECOND = $JWT_EXPIRATION_MILLISECOND" >> .env
+          echo "JWT_TOKEN_PREFIX = $JWT_TOKEN_PREFIX" >> .env
+          echo "JWT_TOKEN_HEADER = $JWT_TOKEN_HEADER" >> .env
         working-directory: backend/dguonoff
+        env:
+          DB_DOMAIN: ${{ secrets.DB_DOMAIN }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DDL_MODE: ${{ secrets.DB_DDL_MODE }}
+          APP_SERVER_PORT: ${{ secrets.APP_SERVER_PORT }}
+          APP_SERVER_ADDRESS: ${{ secrets.APP_SERVER_ADDRESS }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          JWT_EXPIRATION_MILLISECOND: ${{ secrets.JWT_EXPIRATION_MILLISECOND }}
+          JWT_TOKEN_PREFIX: ${{ secrets.JWT_TOKEN_PREFIX }}
+          JWT_TOKEN_HEADER: ${{ secrets.JWT_TOKEN_HEADER }}
 
 
       - name: Grant execute permission for gradlew
