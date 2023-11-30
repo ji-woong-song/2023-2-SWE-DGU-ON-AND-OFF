@@ -2,6 +2,7 @@ package backend.spectrum.dguonoff.security.config;
 
 import backend.spectrum.dguonoff.security.error.handler.JwtExceptionFilter;
 import backend.spectrum.dguonoff.security.auth.jwt.JwtFilter;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +39,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt로 무상태 정책
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**").permitAll()    // auth로 시작하는 uri는 인증 필요 없음
+                .antMatchers("/auth/**", "/swagger-ui/**").permitAll()    // auth로 시작하는 uri, swagger는 인증 필요 없음
                 .antMatchers("/admin/**").hasAuthority("MASTER") // master api는 role master인 사용자만 허용
                 .antMatchers("/api/**").authenticated() // api로 시작하는 uri에 대해서 인증 필요
                 .anyRequest().authenticated()
@@ -54,10 +55,10 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-//        configuration.setAllowedMethods(List.of("HEAD", "GET", "POST", "PUT", "DELETE"));
-//        configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
-//        configuration.setAllowCredentials(true);
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5500"));
+        configuration.setAllowedMethods(List.of("HEAD", "GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
