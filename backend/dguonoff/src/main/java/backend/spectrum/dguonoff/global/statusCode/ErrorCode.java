@@ -21,6 +21,15 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "허용되지 않은 메소드입니다."),
     SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러가 발생하였습니다."),
 
+    // Facility
+    NOT_EXIST_FACILITY(HttpStatus.NOT_FOUND, "해당 시설물을 찾을 수 없습니다."),
+
+    // Reservation
+    EXIST_OVERLAPPED_INTERVAL(HttpStatus.CONFLICT, "겹치는 기간이 있습니다."),
+
+    // FixedSchedule
+    NOT_EXIST_SCHEDULE(HttpStatus.NOT_FOUND, "원하는 고정시간표가 없습니다"),
+
     //Jwt
     JWT_EXPIRED(HttpStatus.FORBIDDEN, "JWT 토큰이 만료되었습니다."),
     JWT_INVALID_SIGNATURE(HttpStatus.FORBIDDEN, "JWT 시그니처가 잘못되었습니다."),

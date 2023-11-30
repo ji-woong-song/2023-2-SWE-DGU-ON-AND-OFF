@@ -22,9 +22,6 @@ public class Reservation {
     @Column(name = "reservation_id", nullable = false)
     private Long reservationId;
 
-    @Column(name = "title", length = 512, nullable = false)
-    private String title;
-
     @Column(name = "status", nullable = false)
     private ReservationStatus status;
 
@@ -46,4 +43,10 @@ public class Reservation {
     @OneToMany(mappedBy = "reservationId")
     private List<Participation_Reservation> guestUserId = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private Event event;
+    public void setEvent(Event event) {
+        this.event = event;
+        this.event.addReservation(this);
+    }
 }
