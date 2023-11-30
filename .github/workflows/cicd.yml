@@ -72,7 +72,7 @@ jobs:
       - name: Upload to AWS S3
         run: |
           aws deploy push --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }} \
-          --ignore-hidden-files --s3-location s3://${{secrets.S3_BUCKET_NAME}}/$GITHUB_SHA.zip --source . .env
+         --s3-location s3://${{secrets.S3_BUCKET_NAME}}/$GITHUB_SHA.zip --source .
         working-directory: backend/dguonoff
       # (6) S3버킷에 있는 파일을 대상으로 CodeDeploy실행
       - name: Deploy to AWS EC2 from S3
