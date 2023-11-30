@@ -8,7 +8,7 @@ on:
   pull_request:
     branches: [ main ]
 env:
-  RESOURCE_PATH: backend/dguonoff/src/main/resources/application.yml
+  RESOURCE_PATH: backend/dguonoff/
 
 
 jobs:
@@ -25,8 +25,9 @@ jobs:
 
       - name: Generate Environment Variables File for Production
         run: |
-          echo "DB_DOMAIN=$DB_DOMAIN" >> .env
-          echo "DB_PORT=$DB_PORT" >> .env
+          echo "DB_DOMAIN=${{secrets.DB_DOMAIN}}" >> .env
+          echo "DB_PORT=${{secrets.DB_PORT}}" >> .env
+          echo "DB_NAME=${{secrets.DB_NAME}}" >> .env
           echo "DB_USERNAME = ${{ secrets.DB_USERNAME }}" >> .env
           echo "DB_PASSWORD = ${{ secrets.DB_PASSWORD }}" >> .env
           echo "DB_DDL_MODE = ${{ secrets.DB_DDL_MODE }}" >> .env
@@ -36,7 +37,8 @@ jobs:
           echo "JWT_EXPIRATION_MILLISECOND = ${{ secrets.JWT_EXPIRATION_MILLISECOND }}" >> .env
           echo "JWT_TOKEN_PREFIX = ${{ secrets.JWT_TOKEN_PREFIX }}" >> .env
           echo "JWT_TOKEN_HEADER = ${{ secrets.JWT_TOKEN_HEADER }}" >> .env
-       
+        working-directory: backend/dguonoff
+
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew && echo ${{secrets.APP_SERVER_PORT}}
