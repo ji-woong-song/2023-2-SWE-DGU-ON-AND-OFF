@@ -31,7 +31,7 @@ public class FixedScheduleService {
     private final UserRepository userRepository;
 
     public List<DailyScheduleResponse> getFixedTimeTables(DailyScheduleRequest request) {
-        List<FixedSchedule> schedules = fixedScheduleRepository.findByDayAndStartDateBetweenAndFacility_Building_BuildingNameAndFacility_Id(
+        List<FixedSchedule> schedules = fixedScheduleRepository.findByDayAndStartDateBetweenAndFacility_Building_NameAndFacility_Id(
                 request.getDay(),
                 request.getEffectiveDate().getStart(),
                 request.getEffectiveDate().getEnd(),
@@ -56,7 +56,7 @@ public class FixedScheduleService {
         User admin = userRepository.findById(adminId)
             .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_USER));
 
-        List<FixedSchedule> alreadyScheduled = fixedScheduleRepository.findByDayAndStartDateBetweenAndFacility_Building_BuildingNameAndFacility_Id(
+        List<FixedSchedule> alreadyScheduled = fixedScheduleRepository.findByDayAndStartDateBetweenAndFacility_Building_NameAndFacility_Id(
                 request.getDay(), request.getEffectiveDate().getStart(), request.getEffectiveDate().getEnd(),
                 request.getFacility().getBuildingName(), request.getFacility().getId()
         );

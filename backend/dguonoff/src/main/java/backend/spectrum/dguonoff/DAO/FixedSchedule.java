@@ -9,7 +9,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -21,7 +20,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "FixedSchedule", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"startDate", "endDate", "day", "startTime", "endTime", "facility_id"})
+    @UniqueConstraint(columnNames = {
+            "start_date", "end_date", "day", "start_time", "end_time", "facility_building_name", "facility_id"
+    })
 })
 @Getter
 @Builder
@@ -51,7 +52,7 @@ public class FixedSchedule {
     private LocalDate endDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
+    @Column(name = "day", nullable = false)
     private DayOfWeek day;
 
     @Column(name = "start_time", nullable = false)
@@ -61,7 +62,6 @@ public class FixedSchedule {
     private LocalTime endTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "facility_id", nullable = false)
     private Facility facility;
 
     @ManyToOne(fetch = FetchType.LAZY)
