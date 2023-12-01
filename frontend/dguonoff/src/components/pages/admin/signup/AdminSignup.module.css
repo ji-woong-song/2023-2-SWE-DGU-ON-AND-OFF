@@ -94,7 +94,7 @@
     margin-top: 10px;
     border: 2px solid var(--component-main-color);
     background-color: var(--component-main-light-color);
-    font-size: 18px;
+    font-size: 18px;   
     font-weight: 600;
     color: var(--component-innertext-color);
     user-select: none;

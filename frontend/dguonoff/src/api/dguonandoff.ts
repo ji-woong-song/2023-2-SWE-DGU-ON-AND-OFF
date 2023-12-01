@@ -9,7 +9,7 @@ import qs from 'qs';
  * @returns {string} 구성된 API URL을 반환합니다.
  */
 function getApiUrl(path: string): string {
-    const baseUrl = `https://blindroute-springboot.koyeb.app${path}`;
+    const baseUrl = `http://3.37.162.40${path}`;
     const now = new Date();
     const formattedTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}:${now.getMilliseconds().toString().padStart(3, '0')}`;
     console.log(`[${formattedTime}] request: ${baseUrl}`);
@@ -18,7 +18,7 @@ function getApiUrl(path: string): string {
 
 
 
-/** 로그인 */
+/** 로그인 (재구현 필요)*/
 export async function requestAuthLogin(id: string, password: string): Promise<any> {
     let result: any = null;
     try {
@@ -41,10 +41,13 @@ export async function requestAuthLogin(id: string, password: string): Promise<an
 }
 
 
-export async function requestAuthSinUp(id: string, sid: string, name: string, password: string, email: string): Promise<any> {
+/** 회원가입 */
+export async function requestAuthSinUp(id: string, sid: string, name: string, major: string, password: string, email: string): Promise<any> {
     let result: any = null;
     try {
-        const postData = qs.stringify({ id, sid, name, password, email });
+        const postData = qs.stringify({ id, sid, name, major, password, email });
+        console.log({ id, sid, name, major, password, email })
+
         const response = await axios.post(
             getApiUrl("/auth/signUp"),
             postData,
@@ -55,6 +58,7 @@ export async function requestAuthSinUp(id: string, sid: string, name: string, pa
                 withCredentials: true
             }
         );
+        console.log(`response: ${response}`)
         result = response.data;
     } catch (error) {
         console.error("가입 요청 실패:", error);
