@@ -38,7 +38,8 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt로 무상태 정책
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**").permitAll()    // auth로 시작하는 uri는 인증 필요 없음
+                .antMatchers("/auth/**", // // auth로 시작하는 uri,
+                        "/swagger*/**", "/v3/api-docs/**", "/swagger-ui/index.html#").permitAll()    // swagger는 인증 필요 없음
                 .antMatchers("/admin/**").hasAuthority("MASTER") // master api는 role master인 사용자만 허용
                 .antMatchers("/api/**").authenticated() // api로 시작하는 uri에 대해서 인증 필요
                 .anyRequest().authenticated()
