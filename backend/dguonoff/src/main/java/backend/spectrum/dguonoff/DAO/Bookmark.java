@@ -27,4 +27,10 @@ public class Bookmark {
     @MapsId("facilityId")
     @ManyToOne(fetch = LAZY)
     private Facility facilityId;
+
+    public Bookmark(User user, Facility facility) {
+        this.bookmarkId = new BookmarkId(userId.getId(), facilityId.getId());
+        this.userId = user;
+        this.facilityId = facility;
+    }
 }

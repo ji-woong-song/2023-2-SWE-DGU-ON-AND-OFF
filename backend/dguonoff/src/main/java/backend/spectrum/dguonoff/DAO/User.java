@@ -39,7 +39,7 @@ public class User {
     @Column(name = "email", nullable = false, length = 255)
     private String email;
 
-    @OneToMany(mappedBy = "userId")
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
     private List<Bookmark> bookmarks = new ArrayList<>();
 
     @OneToMany(mappedBy = "hotUserId")
@@ -53,6 +53,9 @@ public class User {
         this.name = name;
         this.major = major;
         this.email = email;
+    }
+    public void addBookmark(Bookmark bookmark) {
+        this.bookmarks.add(bookmark);
     }
 }
 
