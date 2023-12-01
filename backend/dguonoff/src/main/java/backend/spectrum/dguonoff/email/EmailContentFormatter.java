@@ -3,6 +3,7 @@ package backend.spectrum.dguonoff.email;
 import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
 import backend.spectrum.dguonoff.email.content.EmailMessage;
 import backend.spectrum.dguonoff.event.ReservationConfirmEvent;
+import java.time.format.DateTimeFormatter;
 
 public class EmailContentFormatter {
     // 예약 이벤트에서 값을 가져와 사용자가 볼 이메일 본문 형태로 변환
@@ -24,12 +25,14 @@ public class EmailContentFormatter {
         }
         // 본문 형식 만들어줌
         StringBuilder contentBuilder = new StringBuilder();
+        // 시간 형식
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         contentBuilder
                 .append("\n[날짜] : ")
                 .append(event.getDate().toString()).append("\n")
                 .append("\n[사용 시간] : ")
-                .append(event.getPeriod().getStart().toString()).append(" ~ ")
-                .append(event.getPeriod().getEnd().toString()).append("\n")
+                .append(event.getPeriod().getStart().format(timeFormatter)).append(" ~ ")
+                .append(event.getPeriod().getEnd().format(timeFormatter)).append("\n")
                 .append("\n[사용 시설물] : ")
                 .append(event.getBuildingName()).append(" ").append(event.getFacilityName()).append("\n")
                 .append("\n[신청 결과] : ")

@@ -18,13 +18,17 @@ import org.springframework.stereotype.Service;
 public class ReservationHandlingService {
     private final ApplicationEventPublisher eventPublisher;
 
-    public void approveReservation(Long reservationId) {
+    /**
+     * 테스트 service 함수
+     * @param testedEmail : 메일 받을 이메일 주소
+     */
+    public void approveReservation(String testedEmail) {
         /* mock data, 여기에 예약 정보를 확인 하는 등등의 절차가 필요함 */
 
         // 예약 처리 이벤트 발생
-        ReservationConfirmEvent event = new ReservationConfirmEvent("학생회관", "101",
-                LocalDate.now(),
-                new PeriodDTO<LocalTime>(LocalTime.now(), LocalTime.now().plusMinutes(30)),
+        ReservationConfirmEvent event = new ReservationConfirmEvent(testedEmail,
+                "학생회관", "101", LocalDate.now(),
+                new PeriodDTO<>(LocalTime.now(), LocalTime.now().plusMinutes(30)),
                 ReservationStatus.APPROVED
         );
         eventPublisher.publishEvent(event);
