@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class FloorFacilityRequest {
-    private Boolean bookable;
+    private String buildingName;
     private Integer floor;
 }

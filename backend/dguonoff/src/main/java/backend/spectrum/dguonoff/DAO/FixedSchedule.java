@@ -12,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -25,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "FixedSchedule", uniqueConstraints = {
     @UniqueConstraint(columnNames = {
-            "start_date", "end_date", "day", "start_time", "end_time", "facility_building_name", "facility_id"
+            "start_date", "end_date", "day", "start_time", "end_time", "facility_id"
     })
 })
 @Getter
@@ -55,6 +56,7 @@ public class FixedSchedule {
     private LocalTime endTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "facility_id", nullable = false)
     private Facility facility;
 
     @ManyToOne(fetch = FetchType.LAZY)

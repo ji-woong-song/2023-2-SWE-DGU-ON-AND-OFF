@@ -1,6 +1,5 @@
 package backend.spectrum.dguonoff.DAO;
 
-import backend.spectrum.dguonoff.DAO.idClass.BookmarkId;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,23 +7,29 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.LAZY;
-
 @Entity
-@Table(name = "Bookmark")
+@Table(name = "Bookmark", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {
+                "user_id", "facility_id"
+        })
+})
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Bookmark {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @EmbeddedId
-    private BookmarkId bookmarkId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @MapsId("userId")
-    @ManyToOne(fetch = LAZY)
-    private User userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "facility_id")
+    private Facility facility;
 
-    @MapsId("facilityId")
-    @ManyToOne(fetch = LAZY)
-    private Facility facilityId;
+    public Bookmark(User user, Facility facility) {
+        this.user = user;
+        this.facility = facility;
+    }
 }
