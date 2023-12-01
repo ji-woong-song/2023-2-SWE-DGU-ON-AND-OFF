@@ -10,6 +10,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ReservationConfirmEvent {
+    private final String toEmail;
     private final String buildingName;
     private final String facilityName;
     private final LocalDate date;
