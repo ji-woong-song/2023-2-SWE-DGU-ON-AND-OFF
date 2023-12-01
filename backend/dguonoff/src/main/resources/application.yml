@@ -20,6 +20,18 @@ spring:
         persistence:
           persistence-unit-name: jpa-test
     generate-ddl: true
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
 
 server:
   port: ${APP_SERVER_PORT}
