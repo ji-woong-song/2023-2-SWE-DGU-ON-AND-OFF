@@ -3,7 +3,6 @@ package backend.spectrum.dguonoff.domain.admin.service;
 import backend.spectrum.dguonoff.DAO.Facility;
 import backend.spectrum.dguonoff.DAO.FixedSchedule;
 import backend.spectrum.dguonoff.DAO.User;
-import backend.spectrum.dguonoff.DAO.identifier.FacilityPK;
 import backend.spectrum.dguonoff.domain.admin.converter.FixedScheduleConverter;
 import backend.spectrum.dguonoff.domain.admin.dto.DailyScheduleResponse;
 import backend.spectrum.dguonoff.domain.admin.dto.DailyScheduleRequest;
@@ -36,7 +35,7 @@ public class FixedScheduleService {
                 request.getEffectiveDate().getStart(),
                 request.getEffectiveDate().getEnd(),
                 request.getFacility().getBuildingName(),
-                request.getFacility().getId()
+                request.getFacility().getCode()
         );
         return schedules.stream()
                 .map(FixedScheduleConverter::toFixedScheduleDTO)
@@ -46,19 +45,18 @@ public class FixedScheduleService {
     @Transactional
     public PostNewScheduleResponse enrollFixedTimeTable(String adminId, PostNewScheduleRequest request) {
         // 시설물 id로 시설물을 찾는다.
-        Facility facility = facilityRepository.findById(
-                new FacilityPK(
-                        request.getFacility().getBuildingName(),
-                        request.getFacility().getId()
-                )
+        Facility facility = facilityRepository.findByBuilding_NameAndCode(
+                request.getFacility().getBuildingName(),
+                request.getFacility().getCode()
         ).orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_FACILITY));
+
         // 유저 id로 유저를 찾는다.
         User admin = userRepository.findById(adminId)
             .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_USER));
 
         List<FixedSchedule> alreadyScheduled = fixedScheduleRepository.findByDayAndStartDateBetweenAndFacility_Building_NameAndFacility_Id(
                 request.getDay(), request.getEffectiveDate().getStart(), request.getEffectiveDate().getEnd(),
-                request.getFacility().getBuildingName(), request.getFacility().getId()
+                request.getFacility().getBuildingName(), request.getFacility().getCode()
         );
         // 시간대가 겹치는지 확인
         for (FixedSchedule schedule : alreadyScheduled) {

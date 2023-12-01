@@ -36,10 +36,10 @@ public class User {
     @Column(name = "major", length = 64)
     private String major;
 
-    @Column(name = "email", nullable = false, length = 255)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bookmark> bookmarks = new ArrayList<>();
 
     @OneToMany(mappedBy = "hotUserId")

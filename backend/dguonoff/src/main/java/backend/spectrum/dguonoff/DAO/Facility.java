@@ -1,6 +1,5 @@
 package backend.spectrum.dguonoff.DAO;
 
-import backend.spectrum.dguonoff.DAO.identifier.FacilityPK;
 import backend.spectrum.dguonoff.DAO.model.FacilityStatus;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,32 +11,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "Facility")
+@Table(uniqueConstraints = {
+    @UniqueConstraint(columnNames = {
+            "facility_code", "building_name"
+    })
+})
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Facility {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @EmbeddedId
-    private FacilityPK id;
+    @Column(name = "facility_code",nullable = false)
+    private String code;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    @MapsId("buildingName")
-    private Building building;
+    @Column(name = "facility_name", nullable = false)
+    private String name;
+
+    @Column(name = "capacity",nullable = false)
+    private Integer capacity;
+
+    @Column(name = "floor", nullable = false)
+    private Integer floor;
+
+    @Column(name = "is_bookable", columnDefinition = "BOOLEAN default FALSE")
+    private Boolean isBookable;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(15) DEFAULT 'EMPTY'")
     private FacilityStatus state;
 
-    @Column(name = "name", length = 255, nullable = false)
-    private String name;
-
-    @Column(name = "capacity",nullable = false)
-    private int capacity;
-
-    @Column(name = "floor")
-    private Integer floor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "building_name")
+    private Building building;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
@@ -45,7 +52,4 @@ public class Facility {
 
     @OneToMany(mappedBy = "facility")
     private List<Reservation> reservations = new ArrayList<>();
-
-    @Column(name = "isBookable", columnDefinition = "BOOLEAN default FALSE")
-    private Boolean isBookable;
 }

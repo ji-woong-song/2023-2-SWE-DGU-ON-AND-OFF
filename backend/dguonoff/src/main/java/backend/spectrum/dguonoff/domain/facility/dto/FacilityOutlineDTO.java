@@ -10,7 +10,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public class FacilityOutlineDTO {
     private String name;
-    private String id;
+    private String code;
     private Boolean bookmarked;
     private FacilityStatus status;
+    private Integer capacity;
+
+    public void setBookmarked(Boolean bookmarked) {
+        this.bookmarked = bookmarked;
+    }
 }

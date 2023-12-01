@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class FacilityKeyDTO {
-    private String id;
+    private String code;
     private String buildingName;
 }
