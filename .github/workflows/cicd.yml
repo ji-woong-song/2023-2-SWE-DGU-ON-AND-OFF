@@ -37,6 +37,10 @@ jobs:
           echo "JWT_EXPIRATION_MILLISECOND=$JWT_EXPIRATION_MILLISECOND" >> .env
           echo "JWT_TOKEN_PREFIX=$JWT_TOKEN_PREFIX" >> .env
           echo "JWT_TOKEN_HEADER=$JWT_TOKEN_HEADER" >> .env
+          echo "MAIL_HOST=$MAIL_HOST" >> .env
+          echo "MAIL_PORT=$MAIL_PORT" >> .env
+          echo "MAIL_USERNAME=$MAIL_USERNAME" >> .env
+          echo "MAIL_PASSWORD=$MAIL_PASSWORD" >> .env
         working-directory: backend/dguonoff
         env:
           DB_DOMAIN: ${{ secrets.DB_DOMAIN }}
