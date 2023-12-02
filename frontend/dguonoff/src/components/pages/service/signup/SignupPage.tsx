@@ -2,13 +2,18 @@ import { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import { Box, Container} from "@mui/material";
 import { Business } from '@mui/icons-material';
 import styles from "../Service.module.css";
+import { requestAuthSinUp } from "../../../../api/dguonandoff";
+import { useNavigate } from "react-router-dom";
 
 export default function SignupPage() {
     const [userId, setUserId] = useState<string>("");
     const [userPw, setUserPw] = useState<string>("");
     const [userName, setUsername] = useState<string>("");
-    const [userSid, setUserSid] = useState<number>();
+    const [userSid, setUserSid] = useState<string>("");
     const [userEmail, setUserEmail] = useState<string>("");
+    const [userMajor, setUserMajor] = useState<string>("");
+
+    const navigate = useNavigate();
 
     const handleUserIdChange = (event: ChangeEvent<HTMLInputElement>) => {
         setUserId(event.target.value);
@@ -23,16 +28,38 @@ export default function SignupPage() {
     };
 
     const handleUserSidChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setUserSid(Number(event.target.value));
+        setUserSid(event.target.value);
     };
 
     const handleUserEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
         setUserEmail(event.target.value);
     };
 
-    const handleSubmit = (event : FormEvent<HTMLFormElement>) => {
+    const handleUserMajorChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setUserMajor(event.target.value);
+    };
+
+
+
+    const handleSubmit = async (event : FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         // 여기에서 로그인 로직 처리
+        const result = await requestAuthSinUp(userId, userSid, userName, userMajor, userPw, userEmail);
+        switch (result) {
+            case "SUCCESS": {
+                alert("회원가입에 성공하였습니다.");
+                navigate('/login');
+                break;
+            }
+            case "USER_ID_DUPLICATE": {
+                alert("이미 사용중인 아이디입니다.");
+                break;
+            }
+            default: {
+                alert("예기치 못한 오류로 회원가입에 실패했습니다.");
+                break;
+            }
+        }
         console.log('UserId:', userId, 'userPw:', userPw);
       };
 
@@ -70,6 +97,10 @@ export default function SignupPage() {
                 <div>
                     <input className={styles.inputBox} type="text" placeholder="이메일" value={userEmail}
                     onChange={handleUserEmailChange}/>
+                </div>
+                <div>
+                    <input className={styles.inputBox} type="text" placeholder="전공" value={userMajor}
+                    onChange={handleUserMajorChange}/>
                 </div>
                 <div>
                     <button className={styles.loginButton} type="submit">회원가입</button>
