@@ -1,5 +1,6 @@
 package backend.spectrum.dguonoff.DAO;
 
+import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -22,6 +23,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "FixedSchedule", uniqueConstraints = {
@@ -30,6 +32,7 @@ import lombok.NoArgsConstructor;
     })
 })
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -67,5 +70,17 @@ public class FixedSchedule {
 
     public void setEvent(Event event) {
         this.event = event;
+    }
+    public void  addReservation(LocalDate date, Integer guestNumber) {
+        Reservation reservation = Reservation.builder()
+                .date(date)
+                .hotUserId(reservationAdmin)
+                .status(ReservationStatus.APPROVED)
+                .startTime(startTime)
+                .endTime(endTime)
+                .event(event)
+                .guestNumber(guestNumber)
+                .build();
+        this.event.addReservation(reservation);
     }
 }

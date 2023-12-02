@@ -3,6 +3,7 @@ package backend.spectrum.dguonoff.DAO;
 import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,10 +12,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Setter;
 
 @Entity
 @Table(name = "Reservation")
 @Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reservation {
@@ -33,6 +37,9 @@ public class Reservation {
 
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
+
+    @Column(nullable = false)
+    private Integer guestNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Facility facility;
