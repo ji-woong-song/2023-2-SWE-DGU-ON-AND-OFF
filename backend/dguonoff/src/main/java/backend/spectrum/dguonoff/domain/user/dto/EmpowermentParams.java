@@ -5,5 +5,4 @@ import lombok.Data;
 @Data
 public class EmpowermentParams {
     String userId;
-    String adminId;
 }
