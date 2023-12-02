@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./AdminLogin.module.css";
 import { useState } from "react";
 import { requestAuthLogin } from "../../../../api/dguonandoff";
+import { CookieStorageProvider } from "../../../../modules/storage/AppStorageProvider";
 
 export default function AdminLogin() {
     // Const
@@ -9,19 +10,36 @@ export default function AdminLogin() {
 
 
     // State
-    const [id, setId] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
+    const [id, setId] = useState<string>("cat");
+    const [password, setPassword] = useState<string>("123456789");
 
 
     // Handler
     const onLoginClick = async () => {
         if (id.length > 0 && password.length > 0) {
-            const result = requestAuthLogin(id, password);
-            // TODO: reulst에 따라 홉페이지 이동 or 다시 로그인 시도
-            navigate("/admin");
+            const result = await requestAuthLogin(id, password);
+            switch (result.result) {
+                case "LOGIN_SUCCESS": {
+                    CookieStorageProvider.set("userAuthToken", result.token);
+                    alert(`${id}님 환영합니다.`);
+                    navigate("/admin");
+                    break;
+                }
+                case "LOGIN_FAIL": {
+                    alert("없는 계정이거나 아이디 또는 비밀번호가 틀렸습니다.");
+                    break;
+                }
+                default: {
+                    alert("예기치 못한 오류로 로그인에 실패했습니다.");
+                    break;
+                }
+            }
         } else {
-            (id.length === 0) && alert("아이디를 입력하세요");
-            (password.length === 0) && alert("비밀번호를 입력하세요");
+            let errorInfo = "";
+            if (id.length === 0) errorInfo += "아이디를 입력하세요\n";
+            if (password.length === 0) errorInfo += "비밀번호를 입력하세요\n";
+            alert(errorInfo);
+
         }
     };
 

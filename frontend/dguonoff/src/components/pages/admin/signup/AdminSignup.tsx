@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./AdminSignup.module.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { requestAuthSinUp } from "../../../../api/dguonandoff";
 
 
@@ -10,7 +10,7 @@ export default function AdminSignup() {
 
 
     // State
-    const [id, setId] = useState<string>("cat");
+    const [id, setId] = useState<string>("cat123123");
     const [password, setPassword] = useState<string>("123456789");
     const [passwordCheck, setPasswordCheck] = useState<string>("123456789");
     const [name, setName] = useState<string>("춘배");
@@ -21,10 +21,25 @@ export default function AdminSignup() {
 
 
     // Handler
-    const onSingUpClick = () => {
+    const onSingUpClick = async () => {
         if (id.length > 0 && password.length > 0 && password === passwordCheck && name.length > 0 && sid.length > 0 && emailId.length > 0 && emailDomain.length > 0) {
-            const result = requestAuthSinUp(id, sid, name, major, password, `${emailId}@${emailDomain}`);
-            //      navigate('/admin/login');
+            const result = await requestAuthSinUp(id, sid, name, major, password, `${emailId}@${emailDomain}`);
+            switch (result) {
+                case "SUCCESS": {
+                    alert("회원가입에 성공하였습니다.");
+                    navigate('/admin/login');
+                    break;
+                }
+                case "USER_ID_DUPLICATE": {
+                    alert("이미 사용중인 아이디입니다.");
+                    setId("");
+                    break;
+                }
+                default: {
+                    alert("예기치 못한 오류로 회원가입에 실패했습니다.");
+                    break;
+                }
+            }
         } else {
             let errorInfo = "";
             if (id.length === 0) errorInfo += "아이디를 입력하세요\n";
