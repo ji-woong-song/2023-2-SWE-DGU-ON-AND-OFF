@@ -4,9 +4,6 @@
 }
 
 .table__header {
-    width: calc(100% - 17px);
-    border-right-width: 17px;
-    border-right-style: solid;
     max-width: 100%;
 }
 
