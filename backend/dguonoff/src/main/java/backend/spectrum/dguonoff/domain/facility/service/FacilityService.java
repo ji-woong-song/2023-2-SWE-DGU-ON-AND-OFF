@@ -5,6 +5,7 @@ import backend.spectrum.dguonoff.DAO.Building;
 import backend.spectrum.dguonoff.DAO.Facility;
 import backend.spectrum.dguonoff.DAO.User;
 import backend.spectrum.dguonoff.domain.facility.converter.FacilityConverter;
+import backend.spectrum.dguonoff.domain.facility.dto.BuildingDTO;
 import backend.spectrum.dguonoff.domain.facility.dto.FacilityOutlineDTO;
 import backend.spectrum.dguonoff.domain.facility.dto.FloorFacilityListResponse;
 import backend.spectrum.dguonoff.domain.facility.repository.BuildingRepository;
@@ -26,9 +27,10 @@ public class FacilityService {
     private final FacilityRepository facilityRepository;
     private final UserRepository userRepository;
 
-    public List<String> getAllBuildingNames() {
+    public List<BuildingDTO> getAllBuilding() {
         List<Building> all = buildingRepository.findAll();
-        return all.stream().map(Building::getName)
+        return all.stream()
+                .map(building -> new BuildingDTO(building.getName(), building.getMaxFloor()))
                 .collect(Collectors.toList());
     }
 
