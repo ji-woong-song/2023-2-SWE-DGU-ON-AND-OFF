@@ -6,6 +6,8 @@ import backend.spectrum.dguonoff.DAO.model.ReservationPeriod;
 import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
 import backend.spectrum.dguonoff.domain.facility.repository.FacilityRepository;
 import backend.spectrum.dguonoff.domain.facility.service.FacilityService;
+import backend.spectrum.dguonoff.domain.reservation.dto.GuestInfo;
+import backend.spectrum.dguonoff.domain.reservation.dto.ReservationInfoResponse;
 import backend.spectrum.dguonoff.domain.reservation.dto.ReservationRequest;
 import backend.spectrum.dguonoff.domain.reservation.dto.constraint.DateConstraint;
 import backend.spectrum.dguonoff.domain.reservation.dto.constraint.MaxReservationConstraint;
@@ -18,7 +20,6 @@ import backend.spectrum.dguonoff.domain.reservation.repository.ReservationReposi
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
-import com.sun.jdi.InvalidTypeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -192,6 +193,60 @@ public class ReservationService {
     }
 
 
+
+
+    //유저의 예약 목록을 조회하는 함수
+    public List<ReservationInfoResponse> getReservationInfoList(String userId) {
+        //유저의 예약 목록 조회
+        List<Reservation> reservationList = reservationRepository.findReservationList(userId);
+
+        return convertToInfoResponse(reservationList);
+    }
+
+    //모든 예약 목록을 조회하는 함수
+    public List<ReservationInfoResponse> getAllReservationInfoList() {
+
+        List<Reservation> reservationList = reservationRepository.findAll();
+        return convertToInfoResponse(reservationList);
+    }
+
+    //승인된 모든 예약 목록을 조회하는 함수
+    public List<ReservationInfoResponse> getAllApprovedReservationInfoList() {
+
+        List<Reservation> reservationList = reservationRepository.findAllApproved();
+        return convertToInfoResponse(reservationList);
+    }
+
+
+
+
+    //예약 정보 응답 DTO로 변환하는 함수
+    private List<ReservationInfoResponse> convertToInfoResponse(List<Reservation> reservationList) {
+        List<ReservationInfoResponse> reservationInfoResponseList = new ArrayList<>();
+        reservationList.forEach(
+                reservation -> {
+                    //이벤트 조회
+                    Event event = reservation.getEvent();
+
+                    //예약에 참여한 유저 목록 조회
+                    List<GuestInfo> guestInfoList = participationReservationRepository.findGuestInfoByReservation(reservation.getReservationId());
+
+                    reservationInfoResponseList.add(ReservationInfoResponse.builder()
+                            .reservationId(reservation.getReservationId())
+                            .title(event.getName())
+                            .status(reservation.getStatus())
+                            .date(reservation.getDate())
+                            .startTime(reservation.getStartTime())
+                            .endTime(reservation.getEndTime())
+                            .facilityCode(reservation.getFacility().getCode())
+                            .outline(event.getOutline())
+                            .purpose(event.getPurpose())
+                            .guests(guestInfoList)
+                            .build());
+                }
+        );
+        return reservationInfoResponseList;
+    }
 
 
     //예약 시간이 유효한지 검사하는 함수

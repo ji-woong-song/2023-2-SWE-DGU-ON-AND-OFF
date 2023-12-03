@@ -11,6 +11,7 @@ public enum ErrorCode {
 
     //User
     NOT_EXIST_USER(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),
+    NOT_EXIST_ADMIN(HttpStatus.NOT_FOUND, "존재하지 않는 관리자입니다."),
     NOT_EXIST_MASTER_ADMIN(HttpStatus.NOT_FOUND, "존재하지 않는 마스터 관리자입니다."),
     NO_AUTH(HttpStatus.FORBIDDEN, "권한이 없는 유저입니다."),
 

@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
+import static backend.spectrum.dguonoff.global.statusCode.ErrorCode.NOT_EXIST_ADMIN;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -37,6 +39,16 @@ public class UserService {
     //관리자 권한 부여 함수
     public void changeRoleToAdmin(User targetUser) {
         userRepository.changeRoleToAdmin(targetUser.getId());
+    }
+
+    //관리자 권한 확인 함수
+    public void checkAdmin(String adminId) {
+        User user = userRepository
+                .findById(adminId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_EXIST_USER));
+        if (user.getRole().equals("ADMIN") && !user.getRole().equals("MASTER_ADMIN")) {
+            throw new UserNotFoundException(NOT_EXIST_ADMIN);
+        }
     }
 
     // 모든 유저 정보 얻어오는 메서드
