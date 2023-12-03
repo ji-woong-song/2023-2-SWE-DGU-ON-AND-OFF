@@ -4,6 +4,7 @@ import backend.spectrum.dguonoff.DAO.Bookmark;
 import backend.spectrum.dguonoff.DAO.Building;
 import backend.spectrum.dguonoff.DAO.Facility;
 import backend.spectrum.dguonoff.DAO.User;
+import backend.spectrum.dguonoff.DAO.model.FacilityStatus;
 import backend.spectrum.dguonoff.domain.facility.converter.FacilityConverter;
 import backend.spectrum.dguonoff.domain.facility.dto.BuildingDTO;
 import backend.spectrum.dguonoff.domain.facility.dto.FacilityOutlineDTO;
@@ -15,14 +16,17 @@ import backend.spectrum.dguonoff.domain.reservation.dto.constraint.UsageConstrai
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class FacilityService {
     private final BuildingRepository buildingRepository;
@@ -98,4 +102,15 @@ public class FacilityService {
         return constraint;
     }
 
+    //특정 시설물의 이용상태 반환 함수
+    public FacilityStatus getFacilityStatus(String facilityCode) {
+        FacilityStatus status = facilityRepository.findStatusByFacilityCode(facilityCode)
+                .orElseThrow(() -> new FacilityNotFoundException(ErrorCode.NOT_EXIST_FACILITY));
+        return status;
+    }
+
+    //시설물 이용 상태 종료 함수
+    public void endFacility(String facilityCode) {
+        facilityRepository.updateFacilityStatus(FacilityStatus.EMPTY, facilityCode);
+    }
 }
