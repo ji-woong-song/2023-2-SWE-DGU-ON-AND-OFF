@@ -7,9 +7,12 @@ import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -41,7 +44,7 @@ public class Event {
     @Column
     private String purpose;
 
-    @OneToMany(mappedBy = "reservationId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reservation> reservations;
 
     public void addReservation(Reservation reservation) {
@@ -86,5 +89,12 @@ public class Event {
                 .collect(Collectors.toList());
         futureReservation.forEach(reservation -> reservation.setEvent(otherEvent));
         this.reservations.removeAll(reservations);
+    }
+
+    /**
+     * 모든 예약을 삭제합니다.
+     */
+    public void clearReservation() {
+        this.reservations.clear();
     }
 }

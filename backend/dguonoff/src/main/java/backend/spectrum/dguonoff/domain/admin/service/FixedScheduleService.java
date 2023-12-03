@@ -50,7 +50,7 @@ public class FixedScheduleService {
                 .map(FixedScheduleConverter::toFixedScheduleDTO)
                 .collect(Collectors.toList());
     }
-
+    @Transactional
     public PostNewScheduleResponse enrollFixedTimeTable(String adminId, PostNewScheduleRequest request) {
         // 시설물 id로 시설물을 찾는다.
         Facility facility = facilityRepository.findByBuilding_NameAndCode(
@@ -75,7 +75,7 @@ public class FixedScheduleService {
                 .scheduleId(fixedSchedule.getId())
                 .build();
     }
-
+    @Transactional
     public UpdateScheduleResponse updateSchedule(UpdateScheduleRequest request) {
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
@@ -93,6 +93,7 @@ public class FixedScheduleService {
         // 지난 예약이 있는지 확인
         List<Reservation> passedReservation = event.getPastReservation(today, now);
         // 이미 지난 예약 정보가 없다면 event를 새로 만들지 않고 업데이트 수행
+        System.out.println("updateSchedule에서 " + event.getReservations().size());
         if (passedReservation.isEmpty())
             return updateWithoutEventChange(persistentSchedule, request.getScheduleInfo(), newFacility);
         
@@ -144,11 +145,13 @@ public class FixedScheduleService {
      * @param request
      * @param facility
      */
-    private UpdateScheduleResponse updateWithoutEventChange(FixedSchedule schedule, PostNewScheduleRequest request, Facility facility)  {
+    @Transactional
+    public UpdateScheduleResponse updateWithoutEventChange(FixedSchedule schedule, PostNewScheduleRequest request, Facility facility)  {
         // 기존 event 객체에 요청으로 받은 이벤트 정보를 반영
         Event event = schedule.getEvent();
         // 기존 예약 객체 제거
-        event = eventRepository.save(event);
+        event.clearReservation();
+        System.out.println("후" + event.getReservations().size());
         updateEventInfo(event, request.getEvent());
         schedule.setGuestNumber(request.getEvent().getGuestNumber());
 
@@ -171,7 +174,7 @@ public class FixedScheduleService {
      * @param facility
      * @param reservations
      */
-    private void checkOverlappedReservation(PostNewScheduleRequest request, Facility facility, Event event,
+    public void checkOverlappedReservation(PostNewScheduleRequest request, Facility facility, Event event,
                                             List<Reservation> reservations) {
         for (Reservation reservation : reservations) {
             // 같은 요일이 아니거나 같은 건물이 아니면 체크하지 않는다.
@@ -196,6 +199,10 @@ public class FixedScheduleService {
     public String removeSchedule(Long scheduleId) {
         FixedSchedule fixedSchedule = this.fixedScheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_SCHEDULE));
+        Event event = fixedSchedule.getEvent();
+        event.cancelReservation(LocalDate.now(), LocalTime.now());
+        this.eventRepository.save(event);
+        fixedSchedule.setEvent(null);
         this.fixedScheduleRepository.delete(fixedSchedule);
         return "success";
     }
@@ -223,7 +230,7 @@ public class FixedScheduleService {
      * @param event
      * @param eventInfo
      */
-    private void updateEventInfo(Event event, EventInfoDTO eventInfo) {
+    public void updateEventInfo(Event event, EventInfoDTO eventInfo) {
         event.setName(eventInfo.getName());
         event.setOutline(eventInfo.getOutline());
         event.setPurpose(eventInfo.getPurpose());
@@ -237,7 +244,7 @@ public class FixedScheduleService {
      * @param dto
      * @return
      */
-    private boolean isEventInfoChanged(FixedSchedule schedule, EventInfoDTO dto) {
+    public boolean isEventInfoChanged(FixedSchedule schedule, EventInfoDTO dto) {
         Event event = schedule.getEvent();
         return (!event.getPurpose().equals(dto.getPurpose())) ||
                 (!event.getOutline().equals(dto.getPurpose())) ||
@@ -252,7 +259,7 @@ public class FixedScheduleService {
      * @param newFacility
      * @return
      */
-    private boolean isScheduleTimeChanged(FixedSchedule schedule,
+    public boolean isScheduleTimeChanged(FixedSchedule schedule,
                                           PostNewScheduleRequest request,
                                           Facility newFacility) {
         return (!schedule.getEndTime().equals(request.getEffectiveDate().getEnd())) ||
@@ -269,7 +276,7 @@ public class FixedScheduleService {
      * @param reservation
      * @return
      */
-    private static boolean dateOverlapped(PostNewScheduleRequest request, Reservation reservation) {
+    public static boolean dateOverlapped(PostNewScheduleRequest request, Reservation reservation) {
         return reservation.getDate().getDayOfWeek().equals(request.getDay()) &&
                 reservation.getDate().isAfter(request.getEffectiveDate().getStart()) &&
                 reservation.getDate().equals(request.getEffectiveDate().getStart()) &&
