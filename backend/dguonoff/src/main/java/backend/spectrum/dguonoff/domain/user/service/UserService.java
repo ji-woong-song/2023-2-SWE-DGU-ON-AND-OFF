@@ -1,17 +1,23 @@
 package backend.spectrum.dguonoff.domain.user.service;
 
 import backend.spectrum.dguonoff.DAO.User;
+import backend.spectrum.dguonoff.DAO.model.Role;
 import backend.spectrum.dguonoff.domain.user.dto.UserInfoDTO;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import static backend.spectrum.dguonoff.DAO.model.Role.ADMIN;
+import static backend.spectrum.dguonoff.DAO.model.Role.MASTER;
 import static backend.spectrum.dguonoff.global.statusCode.ErrorCode.NOT_EXIST_ADMIN;
 
 @Service
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
 
@@ -46,7 +52,8 @@ public class UserService {
         User user = userRepository
                 .findById(adminId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_EXIST_USER));
-        if (user.getRole().equals("ADMIN") && !user.getRole().equals("MASTER_ADMIN")) {
+        Role userRole = user.getRole();
+        if (!userRole.equals(ADMIN) && !userRole.equals(MASTER)) {
             throw new UserNotFoundException(NOT_EXIST_ADMIN);
         }
     }
