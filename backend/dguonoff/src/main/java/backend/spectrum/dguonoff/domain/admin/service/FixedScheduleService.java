@@ -7,17 +7,16 @@ import backend.spectrum.dguonoff.DAO.Reservation;
 import backend.spectrum.dguonoff.DAO.User;
 import backend.spectrum.dguonoff.domain.admin.converter.FixedScheduleConverter;
 import backend.spectrum.dguonoff.domain.admin.dto.DailyScheduleResponse;
-import backend.spectrum.dguonoff.domain.admin.dto.DailyScheduleRequest;
 import backend.spectrum.dguonoff.domain.admin.dto.PostNewScheduleRequest;
 import backend.spectrum.dguonoff.domain.admin.dto.PostNewScheduleResponse;
 import backend.spectrum.dguonoff.domain.admin.dto.UpdateScheduleRequest;
 import backend.spectrum.dguonoff.domain.admin.dto.UpdateScheduleResponse;
 import backend.spectrum.dguonoff.domain.admin.dto.common.EventInfoDTO;
 import backend.spectrum.dguonoff.domain.admin.dto.common.PeriodDTO;
-import backend.spectrum.dguonoff.domain.admin.repository.EventRepository;
 import backend.spectrum.dguonoff.domain.admin.repository.FixedScheduleRepository;
 import backend.spectrum.dguonoff.domain.admin.repository.TempReservationRepository;
 import backend.spectrum.dguonoff.domain.facility.repository.FacilityRepository;
+import backend.spectrum.dguonoff.domain.reservation.repository.EventRepository;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.global.error.Exception.BusinessException;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
@@ -68,7 +67,7 @@ public class FixedScheduleService {
         // 겹치지 않았다면 해당 시간표 대로 주어진 기간에 주어진 시간대에 예약을 한다.
         checkOverlappedReservation(request, facility, fixedSchedule.getEvent(), reservations);
         // 주어진 파라미터로 부터 schedule 객체를 만든다.
-        List<Reservation> reserve = fixedSchedule.reserve();
+        fixedSchedule.reserve();
         // 주어진 대로 저장한다.
         fixedScheduleRepository.save(fixedSchedule);
         return PostNewScheduleResponse.builder()

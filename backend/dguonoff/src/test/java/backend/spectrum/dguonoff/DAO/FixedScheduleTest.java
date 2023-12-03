@@ -1,9 +1,7 @@
 package backend.spectrum.dguonoff.DAO;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import backend.spectrum.dguonoff.domain.admin.repository.EventRepository;
 import backend.spectrum.dguonoff.domain.admin.repository.FixedScheduleRepository;
+import backend.spectrum.dguonoff.domain.reservation.repository.EventRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
