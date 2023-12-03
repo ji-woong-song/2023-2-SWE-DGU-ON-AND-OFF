@@ -28,6 +28,7 @@ public enum ErrorCode {
     // Facility
     NOT_EXIST_FACILITY(HttpStatus.NOT_FOUND, "해당 시설물을 찾을 수 없습니다."),
     NOT_DEFINED_RESERVATION_PERIOD(HttpStatus.NOT_FOUND, "정의되지 않은 기준 예약 기간입니다."),
+    NEXT_RESERVATION_NOT_EXIST_FACILITY(HttpStatus.NOT_FOUND, "해당 시설물에 다음 예약이 존재하지 않습니다."),
 
     // Reservation
     NOT_EXIST_RESERVATION(HttpStatus.NOT_FOUND, "존재하지 않는 예약입니다."),
