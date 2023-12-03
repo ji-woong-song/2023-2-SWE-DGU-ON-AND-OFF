@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 public enum CommonCode {
     //User
     SUCCESS_EMPOWERMENT(HttpStatus.OK, "%s 계정에 관리자 권한이 부여됐습니다."),
+    SUCCESS_DEPRIVATION(HttpStatus.OK, "%s 계정에 관리자 권한이 박탈됐습니다."),
 
     //Reservation
     AVAILABLE_FACILITY(HttpStatus.OK, "예약 가능한 시설입니다."),

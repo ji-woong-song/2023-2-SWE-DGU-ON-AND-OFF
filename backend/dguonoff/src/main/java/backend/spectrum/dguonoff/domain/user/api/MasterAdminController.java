@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static backend.spectrum.dguonoff.global.statusCode.CommonCode.SUCCESS_DEPRIVATION;
 import static backend.spectrum.dguonoff.global.statusCode.CommonCode.SUCCESS_EMPOWERMENT;
 
 @RestController
@@ -37,6 +38,20 @@ public class MasterAdminController {
 
         return new ResponseEntity<>(successMessage, successStatus);
     }
+
+    //관리자 권한 박탈 긴능
+    @PostMapping("/deprivation")
+    public ResponseEntity<String> depriveAdminAuthority(@RequestBody EmpowermentParams empParams){
+        String userId = empParams.getUserId();
+        User targetUser = userService.findUser(userId);
+        userService.changeRoleToNormal(targetUser);
+
+        String successMessage = String.format(SUCCESS_DEPRIVATION.getMessage(), userId);
+        HttpStatus successStatus = SUCCESS_DEPRIVATION.getStatus();
+
+        return new ResponseEntity<>(successMessage, successStatus);
+    }
+
     @GetMapping("/users")
     public ResponseEntity<List<UserInfoDTO>> getAllUserInfo() {
         List<UserInfoDTO> allUsers = this.userService.getAllUsers();

@@ -52,4 +52,8 @@ public class UserService {
                     .build())
                 .collect(Collectors.toList());
     }
+
+    public void changeRoleToNormal(User targetUser) {
+        userRepository.changeRoleToNormal(targetUser.getId());
+    }
 }

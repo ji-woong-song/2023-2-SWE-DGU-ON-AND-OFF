@@ -14,4 +14,9 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Modifying
     @Query("update User u set u.role = 'ADMIN' where u.id = ?1")
     int changeRoleToAdmin(@NonNull String id);
+
+    @Transactional
+    @Modifying
+    @Query("update User u set u.role = 'NORMAL' where u.id = ?1")
+    int changeRoleToNormal(@NonNull String id);
 }
