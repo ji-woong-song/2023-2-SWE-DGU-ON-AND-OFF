@@ -2,8 +2,13 @@ import { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import { Box, Container} from "@mui/material";
 import { Business } from '@mui/icons-material';
 import styles from "../Service.module.css";
+import { requestAuthLogin } from "../../../../api/dguonandoff";
+import { useNavigate } from "react-router-dom";
+import { CookieStorageProvider } from "../../../../modules/storage/AppStorageProvider";
 
 export default function LoginPage() {
+    const navigate = useNavigate();
+
     const [userId, setUserId] = useState<string>("");
     const [userPw, setUserPw] = useState<string>("");
 
@@ -15,9 +20,37 @@ export default function LoginPage() {
         setUserPw(event.target.value);
       };
 
-    const handleSubmit = (event : FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event : FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         // 여기에서 로그인 로직 처리
+
+        if (userId.length > 0 && userPw.length > 0) {
+            const result = await requestAuthLogin(userId, userPw);
+            switch (result.result) {
+                case "LOGIN_SUCCESS": {
+                    CookieStorageProvider.set("userAuthToken", result.token);
+                    alert(`${userId}님 환영합니다.`);
+                    navigate("/");
+                    break;
+                }
+                case "LOGIN_FAIL": {
+                    alert("없는 계정이거나 아이디 또는 비밀번호가 틀렸습니다.");
+                    break;
+                }
+                default: {
+                    alert("예기치 못한 오류로 로그인에 실패했습니다.");
+                    break;
+                }
+            }
+        } else {
+            let errorInfo = "";
+            if (userId.length === 0) errorInfo += "아이디를 입력하세요\n";
+            if (userPw.length === 0) errorInfo += "비밀번호를 입력하세요\n";
+            alert(errorInfo);
+
+        }
+
+
         console.log('UserId:', userId, 'userPw:', userPw);
       };
 
