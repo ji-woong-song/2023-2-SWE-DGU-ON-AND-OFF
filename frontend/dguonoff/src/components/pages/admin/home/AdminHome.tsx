@@ -6,6 +6,8 @@ import FixedTimetableManager from "./mainContent/FixedTimetableManager";
 import IndividualTimetableManager from "./mainContent/IndividualTimetableManager";
 import AdminAccountManager from "./mainContent/AdminAccountManager";
 import { useNavigate } from "react-router-dom";
+import { getBuildingNames, getFacilities } from "../../../../api/dguonandoff";
+import { CookieStorageProvider } from "../../../../modules/storage/AppStorageProvider";
 
 
 type SidebarMenu = "Blank" | "예약 신청 관리" | "고정 시간표 관리" | "개별 시간표 관리" | "관리자 계정 관리";
@@ -61,6 +63,11 @@ export default function AdminHome() {
 
     // Effect
     useEffect(() => {
+        const token = CookieStorageProvider.get("userAuthToken");
+        if (token) {
+            getBuildingNames(token);
+            getFacilities(token);
+        }
 
     }, []);
 

@@ -5,12 +5,14 @@ import backend.spectrum.dguonoff.DAO.Facility;
 import backend.spectrum.dguonoff.DAO.User;
 import backend.spectrum.dguonoff.domain.admin.dto.common.FacilityKeyDTO;
 import backend.spectrum.dguonoff.domain.facility.repository.FacilityRepository;
+import backend.spectrum.dguonoff.domain.user.dto.UserBookmarkDTO;
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.global.error.Exception.BusinessException;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserBookmarkService {
     private final UserRepository userRepository;
     private final FacilityRepository facilityRepository;
+
+    public List<UserBookmarkDTO> getUserBookmarks(String userId) {
+        User user = this.userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_EXIST_USER));
+        List<Facility> bookmarkedFacilities = user.getBookmarks().stream().map(Bookmark::getFacility)
+                .collect(Collectors.toList());
+        return bookmarkedFacilities.stream()
+                .map(facility -> UserBookmarkDTO.builder()
+                                .facilityName(facility.getName())
+                                .buildingName(facility.getBuilding().getName())
+                                .facilityCode(facility.getCode())
+                                .build()
+                ).collect(Collectors.toList());
+    }
 
     public void enrollBookmark(String userId, FacilityKeyDTO request) {
         Bookmark newBookmark = fromUserIdAndFacilityId(userId, request);

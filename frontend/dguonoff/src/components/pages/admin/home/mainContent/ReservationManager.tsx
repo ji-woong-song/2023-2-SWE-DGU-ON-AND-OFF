@@ -57,18 +57,18 @@ export default function ReservationManager() {
 
     // Effect
     useEffect(() => {
-        setBuildings([new Building("신공학관", [new Facility("3144")])]);
-        setReservations(Array.from({ length: 50 }, (_, index) => {
-            return new Reservation(
-                (1000 + index).toString(),
-                `MJH`,
-                "학습 목적",
-                new Facility(`신공학관 ${3105 + index}`, Math.floor(Math.random() * 100)),
-                new Date(),
-                new Date(),
-                Math.floor(Math.random() * 30),
-                ["pending", "accept", "reject"][Math.floor(Math.random() * 3)] as ReservationStatus);
-        }));
+        /*  setBuildings([new Building("신공학관", [new Facility("3144")])]);
+          setReservations(Array.from({ length: 50 }, (_, index) => {
+              return new Reservation(
+                  (1000 + index).toString(),
+                  `MJH`,
+                  "학습 목적",
+                  new Facility(`신공학관 ${3105 + index}`, Math.floor(Math.random() * 100)),
+                  new Date(),
+                  new Date(),
+                  Math.floor(Math.random() * 30),
+                  ["pending", "accept", "reject"][Math.floor(Math.random() * 3)] as ReservationStatus);
+          }));*/
     }, []);
 
 

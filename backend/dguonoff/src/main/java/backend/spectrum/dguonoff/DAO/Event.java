@@ -2,6 +2,7 @@ package backend.spectrum.dguonoff.DAO;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
@@ -45,10 +46,10 @@ public class Event {
     private String purpose;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reservation> reservations;
+    private List<Reservation> reservations = new ArrayList<>();
 
     public void addReservation(Reservation reservation) {
-        this.reservations.add(reservation);
+        reservationList.add(reservation);
     }
 
     /**

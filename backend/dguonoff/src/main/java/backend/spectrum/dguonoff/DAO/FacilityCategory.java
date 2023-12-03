@@ -1,18 +1,14 @@
 package backend.spectrum.dguonoff.DAO;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import backend.spectrum.dguonoff.DAO.model.ReservationPeriod;
+import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "FacilityCategory")
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FacilityCategory {
@@ -27,8 +23,9 @@ public class FacilityCategory {
     @Column(name = "max_reservation", nullable = false)
     private Integer maxReservation;
 
-    @Column(name = "max_reservation_period", nullable = false)
-    private Integer maxReservationPeriod;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "max_reservation_period", nullable = false, columnDefinition = "VARCHAR(25)")
+    private ReservationPeriod maxReservationPeriod;
 
     @Column(name = "max_time")
     private Integer max_time;

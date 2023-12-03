@@ -77,10 +77,10 @@ export class SpeechOutputProvider {
 
     /**
      * speak 메서드는 주어진 텍스트를 읽습니다.
-     * 만약 현재 음성이 이미 말하고 있다면, 그 음성을 중지하고 새 텍스트를 읽습니다.
+     * 프로미스를 반환하여 음성이 완전히 읽힐 때까지 기다리게 할 수 있습니다.
      * @param {string} textToRead - 읽을 텍스트입니다.
      */
-    public static async speak(textToRead: string) {
+    public static async speak(textToRead: string): Promise<void> {
         const synth = window.speechSynthesis;
 
         if (textToRead !== "") {
@@ -90,13 +90,15 @@ export class SpeechOutputProvider {
             utterThis.pitch = 1;
             utterThis.rate = 1;
 
-
             // 현재 말하고 있는 경우, 그것을 중지
             if (synth.speaking) {
                 synth.cancel();
             }
 
-            synth.speak(utterThis);  // 새 텍스트를 말하도록 명령
+            return new Promise<void>((resolve) => {
+                utterThis.onend = () => resolve();
+                synth.speak(utterThis);
+            });
         }
     }
 

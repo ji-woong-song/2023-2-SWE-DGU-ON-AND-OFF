@@ -1,11 +1,7 @@
 package backend.spectrum.dguonoff.DAO;
 
 import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -26,6 +22,7 @@ public class Reservation {
     @Column(name = "reservation_id", nullable = false)
     private Long reservationId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private ReservationStatus status;
 

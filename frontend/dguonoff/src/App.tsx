@@ -5,7 +5,7 @@ import AdminLogin from './components/pages/admin/login/AdminLogin';
 import AdminSignup from './components/pages/admin/signup/AdminSignup';
 import MainPage from './components/pages/service/home/MainPage';
 import useModalCreater from './modules/modal/Modal';
-import ReservationInfo from './components/pages/service/reservation/ReservationInfo';
+import ReservationInfo from './components/pages/service/information/ReservationInfo';
 import LoginPage from './components/pages/service/login/LoginPage';
 import SignupPage from './components/pages/service/signup/SignupPage';
 import UserInfo from './components/pages/service/information/UserInfo';
@@ -25,7 +25,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/reservationInfo" element={<ReservationInfo/>} />
-          <Route path="/userInfo" elemet={<UserInfo/>} />
+          <Route path="/userInfo" element={<UserInfo/>} />
           <Route path="/reservationPage" element={<ReservationPage />} />
           <Route path="/onoffPage" element={<OnOffPage />} />
           <Route path="/reservationdetailPage" element={<ReservationDetailPage />}/>
