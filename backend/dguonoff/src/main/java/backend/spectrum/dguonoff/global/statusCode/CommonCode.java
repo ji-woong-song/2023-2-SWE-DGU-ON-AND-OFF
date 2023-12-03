@@ -23,6 +23,7 @@ public enum CommonCode {
     //Facility
     SUCCESS_FACILITY_LOOKUP(HttpStatus.OK, "시설 조회가 완료되었습니다."),
     SUCCESS_FACILITY_FINISH(HttpStatus.OK, "성공적으로 시설물 이용이 종료되었습니다."),
+    SUCCESS_FACILITY_NEXT_RESERVATION_LOOKUP(HttpStatus.OK, "시설물의 다음 예약 조회가 완료되었습니다."),
 
 
 

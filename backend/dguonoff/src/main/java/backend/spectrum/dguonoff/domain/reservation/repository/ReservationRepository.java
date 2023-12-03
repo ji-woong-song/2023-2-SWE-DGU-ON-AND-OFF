@@ -16,6 +16,8 @@ import java.util.Optional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+    @Query("select r from Reservation r where r.facility.code = ?1 and r.date > ?2 and r.status = ?3 order by r.date asc, r.startTime asc")
+    Optional<List<Reservation>> findReservationsAfterYesterday(String code, LocalDate date, ReservationStatus status);
     @Query("select r.event from Reservation r where r.reservationId = ?1")
     Optional<Event> findEventById(Long reservationId);
     @Query("select r from Reservation r where r.facility.code = ?1 and r.date = ?2")
