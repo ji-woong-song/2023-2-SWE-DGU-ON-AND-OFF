@@ -7,6 +7,9 @@ import GrayCircle from "../../../../modules/GrayCircle";
 import { Business, LocalLibrary, FilterHdr } from '@mui/icons-material';
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../../../hooks/useAuth";
+import Bookmark from "../../../../types/Bookmark";
+import { getMyBookmark } from "../../../../api/dguonandoff";
+import { CookieStorageProvider } from "../../../../modules/storage/AppStorageProvider";
 
 
 interface FacilityMenu {
@@ -18,14 +21,8 @@ interface FacilityMenu {
 export default function MainPage() {
     const navigate = useNavigate();
     const isUserLoggedIn = useAuth();
-
-    useEffect(() => {
-        console.log('isUserLoggedIn:', isUserLoggedIn)
-        if (!isUserLoggedIn) {
-          navigate('/login'); // 로그인 안되어 있으면 로그인 페이지로 이동
-        }
-      }, [isUserLoggedIn, navigate]);
-
+    const [myBookmarks, setMyBookmarks] = useState<Bookmark[]>([]); // 즐겨찾기 목록
+    let userToken : string = "";
 
     const appName : string = "동국 ON/OFF";
 
@@ -43,6 +40,22 @@ export default function MainPage() {
             icon : <FilterHdr sx={{ color: 'green' }}/>
         },
     ]
+
+    useEffect(() => {
+        console.log('isUserLoggedIn:', isUserLoggedIn)
+        if (!isUserLoggedIn) {
+          navigate('/login'); // 로그인 안되어 있으면 로그인 페이지로 이동
+        }else{
+            userToken = CookieStorageProvider.get('userAuthToken') || "";
+            handleLoadBookmark();
+        }
+      }, [isUserLoggedIn, navigate]);
+
+
+    const handleLoadBookmark = async () => {
+        const bookmarks : Bookmark[] = await getMyBookmark(userToken);
+        setMyBookmarks(bookmarks);
+    }
 
     const handleBellClick = () => {
         console.log("bell clicked");
@@ -96,12 +109,25 @@ export default function MainPage() {
                 }
             </Box>
             
-            <GrayBorderBox style={{
-                height : '180px'
-            }}>
+            <GrayBorderBox>
                 <div className={styles.boxTitle}>
                     즐겨찾기
-                </div>
+                </div> 
+                <Box sx={{ height : '4px' }}/>
+                {myBookmarks.length > 0 ? 
+                    <>
+                     {myBookmarks.map((bookmark, index) => (
+                        <div key={index}>
+                            <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
+                                <Business sx={{ color: '#959494', paddingTop : '12px' }}/>
+                                <div style={{ paddingTop: '12px' }}>{bookmark.getBuildingName()}</div>
+                                <div style={{ paddingTop: '12px' }}>{bookmark.getFacilityName()}</div>
+                            </div>
+                        </div>
+                    ))}
+                    </> : 
+                    <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '12px' }}>즐겨찾기가 없습니다.</div>}
+               
             </GrayBorderBox>
             <GrayBorderBox style={{
                 height : '180px'

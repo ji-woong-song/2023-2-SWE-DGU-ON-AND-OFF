@@ -1,4 +1,5 @@
 import axios from "axios";
+import Bookmark from "../types/Bookmark";
 
 
 
@@ -174,5 +175,26 @@ export async function getFacilities(token: string): Promise<string[]> {
         console.error(error);
     }
     console.log(result);
+    return result;
+}
+
+
+export async function getMyBookmark(token: string): Promise<Bookmark[]> {
+    let result: Bookmark[] = [];
+    try {
+        const response = await axios.get(
+            getApiUrl("/api/user/bookmark"),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+
+        console.log(response.data);
+        result = response.data.map((item: any) => new Bookmark(item.facilityName, item.facilityCode, item.buildingName));
+    } catch (error) {
+        console.error(error);
+    }
     return result;
 }
