@@ -30,6 +30,9 @@ public enum ErrorCode {
     NOT_DEFINED_RESERVATION_PERIOD(HttpStatus.NOT_FOUND, "정의되지 않은 기준 예약 기간입니다."),
 
     // Reservation
+    NOT_EXIST_RESERVATION(HttpStatus.NOT_FOUND, "존재하지 않는 예약입니다."),
+    NOT_MODIFIABLE_RESERVATION(HttpStatus.NOT_ACCEPTABLE, "수정할 수 없는 예약입니다."),
+    NOT_DELETABLE_RESERVATION(HttpStatus.NOT_ACCEPTABLE, "삭제할 수 없는 예약입니다."),
     EXCEED_MAX_RESERVATION(HttpStatus.NOT_ACCEPTABLE, "최대 예약 횟수를 초과하였습니다."),
     EXIST_OVERLAPPED_INTERVAL(HttpStatus.CONFLICT, "겹치는 기간이 있습니다."),
     EXCEED_MAX_USAGE_TIME(HttpStatus.NOT_ACCEPTABLE, "이용시간이 최대 이용 시간을 초과하였습니다."),

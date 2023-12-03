@@ -4,10 +4,12 @@ import backend.spectrum.dguonoff.DAO.*;
 import backend.spectrum.dguonoff.DAO.idClass.ParticipationReservationId;
 import backend.spectrum.dguonoff.DAO.model.ReservationPeriod;
 import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
+import backend.spectrum.dguonoff.DAO.model.Role;
 import backend.spectrum.dguonoff.domain.facility.repository.FacilityRepository;
 import backend.spectrum.dguonoff.domain.facility.service.FacilityService;
 import backend.spectrum.dguonoff.domain.reservation.dto.GuestInfo;
 import backend.spectrum.dguonoff.domain.reservation.dto.ReservationInfoResponse;
+import backend.spectrum.dguonoff.domain.reservation.dto.ReservationModificationRequest;
 import backend.spectrum.dguonoff.domain.reservation.dto.ReservationRequest;
 import backend.spectrum.dguonoff.domain.reservation.dto.constraint.DateConstraint;
 import backend.spectrum.dguonoff.domain.reservation.dto.constraint.MaxReservationConstraint;
@@ -32,7 +34,7 @@ import java.util.List;
 
 import static backend.spectrum.dguonoff.DAO.model.ReservationStatus.APPROVED;
 import static backend.spectrum.dguonoff.DAO.model.ReservationStatus.PENDING;
-import static backend.spectrum.dguonoff.DAO.model.Role.NORMAL;
+import static backend.spectrum.dguonoff.DAO.model.Role.*;
 import static backend.spectrum.dguonoff.global.statusCode.ErrorCode.*;
 
 @Service
@@ -192,6 +194,104 @@ public class ReservationService {
 
     }
 
+    //예약을 수정하는 함수
+    public void modifyReservation(ReservationModificationRequest modificationRequest, String userId) {
+
+        Long reservationId = modificationRequest.getReservationId();
+
+        ReservationStatus status = reservationRepository.findStatusById(reservationId)
+                .orElseThrow( //예약이 존재하지 않는 경우
+                        () -> new ReservationNotFoundException(ErrorCode.NOT_EXIST_RESERVATION));
+
+        //예약 변경 가능 상태 확인
+        if(status != PENDING && status != APPROVED){
+            throw new InvalidReservationException(ErrorCode.NOT_MODIFIABLE_RESERVATION);
+        }
+
+        //예약자와 수정자가 일치하는지 확인
+        String hostUserId = reservationRepository.findHostUserById(reservationId)
+                .orElseThrow(
+                        () -> new ReservationNotFoundException(ErrorCode.NOT_EXIST_RESERVATION));
+
+        if(!hostUserId.equals(userId)){
+            throw new InvalidReservationException(ErrorCode.NOT_MODIFIABLE_RESERVATION);
+        }
+
+        String outline = modificationRequest.getOutline();
+        List<String> guestList = modificationRequest.getGuestIds();
+
+
+        //예약 수정하기
+        Event event = reservationRepository.findEventById(reservationId)
+                .orElseThrow(
+                        () -> new ReservationNotFoundException(ErrorCode.NOT_EXIST_RESERVATION));
+        eventRepository.updateOutline(outline, event.getId());
+
+        //게스트 유저 참여 예약 수정
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(
+                        () -> new ReservationNotFoundException(ErrorCode.NOT_EXIST_RESERVATION));
+
+        //참여자들의 참여 에약 리스트 수정
+        List<Participation_Reservation> participation_reservations = new ArrayList<>();
+        guestList.forEach(
+                guestId -> {
+                    User guest = userRepository.findById(guestId)
+                            .orElseThrow(
+                                    () -> new UserNotFoundException(ErrorCode.NOT_EXIST_USER));
+
+                    Participation_Reservation participation_reservation = Participation_Reservation.builder()
+                            .bookmarkId(ParticipationReservationId.builder()
+                                    .reservationId(reservation.getReservationId())
+                                    .userId(guest.getId())
+                                    .build())
+                            .reservationId(reservation)
+                            .guestId(guest)
+                            .build();
+                    participation_reservations.add(participation_reservation);
+                }
+        );
+
+        participationReservationRepository.deleteAllByReservation(reservation);
+        participationReservationRepository.saveAll(participation_reservations);
+    }
+
+    //예약을 삭제하는 함수
+    public void deleteReservation(Long reservationId, String userId) {
+
+        //존재하는 예약인지 확인
+        Reservation targetReservation = reservationRepository.findById(reservationId)
+                .orElseThrow(
+                        () -> new ReservationNotFoundException(ErrorCode.NOT_EXIST_RESERVATION));
+
+        //삭제 요청자의 권한 조회
+        Role role = userRepository.findRoleById(userId).orElseThrow(
+                () -> new UserNotFoundException(ErrorCode.NOT_EXIST_USER));
+
+
+        if(role.equals(ADMIN) || role.equals(MASTER)){  //삭제 요청자가 관리자인 경우 예약 삭제
+            log.info("관리자 삭제 요청" + userId + " " + userRepository.findRoleById(userId));
+            //참여자들의 참여 에약 리스트 삭제
+            participationReservationRepository.deleteAllByReservation(targetReservation);
+            reservationRepository.deleteById(reservationId);
+        }
+        else if(role.equals(NORMAL)) { //삭제 요청자가 일반 사용자인 경우
+            String hostUserId = reservationRepository.findHostUserById(reservationId)
+                    .orElseThrow(
+                            () -> new ReservationNotFoundException(ErrorCode.NOT_EXIST_RESERVATION));
+            if(hostUserId.equals(userId)){ //예약자와 삭제 요청자가 일치하는 경우 예약 삭제
+                log.info("hostUserId: " + hostUserId + " userId: " + userId);
+                //참여자들의 참여 에약 리스트 삭제
+                participationReservationRepository.deleteAllByReservation(targetReservation);
+                reservationRepository.deleteById(reservationId);
+
+            }
+            else { //예약자와 삭제 요청자가 일치하지 않는 경우 예외 발생
+                throw new InvalidReservationException(ErrorCode.NOT_DELETABLE_RESERVATION);
+            }
+        }
+    }
+
 
 
 
@@ -247,7 +347,6 @@ public class ReservationService {
         );
         return reservationInfoResponseList;
     }
-
 
     //예약 시간이 유효한지 검사하는 함수
     private void validateTime(LocalTime startTime, LocalTime endTime) {
