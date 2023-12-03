@@ -15,6 +15,8 @@ public enum CommonCode {
     //Reservation
     AVAILABLE_FACILITY(HttpStatus.OK, "예약 가능한 시설입니다."),
     SUCCESS_RESERVATION(HttpStatus.OK, "예약 신청이 완료되었습니다."),
+    SUCCESS_MODIFICATION(HttpStatus.OK, "예약 수정이 완료되었습니다."),
+    SUCCESS_DELETION(HttpStatus.OK, "예약 삭제가 완료되었습니다."),
 
 
 
