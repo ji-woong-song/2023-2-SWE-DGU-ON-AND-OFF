@@ -49,7 +49,7 @@ public class Event {
     private List<Reservation> reservations = new ArrayList<>();
 
     public void addReservation(Reservation reservation) {
-        reservationList.add(reservation);
+        this.reservations.add(reservation);
     }
 
     /**
