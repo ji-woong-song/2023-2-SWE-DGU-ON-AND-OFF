@@ -1,8 +1,11 @@
 package backend.spectrum.dguonoff.DAO;
 
+import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,6 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "FixedSchedule", uniqueConstraints = {
@@ -30,6 +34,7 @@ import lombok.NoArgsConstructor;
     })
 })
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -55,6 +60,9 @@ public class FixedSchedule {
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
+    @Column(nullable = false)
+    private Integer guestNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "facility_id", nullable = false)
     private Facility facility;
@@ -67,5 +75,40 @@ public class FixedSchedule {
 
     public void setEvent(Event event) {
         this.event = event;
+    }
+    private Reservation toReservation(LocalDate date) {
+        return Reservation.builder()
+                .date(date)
+                .hotUserId(reservationAdmin)
+                .status(ReservationStatus.APPROVED)
+                .startTime(startTime)
+                .endTime(endTime)
+                .event(event)
+                .guestNumber(guestNumber)
+                .build();
+    }
+
+    /**
+     * 자신의 정보를 토대로 event에 예약 정보를 넣어준다.
+     * @return
+     */
+    public List<Reservation> reserve() {
+        List<Reservation> result = new ArrayList<>();
+        LocalDate date = LocalDate.from(startDate);
+
+        if (LocalDate.now().isAfter(startDate)) {
+            date = LocalDate.now();
+        }
+        int searchInterval = 1;
+        while (date.isBefore(endDate) || date.equals(endDate)) {
+            if (date.getDayOfWeek().getValue() == day.getValue()) {
+                searchInterval = 7;
+                Reservation reservation = toReservation(date);
+                reservation.setEvent(event);
+                reservation.setFacility(facility);
+            }
+            date = date.plusDays(searchInterval);
+        }
+        return result;
     }
 }
