@@ -43,23 +43,27 @@ export default function SignupPage() {
 
     const handleSubmit = async (event : FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        // 여기에서 로그인 로직 처리
-        const result = await requestAuthSinUp(userId, userSid, userName, userMajor, userPw, userEmail);
-        switch (result) {
-            case "SUCCESS": {
-                alert("회원가입에 성공하였습니다.");
-                navigate('/login');
-                break;
-            }
-            case "USER_ID_DUPLICATE": {
-                alert("이미 사용중인 아이디입니다.");
-                break;
-            }
-            default: {
-                alert("예기치 못한 오류로 회원가입에 실패했습니다.");
-                break;
+
+        if (userId.length > 0 && userPw.length > 0 && userName.length > 0 && userSid.length > 0 && userEmail.length > 0 && userMajor.length > 0) {
+            // 여기에서 로그인 로직 처리
+            const result = await requestAuthSinUp(userId, userSid, userName, userMajor, userPw, userEmail);
+            switch (result) {
+                case "SUCCESS": {
+                    alert("회원가입에 성공하였습니다.");
+                    navigate('/login');
+                    break;
+                }
+                case "USER_ID_DUPLICATE": {
+                    alert("이미 사용중인 아이디입니다.");
+                    break;
+                }
+                default: {
+                    alert("예기치 못한 오류로 회원가입에 실패했습니다.");
+                    break;
+                }
             }
         }
+ 
         console.log('UserId:', userId, 'userPw:', userPw);
       };
 
