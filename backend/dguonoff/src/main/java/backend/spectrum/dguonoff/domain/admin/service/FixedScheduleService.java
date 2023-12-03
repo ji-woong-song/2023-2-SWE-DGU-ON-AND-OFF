@@ -22,6 +22,7 @@ import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.global.error.Exception.BusinessException;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import backend.spectrum.dguonoff.global.util.IntervalUtil;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -41,14 +42,10 @@ public class FixedScheduleService {
     private final EventRepository eventRepository;
 
     @Transactional(readOnly = true)
-    public List<DailyScheduleResponse> getFixedTimeTables(DailyScheduleRequest request) {
+    public List<DailyScheduleResponse> getFixedTimeTables(DayOfWeek day, LocalDate startDate, LocalDate endDate,
+                                                          String code, String buildingName) {
         List<FixedSchedule> schedules = fixedScheduleRepository.findByDayAndStartDateBetweenAndFacility_Building_NameAndFacility_Id(
-                request.getDay(),
-                request.getEffectiveDate().getStart(),
-                request.getEffectiveDate().getEnd(),
-                request.getFacility().getBuildingName(),
-                request.getFacility().getCode()
-        );
+                day, startDate, endDate, buildingName, code);
         return schedules.stream()
                 .map(FixedScheduleConverter::toFixedScheduleDTO)
                 .collect(Collectors.toList());
@@ -79,7 +76,7 @@ public class FixedScheduleService {
                 .build();
     }
 
-    public UpdateScheduleResponse updateSchedule(String userId, UpdateScheduleRequest request) {
+    public UpdateScheduleResponse updateSchedule(UpdateScheduleRequest request) {
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
         FixedSchedule schedule = fixedScheduleRepository.findById(request.getScheduleId())
