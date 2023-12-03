@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./IndividualTimetableManager.module.css";
 import FacilityTable from "./commons/FacilityTable";
 import FacilityTimetable from "./commons/FacilityTimetable";
-import FacilityEventInfo from "./commons/FacilityEventInfo";
+import FacilityEventInfo, { FacilityEvent } from "./commons/FacilityEventInfo";
 import FacilityCategoryTable, { FacilityCategory } from "./commons/FacilityCategoryTable";
 import Facility from "../../../../../types/Facility";
 import Building from "../../../../../types/Building";
@@ -13,11 +13,17 @@ import { Day } from "../../../../../types/Day";
 export default function IndividualTimetableManager() {
     // State
     const [currFacility, setCurrFacility] = useState<FacilityCategory>("강의실");
-    const [date, setDate] = useState<Date>(new Date());
     const [buildings, setBuildings] = useState<Building[]>([]);
     const [selectedBuilding, setSelectedBuilding] = useState<Building>(new Building());
     const [facilities, setFacilities] = useState<Facility[]>([]);
-    const [currDay, setCurrDay] = useState<Day>("월");
+    const [selectedFacility, setSelectedFacility] = useState<Facility | null>(null);
+
+    const [currDay, setCurrDay] = useState<Day>("MONDAY");
+    const [date, setDate] = useState<Date>(new Date());
+    const [selectedTimes, setSelectedTimes] = useState<Date[]>([]);
+    const [facilityEvent, setFacilityEvent] = useState<FacilityEvent>({ name: '', hostName: '', outline: '', purpose: '', guestNumber: 0 });
+    const [doSubmitEvent, setDoSubmitEvent] = useState<boolean>(false);
+    const [doRemoveEvent, setDoRemoveEvent] = useState<boolean>(false);
 
 
     // Effect
@@ -74,17 +80,25 @@ export default function IndividualTimetableManager() {
                     <div className={styles.facility_table}>
                         <FacilityTable
                             facilities={facilities}
+                            selectedFacility={selectedFacility}
+                            setSelectedFacility={setSelectedFacility}
                         />
                     </div>
                     <div className={styles.facility_timetable}>
                         <FacilityTimetable
                             currDay={currDay}
                             setCurrDay={setCurrDay}
+                            selectedTimes={selectedTimes}
+                            setSelectedTimes={setSelectedTimes}
                         />
                     </div>
                     <div className={styles.event_info}>
                         <FacilityEventInfo
                             submitType={"modify"}
+                            facilityEvent={facilityEvent}
+                            setFacilityEvent={setFacilityEvent}
+                            setDoSubmitEvent={setDoSubmitEvent}
+                            setDoRemoveEvent={setDoRemoveEvent}
                         />
                     </div>
                 </div>

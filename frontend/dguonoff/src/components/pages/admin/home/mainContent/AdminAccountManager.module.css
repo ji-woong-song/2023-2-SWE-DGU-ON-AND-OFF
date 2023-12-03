@@ -29,7 +29,7 @@
 
 /* search_filter's components */
 .search_filter .account_type {
-    width: calc(20% - 30px);
+    width: calc(50% - 30px);
     height: 100%;
     min-width: 520px;
     padding-left: 15px;
@@ -47,16 +47,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.search_filter .buttons {
-    width: calc(30% - 10% - 15px);
-    height: 100%;
-    padding-left: 10%;
-    padding-right: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
 }
 
 .search_filter label {
@@ -106,43 +96,5 @@
 
 .user_name .search:hover {
     background-color: var(--component-main-color);
-    color: var(--component-innertext-select-color);
-}
-
-.buttons .save {
-    height: 70%;
-    width: 45%;
-    cursor: pointer;
-    border: 2px solid var(--button-positive-color);
-    background-color: var(--button-positive-light-color);
-    border-radius: 15px;
-    padding: 1px;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--component-innertext-color);
-    user-select: none;
-}
-
-.buttons .save:hover {
-    background-color: var(--button-positive-color);
-    color: var(--component-innertext-select-color);
-}
-
-.buttons .undo {
-    height: 70%;
-    width: 45%;
-    cursor: pointer;
-    border: 2px solid var(--button-negative-color);
-    background-color: var(--button-negative-light-color);
-    border-radius: 15px;
-    padding: 1px;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--component-innertext-color);
-    user-select: none;
-}
-
-.buttons .undo:hover {
-    background-color: var(--button-negative-color);
     color: var(--component-innertext-select-color);
 }

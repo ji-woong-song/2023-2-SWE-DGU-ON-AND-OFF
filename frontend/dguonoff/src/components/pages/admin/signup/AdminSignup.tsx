@@ -1,16 +1,30 @@
+/*****************************************************************
+ * 관리자 회원가입 페이지를 렌더링하고, 회원가입 기능을 제공하는 컴포넌트입니다.
+ *****************************************************************/
+
 import { useNavigate } from "react-router-dom";
 import styles from "./AdminSignup.module.css";
 import { useState } from "react";
 import { requestAuthSinUp } from "../../../../api/dguonandoff";
 
-
+/**
+ * AdminSignup 컴포넌트는 관리자 회원가입을 위한 UI를 제공합니다.
+ * 
+ * 이 컴포넌트는 회원가입을 위한 아이디, 비밀번호, 비밀번호 확인, 이름, 학번, 전공, 이메일 입력 필드 및 회원가입 버튼을 제공합니다.
+ * 사용자가 회원가입 버튼을 클릭하면, 입력된 정보로 회원가입을 시도하고 결과에 따라 다른 동작을 수행합니다.
+ * 회원가입 성공 시, 로그인 페이지로 이동합니다.
+ * 회원가입 실패 시, 오류 메시지를 표시합니다.
+ * 입력 필드에는 유효성 검사를 적용하여, 유효하지 않은 입력을 방지합니다.
+ * 
+ * @returns {JSX.Element} 관리자 회원가입 페이지를 렌더링하는 JSX 엘리먼트입니다.
+ */
 export default function AdminSignup() {
     // Const
     const navigate = useNavigate();
 
 
     // State
-    const [id, setId] = useState<string>("cat123123");
+    const [id, setId] = useState<string>("cat3");
     const [password, setPassword] = useState<string>("123456789");
     const [passwordCheck, setPasswordCheck] = useState<string>("123456789");
     const [name, setName] = useState<string>("춘배");
@@ -23,8 +37,8 @@ export default function AdminSignup() {
     // Handler
     const onSingUpClick = async () => {
         if (id.length > 0 && password.length > 0 && password === passwordCheck && name.length > 0 && sid.length > 0 && emailId.length > 0 && emailDomain.length > 0) {
-            const result = await requestAuthSinUp(id, sid, name, major, password, `${emailId}@${emailDomain}`);
-            switch (result) {
+            const { message } = await requestAuthSinUp(id, sid, name, major, password, `${emailId}@${emailDomain}`);
+            switch (message) {
                 case "SUCCESS": {
                     alert("회원가입에 성공하였습니다.");
                     navigate('/admin/login');
