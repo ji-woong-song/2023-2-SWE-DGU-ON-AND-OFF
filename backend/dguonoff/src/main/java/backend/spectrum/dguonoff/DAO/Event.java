@@ -1,5 +1,6 @@
 package backend.spectrum.dguonoff.DAO;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -40,6 +41,8 @@ public class Event {
     private List<Reservation> reservations;
 
     public void addReservation(Reservation reservation) {
-        this.reservations.add(reservation);
+        List<Reservation> reservationList = new ArrayList<Reservation>();
+        reservationList.add(reservation);
+        this.reservations = reservationList;
     }
 }

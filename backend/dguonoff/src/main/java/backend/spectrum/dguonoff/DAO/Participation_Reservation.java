@@ -1,16 +1,14 @@
 package backend.spectrum.dguonoff.DAO;
 
 import backend.spectrum.dguonoff.DAO.idClass.ParticipationReservationId;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "Participation_Reservation")
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Participation_Reservation {

@@ -8,8 +8,10 @@ import backend.spectrum.dguonoff.domain.facility.converter.FacilityConverter;
 import backend.spectrum.dguonoff.domain.facility.dto.BuildingDTO;
 import backend.spectrum.dguonoff.domain.facility.dto.FacilityOutlineDTO;
 import backend.spectrum.dguonoff.domain.facility.dto.FloorFacilityListResponse;
+import backend.spectrum.dguonoff.domain.facility.exception.FacilityNotFoundException;
 import backend.spectrum.dguonoff.domain.facility.repository.BuildingRepository;
 import backend.spectrum.dguonoff.domain.facility.repository.FacilityRepository;
+import backend.spectrum.dguonoff.domain.reservation.dto.constraint.UsageConstraint;
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
@@ -87,6 +89,13 @@ public class FacilityService {
                 outline.setBookmarked(true);
         });
         return outlines;
+    }
+
+    //시설물의 이용 제약조건을 반환하는 함수
+    public UsageConstraint getUsageConstraint(String facilityCode) {
+        UsageConstraint constraint = facilityRepository.findFacilityUsageConstraint(facilityCode)
+                .orElseThrow(() -> new FacilityNotFoundException(ErrorCode.NOT_EXIST_FACILITY));
+        return constraint;
     }
 
 }
