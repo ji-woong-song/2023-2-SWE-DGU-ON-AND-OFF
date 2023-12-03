@@ -1,15 +1,21 @@
 package backend.spectrum.dguonoff.domain.user.api;
 
 import backend.spectrum.dguonoff.DAO.User;
+import backend.spectrum.dguonoff.domain.admin.dto.PostBoardDTO;
+import backend.spectrum.dguonoff.domain.admin.dto.PostBoardResponse;
+import backend.spectrum.dguonoff.domain.admin.service.BoardService;
 import backend.spectrum.dguonoff.domain.user.dto.EmpowermentParams;
 import backend.spectrum.dguonoff.domain.user.dto.UserInfoDTO;
 import backend.spectrum.dguonoff.domain.user.service.UserService;
+import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +31,7 @@ import static backend.spectrum.dguonoff.global.statusCode.CommonCode.SUCCESS_EMP
 public class MasterAdminController {
 
     private final UserService userService;
+    private final BoardService boardService;
 
     //관리자 권한 부여 기능
     @PostMapping("/empowerment")
@@ -56,5 +63,17 @@ public class MasterAdminController {
     public ResponseEntity<List<UserInfoDTO>> getAllUserInfo() {
         List<UserInfoDTO> allUsers = this.userService.getAllUsers();
         return new ResponseEntity<>(allUsers, HttpStatus.OK);
+    }
+
+    @PostMapping("/board")
+    public ResponseEntity<PostBoardResponse> postBoard(Principal principal, @RequestBody PostBoardDTO dto) {
+        Long board = this.boardService.createBoard(principal.getName(), dto);
+        return ResponseEntity.ok(new PostBoardResponse(board));
+    }
+    @PatchMapping("/board/{boardId}")
+    public ResponseEntity<PostBoardResponse> patchBoard(Principal principal,@PathVariable Long boardId,
+                                                        @RequestBody PostBoardDTO dto) {
+        Long board = this.boardService.updateBoard(principal.getName(), boardId, dto);
+        return ResponseEntity.ok(new PostBoardResponse(board));
     }
 }

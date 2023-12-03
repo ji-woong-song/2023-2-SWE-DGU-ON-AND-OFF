@@ -43,6 +43,9 @@ public class User {
     @OneToMany(mappedBy = "hotUserId")
     private List<Reservation> reservations = new ArrayList<>();
 
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private List<Board> boards = new ArrayList<>();
+
     public User(String id, String sid, String password, Role role, String name, String major, String email) {
         this.id = id;
         this.sid = sid;
@@ -55,5 +58,6 @@ public class User {
     public void addBookmark(Bookmark bookmark) {
         this.bookmarks.add(bookmark);
     }
+    public void addBoard(Board board) {this.boards.add(board);}
 }
 

@@ -15,6 +15,10 @@ public enum ErrorCode {
     NOT_EXIST_MASTER_ADMIN(HttpStatus.NOT_FOUND, "존재하지 않는 마스터 관리자입니다."),
     NO_AUTH(HttpStatus.FORBIDDEN, "권한이 없는 유저입니다."),
 
+    // Board
+    NOT_EXIST_BOARD(HttpStatus.NOT_FOUND, "존재하지 않은 게시판입니다."),
+    NOT_ALLOW_AUTHOR(HttpStatus.FORBIDDEN, "작성자 또는 관리자만 삭제할 수 있습니다"),
+
     DUP_BOOKMARK(HttpStatus.CONFLICT, "이미 등록한 시설물입니다"),
     NO_BOOKMARK(HttpStatus.NOT_FOUND, "등록되지 않은 북마크입니다."),
 
