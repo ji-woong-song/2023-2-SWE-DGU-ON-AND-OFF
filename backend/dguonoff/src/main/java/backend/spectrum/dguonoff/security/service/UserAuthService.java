@@ -1,6 +1,7 @@
 package backend.spectrum.dguonoff.security.service;
 
 import backend.spectrum.dguonoff.domain.user.dto.LoginRequest;
+import backend.spectrum.dguonoff.domain.user.dto.LoginResponse;
 import backend.spectrum.dguonoff.domain.user.dto.SignUpRequest;
 import backend.spectrum.dguonoff.DAO.User;
 import backend.spectrum.dguonoff.DAO.model.Role;
@@ -14,8 +15,10 @@ import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -26,13 +29,17 @@ public class UserAuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtAuthTokenProvider tokenProvider;
 
-    public String login(LoginRequest dto) throws AuthenticationException {
+    public LoginResponse login(LoginRequest dto) throws AuthenticationException {
         CustomPasswordAuthenticationToken token = new CustomPasswordAuthenticationToken(
                 dto.getId(), dto.getPassword()
         );
         Authentication authentication = authenticationManager.authenticate(token);
+        String role = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .findAny().orElseThrow(() -> new BadCredentialsException("Role 정보가 없습니다."));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return createToken((CustomPasswordAuthenticationToken) authentication);
+        String jwtToken = createToken((CustomPasswordAuthenticationToken) authentication);
+        return new LoginResponse(jwtToken, role);
     }
 
     public void signUp(SignUpRequest dto) throws UserDuplicateException {

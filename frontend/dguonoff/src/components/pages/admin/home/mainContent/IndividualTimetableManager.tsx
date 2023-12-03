@@ -22,10 +22,10 @@ export default function IndividualTimetableManager() {
 
     // Effect
     useEffect(() => {
-        setBuildings([new Building("신공학관", [new Facility("3144")])]);
-        setFacilities(Array.from({ length: 50 }, (_, index) => {
-            return new Facility(`신공학관 ${3105 + index}`, Math.floor(Math.random() * 100));
-        }));
+        /*  setBuildings([new Building("신공학관", [new Facility("3144")])]);
+          setFacilities(Array.from({ length: 50 }, (_, index) => {
+              return new Facility(`신공학관 ${3105 + index}`, Math.floor(Math.random() * 100));
+          }));*/
     }, []);
 
 

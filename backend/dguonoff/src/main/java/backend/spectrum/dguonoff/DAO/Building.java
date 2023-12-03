@@ -17,7 +17,9 @@ public class Building {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private int maxFloor;
+
     @OneToMany(mappedBy = "building")
     private List<Facility> facilities = new ArrayList<>();
-
 }

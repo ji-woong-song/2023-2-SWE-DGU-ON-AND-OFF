@@ -1,25 +1,66 @@
-
+/**
+ * Facility 클래스는 시설 정보를 나타냅니다.
+ * 이 클래스는 시설의 이름, 코드, 북마크 여부, 사용 상태 및 수용 인원 정보를 관리합니다.
+ */
 export default class Facility {
     private name: string;
+    private code: string;
+    private bookmarked: boolean;
+    private status: "EMPTY" | "USING";
     private capacity: number;
 
-    constructor(name: string = "", capacity: number = 0) {
+    /**
+     * Facility 클래스의 생성자입니다.
+     * @param {string} name - 시설의 이름입니다.
+     * @param {string} code - 시설의 고유 코드입니다.
+     * @param {boolean} bookmarked - 시설이 북마크되었는지 여부입니다.
+     * @param {"EMPTY" | "USING"} status - 시설의 사용 상태입니다.
+     * @param {number} capacity - 시설의 수용 인원입니다.
+     */
+    constructor(name: string = "", code: string = "", bookmarked: boolean = false, status: "EMPTY" | "USING" = "EMPTY", capacity: number = 0) {
         this.name = name;
+        this.code = code;
+        this.bookmarked = bookmarked;
+        this.status = status;
         this.capacity = capacity;
     }
 
+    // 이름 관련 getter 및 setter
     public getName(): string {
         return this.name;
     }
-
     public setName(name: string): void {
         this.name = name;
     }
 
+    // 코드 관련 getter 및 setter
+    public getCode(): string {
+        return this.code;
+    }
+    public setCode(code: string): void {
+        this.code = code;
+    }
+
+    // 북마크 상태 관련 getter 및 setter
+    public isBookmarked(): boolean {
+        return this.bookmarked;
+    }
+    public setBookmarked(bookmarked: boolean): void {
+        this.bookmarked = bookmarked;
+    }
+
+    // 사용 상태 관련 getter 및 setter
+    public getStatus(): "EMPTY" | "USING" {
+        return this.status;
+    }
+    public setStatus(status: "EMPTY" | "USING"): void {
+        this.status = status;
+    }
+
+    // 수용 인원 관련 getter 및 setter
     public getCapacity(): number {
         return this.capacity;
     }
-
     public setCapacity(capacity: number): void {
         this.capacity = capacity;
     }

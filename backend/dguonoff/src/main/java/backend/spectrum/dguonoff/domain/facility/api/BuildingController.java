@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.domain.facility.api;
 
-import backend.spectrum.dguonoff.domain.facility.dto.BuildingNameResponse;
+import backend.spectrum.dguonoff.domain.facility.dto.BuildingDTO;
 import backend.spectrum.dguonoff.domain.facility.service.FacilityService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BuildingController {
     private final FacilityService facilityService;
-    @GetMapping("/names")
-    public ResponseEntity<BuildingNameResponse> getBuildingNames() {
-        List<String> allBuildingNames = facilityService.getAllBuildingNames();
-        return ResponseEntity.ok(new BuildingNameResponse(allBuildingNames));
+    @GetMapping("/")
+    public ResponseEntity<List<BuildingDTO>> getBuildingNames() {
+        List<BuildingDTO> allBuildingNames = facilityService.getAllBuilding();
+        return ResponseEntity.ok(allBuildingNames);
     }
 
 }
