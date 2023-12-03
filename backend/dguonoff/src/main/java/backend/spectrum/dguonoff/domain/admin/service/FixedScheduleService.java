@@ -44,7 +44,7 @@ public class FixedScheduleService {
     @Transactional(readOnly = true)
     public List<DailyScheduleResponse> getFixedTimeTables(DayOfWeek day, LocalDate startDate, LocalDate endDate,
                                                           String code, String buildingName) {
-        List<FixedSchedule> schedules = fixedScheduleRepository.findByDayAndStartDateBetweenAndFacility_Building_NameAndFacility_Id(
+        List<FixedSchedule> schedules = fixedScheduleRepository.findByDayAndStartDateBetweenAndFacility_Building_NameAndFacility_Code(
                 day, startDate, endDate, buildingName, code);
         return schedules.stream()
                 .map(FixedScheduleConverter::toFixedScheduleDTO)
@@ -62,13 +62,13 @@ public class FixedScheduleService {
         User admin = userRepository.findById(adminId)
             .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_USER));
         // 겹치는 고정 시간표가 있는지 확인
-        List<Reservation> reservations = tempReservationRepository.findByDateAfterThanEqualOrDateEqualAndStartTimeAfter(
-                LocalDate.now(), LocalTime.now());
+        List<Reservation> reservations = tempReservationRepository.findByDateAfterOrDateEqualsAndStartTimeAfter(
+                LocalDate.now(), LocalDate.now(), LocalTime.now());
         FixedSchedule fixedSchedule = FixedScheduleConverter.toFixedScheduleEntity(request, facility, admin);
         // 겹치지 않았다면 해당 시간표 대로 주어진 기간에 주어진 시간대에 예약을 한다.
         checkOverlappedReservation(request, facility, fixedSchedule.getEvent(), reservations);
         // 주어진 파라미터로 부터 schedule 객체를 만든다.
-        fixedSchedule.reserve();
+        List<Reservation> reserve = fixedSchedule.reserve();
         // 주어진 대로 저장한다.
         fixedScheduleRepository.save(fixedSchedule);
         return PostNewScheduleResponse.builder()
@@ -79,35 +79,35 @@ public class FixedScheduleService {
     public UpdateScheduleResponse updateSchedule(UpdateScheduleRequest request) {
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
-        FixedSchedule schedule = fixedScheduleRepository.findById(request.getScheduleId())
+        FixedSchedule persistentSchedule = fixedScheduleRepository.findById(request.getScheduleId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_SCHEDULE));
-        Event event = schedule.getEvent();
+        Event event = persistentSchedule.getEvent();
         // 바꾸려는 시설물 검색
         Facility newFacility = facilityRepository.findByBuilding_NameAndCode(
                 request.getScheduleInfo().getFacility().getBuildingName(),
                 request.getScheduleInfo().getFacility().getCode()
         ).orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_FACILITY));
         // 다음에 올 예약 정보들
-        List<Reservation> futureReservations = tempReservationRepository.findByDateAfterThanEqualOrDateEqualAndStartTimeAfter(
-                LocalDate.now(), LocalTime.now());
+        List<Reservation> futureReservations = tempReservationRepository.findByDateAfterOrDateEqualsAndStartTimeAfter(
+                LocalDate.now(), LocalDate.now(), LocalTime.now());
         // 지난 예약이 있는지 확인
         List<Reservation> passedReservation = event.getPastReservation(today, now);
         // 이미 지난 예약 정보가 없다면 event를 새로 만들지 않고 업데이트 수행
         if (passedReservation.isEmpty())
-            return updateWithoutEventChange(schedule, request.getScheduleInfo(), newFacility);
+            return updateWithoutEventChange(persistentSchedule, request.getScheduleInfo(), newFacility);
         
         // 이미 지난 예약 정보가 있을 경우
         
         // 이벤트 정보가 바뀌었다면
-        if (isEventInfoChanged(schedule, request.getScheduleInfo().getEvent())) {
+        if (isEventInfoChanged(persistentSchedule, request.getScheduleInfo().getEvent())) {
             Event newEvent = FixedScheduleConverter.toEventEntity(request.getScheduleInfo().getEvent());
             // 예약정보는 하나도 안바뀐 경우
-            if (!isScheduleTimeChanged(schedule, request.getScheduleInfo(), newFacility)) {
+            if (!isScheduleTimeChanged(persistentSchedule, request.getScheduleInfo(), newFacility)) {
                 // 새 event에 아직 지나지 않은 reservation 정보들을 옮기기
                 event.moveReservation(today, now, newEvent);
                 eventRepository.save(event);
-                schedule.setEvent(newEvent);
-                return new UpdateScheduleResponse(fixedScheduleRepository.save(schedule).getId());
+                persistentSchedule.setEvent(newEvent);
+                return new UpdateScheduleResponse(fixedScheduleRepository.save(persistentSchedule).getId());
             }
             // 예약 정보가 바뀌었을 경우
             checkOverlappedReservation(request.getScheduleInfo(), newFacility, event, futureReservations);
@@ -116,10 +116,13 @@ public class FixedScheduleService {
             // 임시 스케쥴 객체로 newEvent에 예약하기
             FixedSchedule tempSchedule = FixedScheduleConverter.toFixedScheduleEntity(request.getScheduleInfo(),
                     newFacility, newEvent);
-            tempSchedule.reserve();
+            List<Reservation> reserve = tempSchedule.reserve();
+            for (Reservation reservation : reserve) {
+                reservation.setEvent(event);
+            }
             // 새롭게 예약한 정보들을 가진 event 랑 기존 스케쥴이랑 연결한다.
-            schedule.setEvent(newEvent);
-            return new UpdateScheduleResponse(fixedScheduleRepository.save(schedule).getId());
+            persistentSchedule.setEvent(newEvent);
+            return new UpdateScheduleResponse(fixedScheduleRepository.save(persistentSchedule).getId());
         }
 
         // 이벤트 정보 변경 없이 예약 시간대만 바뀐 경우
@@ -128,10 +131,10 @@ public class FixedScheduleService {
         // 앞으로 오는 예약 다 취소
         event.cancelReservation(today, now);
         // 새 정보로 update 후 예약하기
-        updateScheduleTime(schedule, newFacility, request.getScheduleInfo());
-        schedule.reserve();
+        updateScheduleTime(persistentSchedule, newFacility, request.getScheduleInfo());
+        persistentSchedule.reserve();
         // 지금까지 변동 사항 반영
-        return new UpdateScheduleResponse(fixedScheduleRepository.save(schedule).getId());
+        return new UpdateScheduleResponse(fixedScheduleRepository.save(persistentSchedule).getId());
     }
 
     /**
@@ -145,14 +148,14 @@ public class FixedScheduleService {
         // 기존 event 객체에 요청으로 받은 이벤트 정보를 반영
         Event event = schedule.getEvent();
         // 기존 예약 객체 제거
-        event.getReservations().clear();
+        event = eventRepository.save(event);
         updateEventInfo(event, request.getEvent());
         schedule.setGuestNumber(request.getEvent().getGuestNumber());
 
         // 스케쥴이 달라졌다면 예약 정보들을 수정한다.
         if (isScheduleTimeChanged(schedule, request, facility)) {
-            List<Reservation> reservations = tempReservationRepository.findByDateAfterThanEqualOrDateEqualAndStartTimeAfter(
-                    LocalDate.now(), LocalTime.now());
+            List<Reservation> reservations = tempReservationRepository.findByDateAfterOrDateEqualsAndStartTimeAfter(
+                    LocalDate.now(), LocalDate.now(), LocalTime.now());
             checkOverlappedReservation(request, facility, event, reservations);
             // 달라진 스케쥴 정보로 수정후 예약하기.
             updateScheduleTime(schedule, facility, request);

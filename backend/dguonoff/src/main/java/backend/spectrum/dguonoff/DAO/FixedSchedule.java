@@ -70,7 +70,7 @@ public class FixedSchedule {
     @ManyToOne(fetch = FetchType.LAZY)
     private User reservationAdmin;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = CascadeType.ALL)
     private Event event;
 
     public void setEvent(Event event) {
@@ -97,13 +97,15 @@ public class FixedSchedule {
         LocalDate date = LocalDate.from(startDate);
 
         if (LocalDate.now().isAfter(startDate)) {
-            date = LocalDate.from(LocalTime.now());
+            date = LocalDate.now();
         }
         int searchInterval = 1;
         while (date.isBefore(endDate) || date.equals(endDate)) {
-            if (date.getDayOfMonth() == day.getValue()) {
+            if (date.getDayOfWeek().getValue() == day.getValue()) {
                 searchInterval = 7;
-                result.add(toReservation(date));
+                Reservation reservation = toReservation(date);
+                reservation.setEvent(event);
+                reservation.setFacility(facility);
             }
             date = date.plusDays(searchInterval);
         }

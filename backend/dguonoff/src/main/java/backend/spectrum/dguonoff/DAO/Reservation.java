@@ -22,7 +22,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reservation {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reservation_id", nullable = false)
     private Long reservationId;
 
@@ -55,5 +55,8 @@ public class Reservation {
     public void setEvent(Event event) {
         this.event = event;
         this.event.addReservation(this);
+    }
+    public void setFacility(Facility facility) {
+        this.facility = facility;
     }
 }

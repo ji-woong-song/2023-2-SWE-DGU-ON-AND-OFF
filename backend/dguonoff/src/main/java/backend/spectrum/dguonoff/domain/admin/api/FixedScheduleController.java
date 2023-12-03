@@ -12,6 +12,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +32,9 @@ public class FixedScheduleController {
 
     @GetMapping("/")
     public ResponseEntity<List<DailyScheduleResponse>> getFixedSchedules(
-            @RequestParam DayOfWeek day, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate,
+            @RequestParam DayOfWeek day,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
             @RequestParam String code, @RequestParam String buildingName
     ) {
         List<DailyScheduleResponse> fixedSchedules = fixedScheduleService.getFixedTimeTables(day, startDate, endDate,
