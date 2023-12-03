@@ -54,4 +54,16 @@ public class FixedScheduleConverter {
                 .event(toEventEntity(request.getEvent()))
                 .build();
     }
+    public static FixedSchedule toFixedScheduleEntity(PostNewScheduleRequest request, Facility facility, Event event) {
+        return FixedSchedule.builder()
+                .guestNumber(request.getEvent().getGuestNumber())
+                .facility(facility)
+                .startDate(request.getEffectiveDate().getStart())
+                .endDate(request.getEffectiveDate().getEnd())
+                .day(request.getDay())
+                .startTime(request.getTime().getStart())
+                .endTime(request.getTime().getEnd())
+                .event(event)
+                .build();
+    }
 }

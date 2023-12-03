@@ -76,7 +76,7 @@ public class FixedSchedule {
     public void setEvent(Event event) {
         this.event = event;
     }
-    public Reservation toReservation(LocalDate date) {
+    private Reservation toReservation(LocalDate date) {
         return Reservation.builder()
                 .date(date)
                 .hotUserId(reservationAdmin)
@@ -87,6 +87,11 @@ public class FixedSchedule {
                 .guestNumber(guestNumber)
                 .build();
     }
+
+    /**
+     * 자신의 정보를 토대로 event에 예약 정보를 넣어준다.
+     * @return
+     */
     public List<Reservation> reserve() {
         List<Reservation> result = new ArrayList<>();
         LocalDate date = LocalDate.from(startDate);

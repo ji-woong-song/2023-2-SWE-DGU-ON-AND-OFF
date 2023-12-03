@@ -14,6 +14,7 @@ import backend.spectrum.dguonoff.domain.admin.dto.UpdateScheduleRequest;
 import backend.spectrum.dguonoff.domain.admin.dto.UpdateScheduleResponse;
 import backend.spectrum.dguonoff.domain.admin.dto.common.EventInfoDTO;
 import backend.spectrum.dguonoff.domain.admin.dto.common.PeriodDTO;
+import backend.spectrum.dguonoff.domain.admin.repository.EventRepository;
 import backend.spectrum.dguonoff.domain.admin.repository.FixedScheduleRepository;
 import backend.spectrum.dguonoff.domain.admin.repository.TempReservationRepository;
 import backend.spectrum.dguonoff.domain.facility.repository.FacilityRepository;
@@ -21,10 +22,8 @@ import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.global.error.Exception.BusinessException;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import backend.spectrum.dguonoff.global.util.IntervalUtil;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +38,7 @@ public class FixedScheduleService {
     private final UserRepository userRepository;
     private final FixedScheduleRepository fixedScheduleRepository;
     private final FacilityRepository facilityRepository;
+    private final EventRepository eventRepository;
 
     @Transactional(readOnly = true)
     public List<DailyScheduleResponse> getFixedTimeTables(DailyScheduleRequest request) {
@@ -67,74 +67,102 @@ public class FixedScheduleService {
         // 겹치는 고정 시간표가 있는지 확인
         List<Reservation> reservations = tempReservationRepository.findByDateAfterThanEqualOrDateEqualAndStartTimeAfter(
                 LocalDate.now(), LocalTime.now());
-        checkOverlappedReservation(request, facility, reservations);
-        // 주어진 파라미터로 부터 schedule 객체를 만든다.
         FixedSchedule fixedSchedule = FixedScheduleConverter.toFixedScheduleEntity(request, facility, admin);
         // 겹치지 않았다면 해당 시간표 대로 주어진 기간에 주어진 시간대에 예약을 한다.
+        checkOverlappedReservation(request, facility, fixedSchedule.getEvent(), reservations);
+        // 주어진 파라미터로 부터 schedule 객체를 만든다.
         fixedSchedule.reserve();
         // 주어진 대로 저장한다.
-        facilityRepository.save(facility);
+        fixedScheduleRepository.save(fixedSchedule);
         return PostNewScheduleResponse.builder()
                 .scheduleId(fixedSchedule.getId())
                 .build();
     }
 
     public UpdateScheduleResponse updateSchedule(String userId, UpdateScheduleRequest request) {
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
         FixedSchedule schedule = fixedScheduleRepository.findById(request.getScheduleId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_SCHEDULE));
-        // 유저 id로 유저를 찾는다.
-        User admin = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_USER));
+        Event event = schedule.getEvent();
         // 바꾸려는 시설물 검색
-        Facility facility = facilityRepository.findByBuilding_NameAndCode(
+        Facility newFacility = facilityRepository.findByBuilding_NameAndCode(
                 request.getScheduleInfo().getFacility().getBuildingName(),
                 request.getScheduleInfo().getFacility().getCode()
         ).orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_FACILITY));
-
+        // 다음에 올 예약 정보들
+        List<Reservation> futureReservations = tempReservationRepository.findByDateAfterThanEqualOrDateEqualAndStartTimeAfter(
+                LocalDate.now(), LocalTime.now());
         // 지난 예약이 있는지 확인
-        List<Reservation> passedReservation = tempReservationRepository.findByDateLessThanEqualOrDateEqualAndStartTimeBeforeAndEvent_EventId(
-                LocalDate.now(), LocalTime.now(), schedule.getEvent().getId()
-        );
+        List<Reservation> passedReservation = event.getPastReservation(today, now);
         // 이미 지난 예약 정보가 없다면 event를 새로 만들지 않고 업데이트 수행
-        if (passedReservation.isEmpty()) {
-            updateWithoutEventChange(schedule, request.getScheduleInfo(), facility );
-        }else {
-            Event event = schedule.getEvent();
-            if (isEventInfoChanged(schedule, request.getScheduleInfo().getEvent())) {
-
+        if (passedReservation.isEmpty())
+            return updateWithoutEventChange(schedule, request.getScheduleInfo(), newFacility);
+        
+        // 이미 지난 예약 정보가 있을 경우
+        
+        // 이벤트 정보가 바뀌었다면
+        if (isEventInfoChanged(schedule, request.getScheduleInfo().getEvent())) {
+            Event newEvent = FixedScheduleConverter.toEventEntity(request.getScheduleInfo().getEvent());
+            // 예약정보는 하나도 안바뀐 경우
+            if (!isScheduleTimeChanged(schedule, request.getScheduleInfo(), newFacility)) {
+                // 새 event에 아직 지나지 않은 reservation 정보들을 옮기기
+                event.moveReservation(today, now, newEvent);
+                eventRepository.save(event);
+                schedule.setEvent(newEvent);
+                return new UpdateScheduleResponse(fixedScheduleRepository.save(schedule).getId());
             }
-            // 관련 예약 정보 update
-
-            // 예약 정보 모두 지우기
-            enrollFixedTimeTable(userId, request.getScheduleInfo());
-
+            // 예약 정보가 바뀌었을 경우
+            checkOverlappedReservation(request.getScheduleInfo(), newFacility, event, futureReservations);
+            // 이후에 시작하는 예약 정보들 삭제
+            event.cancelReservation(today, now);
+            // 임시 스케쥴 객체로 newEvent에 예약하기
+            FixedSchedule tempSchedule = FixedScheduleConverter.toFixedScheduleEntity(request.getScheduleInfo(),
+                    newFacility, newEvent);
+            tempSchedule.reserve();
+            // 새롭게 예약한 정보들을 가진 event 랑 기존 스케쥴이랑 연결한다.
+            schedule.setEvent(newEvent);
+            return new UpdateScheduleResponse(fixedScheduleRepository.save(schedule).getId());
         }
 
-        return new UpdateScheduleResponse(schedule.getId());
+        // 이벤트 정보 변경 없이 예약 시간대만 바뀐 경우
+        // 시간표 겹치는 지 확인
+        checkOverlappedReservation(request.getScheduleInfo(), newFacility, event, futureReservations);
+        // 앞으로 오는 예약 다 취소
+        event.cancelReservation(today, now);
+        // 새 정보로 update 후 예약하기
+        updateScheduleTime(schedule, newFacility, request.getScheduleInfo());
+        schedule.reserve();
+        // 지금까지 변동 사항 반영
+        return new UpdateScheduleResponse(fixedScheduleRepository.save(schedule).getId());
     }
 
     /**
+     * 아직 지난 예약이 없을 때,
      * 새 이벤트 객체 없이 업데이트 합니다.
      * @param schedule
      * @param request
      * @param facility
      */
-    private void updateWithoutEventChange(FixedSchedule schedule, PostNewScheduleRequest request, Facility facility)  {
+    private UpdateScheduleResponse updateWithoutEventChange(FixedSchedule schedule, PostNewScheduleRequest request, Facility facility)  {
         // 기존 event 객체에 요청으로 받은 이벤트 정보를 반영
         Event event = schedule.getEvent();
+        // 기존 예약 객체 제거
+        event.getReservations().clear();
         updateEventInfo(event, request.getEvent());
         schedule.setGuestNumber(request.getEvent().getGuestNumber());
 
+        // 스케쥴이 달라졌다면 예약 정보들을 수정한다.
         if (isScheduleTimeChanged(schedule, request, facility)) {
-            List<Reservation> reservations = tempReservationRepository.findByDateAfterThanEqualOrDateEqualAndStartTimeAfterAndEvent_EventId(
-                    LocalDate.now(), LocalTime.now(), event.getId()
-            );
-            // 스케쥴이 달라졌다면 예약 정보들을 수정한다.
-            checkOverlappedReservation(request, facility, reservations);
-            // 달라진 스케쥴 정보로 수정한다.
+            List<Reservation> reservations = tempReservationRepository.findByDateAfterThanEqualOrDateEqualAndStartTimeAfter(
+                    LocalDate.now(), LocalTime.now());
+            checkOverlappedReservation(request, facility, event, reservations);
+            // 달라진 스케쥴 정보로 수정후 예약하기.
             updateScheduleTime(schedule, facility, request);
-
+            schedule.reserve();
         }
+        FixedSchedule save = fixedScheduleRepository.save(schedule);
+        return new UpdateScheduleResponse(save.getId());
     }
 
     /**
@@ -143,15 +171,17 @@ public class FixedScheduleService {
      * @param facility
      * @param reservations
      */
-    private void checkOverlappedReservation(PostNewScheduleRequest request, Facility facility,
+    private void checkOverlappedReservation(PostNewScheduleRequest request, Facility facility, Event event,
                                             List<Reservation> reservations) {
         for (Reservation reservation : reservations) {
             // 같은 요일이 아니거나 같은 건물이 아니면 체크하지 않는다.
             if (!reservation.getDate().getDayOfWeek().equals(request.getDay()) ||
-                !reservation.getFacility().getId().equals(facility.getId()))
+                !reservation.getFacility().getId().equals(facility.getId()) ||
+                reservation.getEvent().getId().equals(event.getId()))
                 continue;
             // 같은 요일의 경우 겹치는 시간대를 확인한다.
             PeriodDTO<LocalTime> timeInterval = new PeriodDTO<>(reservation.getStartTime(), reservation.getEndTime());
+            // 유효기간도 겹치고 시간대도 겹치면 에러 발생
             if (dateOverlapped(request, reservation) && IntervalUtil.isOverlapped(request.getTime(), timeInterval)){
                 throw new BusinessException(ErrorCode.EXIST_OVERLAPPED_INTERVAL);
             }
