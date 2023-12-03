@@ -75,7 +75,7 @@ public class FacilityService {
         List<FacilityOutlineDTO> outlines = facilities.stream()
                 .map(FacilityConverter::toFacilityOutlineDTO)
                 .collect(Collectors.toList());
-        // 등록된 bookmark 정보를 반영한다.S
+        // 등록된 bookmark 정보를 반영한다.
         outlines.forEach(outline-> {
             Optional<Bookmark> matched = userBookmarks.stream().filter(bookmark ->
                 bookmark.getFacility().getCode().equals(outline.getCode()) &&

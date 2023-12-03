@@ -38,7 +38,7 @@ public class Event {
     @Column
     private String purpose;
 
-    @OneToMany(mappedBy = "reservationId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "reservationId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reservation> reservations;
 
     public void addReservation(Reservation reservation) {

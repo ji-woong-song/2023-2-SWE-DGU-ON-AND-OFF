@@ -43,6 +43,7 @@ public class FixedScheduleConverter {
 
     public static FixedSchedule toFixedScheduleEntity(PostNewScheduleRequest request, Facility facility, User admin) {
         return FixedSchedule.builder()
+                .guestNumber(request.getEvent().getGuestNumber())
                 .facility(facility)
                 .reservationAdmin(admin)
                 .startDate(request.getEffectiveDate().getStart())

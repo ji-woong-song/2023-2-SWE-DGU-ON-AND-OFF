@@ -58,6 +58,9 @@ public class FixedSchedule {
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
+    @Column(nullable = false)
+    private Integer guestNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "facility_id", nullable = false)
     private Facility facility;
@@ -65,14 +68,14 @@ public class FixedSchedule {
     @ManyToOne(fetch = FetchType.LAZY)
     private User reservationAdmin;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.PERSIST)
     private Event event;
 
     public void setEvent(Event event) {
         this.event = event;
     }
-    public void  addReservation(LocalDate date, Integer guestNumber) {
-        Reservation reservation = Reservation.builder()
+    public Reservation toReservation(LocalDate date) {
+        return Reservation.builder()
                 .date(date)
                 .hotUserId(reservationAdmin)
                 .status(ReservationStatus.APPROVED)
@@ -81,6 +84,5 @@ public class FixedSchedule {
                 .event(event)
                 .guestNumber(guestNumber)
                 .build();
-        this.event.addReservation(reservation);
     }
 }
