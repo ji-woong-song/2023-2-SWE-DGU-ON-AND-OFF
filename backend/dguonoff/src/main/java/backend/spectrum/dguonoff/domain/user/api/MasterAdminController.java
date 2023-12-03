@@ -39,7 +39,7 @@ public class MasterAdminController {
         return new ResponseEntity<>(successMessage, successStatus);
     }
 
-    //관리자 권한 박탈 긴능
+    //관리자 권한 박탈 기능
     @PostMapping("/deprivation")
     public ResponseEntity<String> depriveAdminAuthority(@RequestBody EmpowermentParams empParams){
         String userId = empParams.getUserId();
