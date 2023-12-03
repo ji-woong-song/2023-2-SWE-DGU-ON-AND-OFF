@@ -31,6 +31,13 @@ public enum ErrorCode {
     // Reservation
     EXCEED_MAX_RESERVATION(HttpStatus.NOT_ACCEPTABLE, "최대 예약 횟수를 초과하였습니다."),
     EXIST_OVERLAPPED_INTERVAL(HttpStatus.CONFLICT, "겹치는 기간이 있습니다."),
+    EXCEED_MAX_USAGE_TIME(HttpStatus.NOT_ACCEPTABLE, "이용시간이 최대 이용 시간을 초과하였습니다."),
+    EXCEED_MAX_PERSONNEL(HttpStatus.NOT_ACCEPTABLE, "이용자 수가 최대 수용 인원을 초과하였습니다."),
+    UNDER_MIN_PERSONNEL(HttpStatus.NOT_ACCEPTABLE, "이용자 수가 최소 인원보다 적습니다."),
+    TIME_CONFLICT(HttpStatus.NOT_ACCEPTABLE, "시간이 겹치는 예약이 존재합니다."),
+    INVALID_ORDER_TIME(HttpStatus.NOT_ACCEPTABLE, "시작 시간이 종료 시간보다 이전입니다."),
+    INVALID_SAME_TIME(HttpStatus.NOT_ACCEPTABLE, "시작 시간과 종료 시간이 같습니다."),
+    INVALID_RESERVATION_DATE(HttpStatus.NOT_ACCEPTABLE, "예약 가능한 날짜가 아닙니다."),
 
     // FixedSchedule
     NOT_EXIST_SCHEDULE(HttpStatus.NOT_FOUND, "원하는 고정시간표가 없습니다"),

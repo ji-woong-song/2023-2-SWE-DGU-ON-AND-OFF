@@ -1,13 +1,21 @@
 package backend.spectrum.dguonoff.domain.reservation.service;
 
+import backend.spectrum.dguonoff.DAO.*;
+import backend.spectrum.dguonoff.DAO.idClass.ParticipationReservationId;
 import backend.spectrum.dguonoff.DAO.model.ReservationPeriod;
+import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
 import backend.spectrum.dguonoff.domain.facility.repository.FacilityRepository;
+import backend.spectrum.dguonoff.domain.facility.service.FacilityService;
+import backend.spectrum.dguonoff.domain.reservation.dto.ReservationRequest;
 import backend.spectrum.dguonoff.domain.reservation.dto.constraint.DateConstraint;
 import backend.spectrum.dguonoff.domain.reservation.dto.constraint.MaxReservationConstraint;
-import backend.spectrum.dguonoff.domain.reservation.exception.ExceedMaxReservation;
+import backend.spectrum.dguonoff.domain.reservation.dto.constraint.UsageConstraint;
+import backend.spectrum.dguonoff.domain.reservation.exception.*;
 import backend.spectrum.dguonoff.domain.facility.exception.FacilityNotFoundException;
-import backend.spectrum.dguonoff.domain.reservation.exception.InvalidPeriodException;
+import backend.spectrum.dguonoff.domain.reservation.repository.EventRepository;
+import backend.spectrum.dguonoff.domain.reservation.repository.ParticipationReservationRepository;
 import backend.spectrum.dguonoff.domain.reservation.repository.ReservationRepository;
+import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import com.sun.jdi.InvalidTypeException;
@@ -15,10 +23,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
-import static backend.spectrum.dguonoff.global.statusCode.ErrorCode.EXCEED_MAX_RESERVATION;
-import static backend.spectrum.dguonoff.global.statusCode.ErrorCode.NOT_DEFINED_RESERVATION_PERIOD;
+import static backend.spectrum.dguonoff.DAO.model.ReservationStatus.APPROVED;
+import static backend.spectrum.dguonoff.DAO.model.ReservationStatus.PENDING;
+import static backend.spectrum.dguonoff.DAO.model.Role.NORMAL;
+import static backend.spectrum.dguonoff.global.statusCode.ErrorCode.*;
 
 @Service
 @Slf4j
@@ -31,10 +45,14 @@ public class ReservationService {
     private static final int FIRST_DAY_OF_MONTH = 1;
     private static final int ONE_DAY = 1;
     private static final int NEXT_SEMESTER_MONTH = 5;
+    private static final int NO_MAX_TIME = 0;
 
     private final FacilityRepository facilityRepository;
     private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
+    private final EventRepository eventRepository;
+    private final ParticipationReservationRepository participationReservationRepository;
+    private final FacilityService facilityService;
 
 
 
@@ -51,7 +69,7 @@ public class ReservationService {
     public void validateMaxReservation(String facilityCode, LocalDate date, String userId) {
 
         //관리자인 경우 이용 횟수 초과를 확인하지 않음
-        if (!userRepository.findById(userId).get().getRole().equals("NORMAL")) {
+        if (!userRepository.findById(userId).get().getRole().equals(NORMAL)) {
             return;
         }
 
@@ -95,5 +113,133 @@ public class ReservationService {
             throw new ExceedMaxReservation(EXCEED_MAX_RESERVATION, maxReservation);
         }
     }
+
+    //예약을 등록하는 함수
+    public void registerReservation(ReservationRequest reservationRequest, String userId) {
+
+        String title = reservationRequest.getTitle();
+        LocalDate reservationDate = LocalDate.parse(reservationRequest.getDate());
+        LocalTime startTime = LocalTime.parse(reservationRequest.getStartTime());
+        LocalTime endTime = LocalTime.parse(reservationRequest.getEndTime());
+        String facilityCode = reservationRequest.getFacilityCode();
+        String outline = reservationRequest.getOutline();
+        String purpose = reservationRequest.getPurpose();
+        List<String> guestList = reservationRequest.getGuestIds();
+        ReservationStatus status;
+
+        User user = userRepository.findById(userId) //유저가 존재하지 않는 경우
+                .orElseThrow(
+                        () -> new UserNotFoundException(ErrorCode.NOT_EXIST_USER));
+
+        Facility facility = facilityRepository.findByCode(facilityCode) //시설물이 존재하지 않는 경우
+                .orElseThrow(
+                        () -> new FacilityNotFoundException(ErrorCode.NOT_EXIST_FACILITY));
+
+
+        //예약 유효성 검사
+        validateMaxReservation(facilityCode, reservationDate, userId); // 최대 예약 횟수를 초과한 경우 예외 발생
+        validateAvailableDate(reservationDate, facilityCode); //예약 가능 날짜인지 검사
+        validateTime(startTime, endTime); //예약 시간이 유효한지 검사
+        validateTimeConflict(startTime, endTime, facilityCode, reservationDate); //다른 예약과 시간이 곂치는지 검사
+        validateUsageConstraint(startTime, endTime, facilityCode, guestList); //시설물 이용 제한을 위반한 경우 예외 발생
+
+        //예약자의 권한에 따라 예약 상태 설정
+        if(user.getRole().equals(NORMAL)) {
+            status = PENDING;
+        } else {
+            status = APPROVED;
+        }
+
+        //이벤트 등록하기
+        Event event = Event.builder()
+                .hostName(title)
+                .name(user.getName())
+                .outline(outline)
+                .purpose(purpose)
+                .build();
+        eventRepository.saveAndFlush(event);
+
+        //예약 등록하기
+        Reservation reservation = Reservation.builder()
+                .status(status)
+                .date(reservationDate)
+                .startTime(startTime)
+                .endTime(endTime)
+                .facility(facility)
+                .hotUserId(user)
+                .build();
+        reservation.setEvent(event);
+        reservationRepository.saveAndFlush(reservation);
+
+
+        //게스트 유저 참여 예약 등록
+        guestList.forEach(guestId -> {
+            User guest = userRepository.findById(guestId)
+                    .orElseThrow(
+                            () -> new UserNotFoundException(NOT_EXIST_USER));
+
+            Participation_Reservation participation_reservation = Participation_Reservation.builder()
+                    .bookmarkId(ParticipationReservationId.builder()
+                            .reservationId(reservation.getReservationId())
+                            .userId(guest.getId())
+                            .build())
+                    .reservationId(reservation)
+                    .guestId(guest)
+                    .build();
+            participationReservationRepository.save(participation_reservation);
+        });
+
+    }
+
+
+
+
+    //예약 시간이 유효한지 검사하는 함수
+    private void validateTime(LocalTime startTime, LocalTime endTime) {
+        if(startTime.isAfter(endTime)) { //시작 시간이 종료 시간보다 늦은 경우 예외 발생
+            throw new InvalidTimeException(INVALID_ORDER_TIME);
+        } else if (startTime.equals(endTime)) { //시작 시간과 종료 시간이 같은 경우 예외 발생
+            throw new InvalidTimeException(INVALID_SAME_TIME);
+        }
+    }
+
+    //예약 가능 날짜인지 검사하는 함수
+    private void validateAvailableDate(LocalDate reservationDate, String facilityCode) {
+        DateConstraint availableDate = getAvailableDate(facilityCode);
+        LocalDate currentDate = LocalDate.now();
+
+        LocalDate maxDate = reservationDate.minusDays(availableDate.getMaxDate());
+        LocalDate minDate = reservationDate.minusDays(availableDate.getMinDate());
+
+        if(currentDate.isAfter(minDate) || currentDate.isBefore(maxDate)) { //예약 가능 날짜가 아닌 경우 예외 발생
+            throw new InvalidDateException(INVALID_RESERVATION_DATE);
+        }
+    }
+
+    //기존 예약과 시간이 곂치는지 검증하는 함수
+    private void validateTimeConflict(LocalTime startTime, LocalTime endTime, String facilityCode, LocalDate reservationDate) {
+        List<Reservation> reservationList = reservationRepository.findByFacilityCodeAndDate(facilityCode, reservationDate);
+        for (Reservation reservation : reservationList) {
+            if (startTime.isBefore(reservation.getEndTime()) && endTime.isAfter(reservation.getStartTime())) {
+                throw new InvalidReservationException(ErrorCode.TIME_CONFLICT); //다른 예약과 시간이 곂치는 경우 예외 발생
+            }
+        }
+    }
+
+    //시설물 이용 제한을 위반했는지 검증하는 함수
+    private void validateUsageConstraint(LocalTime startTime, LocalTime endTime, String facilityCode, List<String> guestList) {
+        UsageConstraint usageConstraint = facilityService.getUsageConstraint(facilityCode);
+        long usageTime = Duration.between(startTime, endTime).toHours();
+
+        //예약 유효성 검사: 최대 이용 시간, 최대 이용 인원, 최소 이용 인원을 초과한 경우 예외 발생
+        if(usageTime > usageConstraint.getMax_time() && usageConstraint.getMax_time() != NO_MAX_TIME){ //최대 이용 시간을 초과한 경우
+            throw new InvalidReservationException(ErrorCode.EXCEED_MAX_USAGE_TIME);
+        } else if(guestList.size() > usageConstraint.getMax_personnel()){ //최대 이용 인원을 초과한 경우
+            throw new InvalidReservationException(ErrorCode.EXCEED_MAX_PERSONNEL);
+        } else if(guestList.size() < usageConstraint.getMin_personnel()){ //최소 이용 인원을 초과한 경우
+            throw new InvalidReservationException(ErrorCode.UNDER_MIN_PERSONNEL);
+        }
+    }
+
 
 }

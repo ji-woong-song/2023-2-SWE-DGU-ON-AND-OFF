@@ -15,11 +15,11 @@ import java.util.Optional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+    @Query("select r from Reservation r where r.facility.code = ?1 and r.date = ?2")
+    List<Reservation> findByFacilityCodeAndDate(String code, LocalDate date);
 
     @Query("select count(r) from Reservation r " +
             "where r.hotUserId.id = ?1 and r.date between ?2 and ?3 and r.facility.category.name = ?4")
     long countFacilityUsageForCategory(String id, LocalDate dateStart, LocalDate dateEnd, String category);
-
-    List<Reservation> findByFacility_IdAndDate(String id, LocalDate date);
 
 }

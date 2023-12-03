@@ -1,21 +1,20 @@
 package backend.spectrum.dguonoff.domain.reservation.api;
 
 import backend.spectrum.dguonoff.domain.reservation.dto.AvailabilityResponse;
+import backend.spectrum.dguonoff.domain.reservation.dto.ReservationRequest;
 import backend.spectrum.dguonoff.domain.reservation.dto.constraint.DateConstraint;
 import backend.spectrum.dguonoff.domain.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDate;
 
 import static backend.spectrum.dguonoff.global.statusCode.CommonCode.AVAILABLE_FACILITY;
+import static backend.spectrum.dguonoff.global.statusCode.CommonCode.SUCCESS_RESERVATION;
 
 @RestController
 @Slf4j
@@ -43,5 +42,20 @@ public class ReservationController {
 
         return new ResponseEntity<>(response, successStatus);
     }
+
+    //예약 신청 기능
+    @PostMapping("/registration")
+    public ResponseEntity<String> registerReservation(@RequestBody ReservationRequest reservationRequest, Principal principal){
+        String userId = principal.getName();
+
+        //예약 신청
+        reservationService.registerReservation(reservationRequest, userId);
+
+        String successMessage = String.format(SUCCESS_RESERVATION.getMessage(), userId);
+        HttpStatus successStatus = SUCCESS_RESERVATION.getStatus();
+
+        return new ResponseEntity(successMessage, successStatus);
+    }
+
 
 }
