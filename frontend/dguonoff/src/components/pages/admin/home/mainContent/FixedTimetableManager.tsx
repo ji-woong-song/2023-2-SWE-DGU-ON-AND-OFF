@@ -2,32 +2,99 @@ import { useEffect, useState } from "react";
 import styles from "./FixedTimetableManager.module.css";
 import FacilityTable from "./commons/FacilityTable";
 import FacilityTimetable from "./commons/FacilityTimetable";
-import FacilityEventInfo from "./commons/FacilityEventInfo";
+import FacilityEventInfo, { FacilityEvent } from "./commons/FacilityEventInfo";
 import FacilityCategoryTable, { FacilityCategory } from "./commons/FacilityCategoryTable";
 import Building from "../../../../../types/Building";
 import Facility from "../../../../../types/Facility";
 import { Day } from "../../../../../types/Day";
+import { getAuthToken, getFacilities, getFixedSchedules, getUserRole, registerFixedSchedules } from "../../../../../api/dguonandoff";
+import { useNavigate } from "react-router-dom";
+
+
+interface FixedTimetableManagerParams {
+    buildings: Building[];
+}
+
 
 
 /** 고정 시간표 관리 */
-export default function FixedTimetableManager() {
+export default function FixedTimetableManager({ buildings }: FixedTimetableManagerParams) {
+    // Const
+    const navigate = useNavigate();
+
+
     // State
     const [currFacility, setCurrFacility] = useState<FacilityCategory>("강의실");
+    const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
+    const [facilities, setFacilities] = useState<Facility[]>([]);
+    const [selectedFacility, setSelectedFacility] = useState<Facility | null>(null);
+
+
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date>(new Date());
-    const [buildings, setBuildings] = useState<Building[]>([]);
-    const [selectedBuilding, setSelectedBuilding] = useState<Building>(new Building());
-    const [facilities, setFacilities] = useState<Facility[]>([]);
-    const [currDay, setCurrDay] = useState<Day>("월");
+    const [currDay, setCurrDay] = useState<Day>("MONDAY");
+    const [selectedTimes, setSelectedTimes] = useState<Date[]>([]);
+    const [facilityEvent, setFacilityEvent] = useState<FacilityEvent>({ name: '', hostName: '', outline: '', purpose: '', guestNumber: 0 });
+    const [doSubmitEvent, setDoSubmitEvent] = useState<boolean>(false);
+    const [doRemoveEvent, setDoRemoveEvent] = useState<boolean>(false);
 
 
     // Effect
     useEffect(() => {
-        /*  setBuildings([new Building("신공학관", [new Facility("3144")])]);
-          setFacilities(Array.from({ length: 50 }, (_, index) => {
-              return new Facility(`신공학관 ${3105 + index}`, Math.floor(Math.random() * 100));
-          }));*/
-    }, []);
+        if (buildings.length > 0) {
+            setSelectedBuilding(buildings[0]);
+        }
+    }, [buildings]);
+
+    useEffect(() => {
+        if (selectedBuilding) {
+            (async () => {
+                const [token, userRole] = [getAuthToken(), getUserRole()];
+                if (token && userRole) {
+                    let newFacilities: Facility[] = [];
+                    for (let i = 1; i <= selectedBuilding.getMaxFloor(); i++) {
+                        newFacilities = [...newFacilities, ...(await getFacilities(token, i, selectedBuilding.getName()))];
+                    }
+                    setFacilities(newFacilities);
+                } else {
+                    alert("로그인 시간이 만료되었습니다.");
+                    navigate("/admin/login")
+                }
+            })();
+        }
+    }, [selectedBuilding]);
+
+    useEffect(() => {
+        if (selectedFacility && selectedBuilding) {
+            (async () => {
+                const [token, userRole] = [getAuthToken(), getUserRole()];
+                if (token && userRole) {
+                    getFixedSchedules(token, currDay, startDate, endDate, selectedFacility, selectedBuilding);
+                } else {
+                    alert("로그인 시간이 만료되었습니다.");
+                    navigate("/admin/login")
+                }
+            })();
+        }
+    }, [selectedFacility, selectedBuilding, currDay]);
+
+    useEffect(() => {
+        if (selectedFacility && selectedBuilding && doSubmitEvent) {
+            (async () => {
+                const [token, userRole] = [getAuthToken(), getUserRole()];
+                if (token && userRole) {
+                    selectedTimes.forEach((time) => {
+                        console.log(time);
+                        registerFixedSchedules(token, selectedFacility, selectedBuilding, startDate, endDate, currDay, time, facilityEvent);
+                    });
+                    setDoSubmitEvent(false);
+                } else {
+                    alert("로그인 시간이 만료되었습니다.");
+                    navigate("/admin/login")
+                }
+            })();
+        }
+    }, [selectedFacility, selectedBuilding, doSubmitEvent, setDoSubmitEvent]);
 
 
     // Redner
@@ -86,17 +153,25 @@ export default function FixedTimetableManager() {
                     <div className={styles.facility_table}>
                         <FacilityTable
                             facilities={facilities}
+                            selectedFacility={selectedFacility}
+                            setSelectedFacility={setSelectedFacility}
                         />
                     </div>
                     <div className={styles.facility_timetable}>
                         <FacilityTimetable
                             currDay={currDay}
                             setCurrDay={setCurrDay}
+                            selectedTimes={selectedTimes}
+                            setSelectedTimes={setSelectedTimes}
                         />
                     </div>
                     <div className={styles.event_info}>
                         <FacilityEventInfo
                             submitType={"register"}
+                            facilityEvent={facilityEvent}
+                            setFacilityEvent={setFacilityEvent}
+                            setDoSubmitEvent={setDoSubmitEvent}
+                            setDoRemoveEvent={setDoRemoveEvent}
                         />
                     </div>
                 </div>

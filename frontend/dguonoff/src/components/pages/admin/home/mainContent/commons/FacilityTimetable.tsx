@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import styles from "./FacilityTimetable.module.css";
-import { Day } from "../../../../../../types/Day";
+import { Day, dayToKor } from "../../../../../../types/Day";
 import useElementDimensions from "../../../../../../hooks/useElementDimensions";
 import VirtualizedTable from "../../../../../../modules/virtualizedTable/VirtualizedTable";
 
@@ -8,16 +8,17 @@ import VirtualizedTable from "../../../../../../modules/virtualizedTable/Virtual
 export interface FacilityTimetableProps {
     currDay: Day;
     setCurrDay: React.Dispatch<React.SetStateAction<Day>>;
+    selectedTimes: Date[];
+    setSelectedTimes: React.Dispatch<React.SetStateAction<Date[]>>
 }
 
 
-export default function FacilityTimetable({ currDay, setCurrDay }: FacilityTimetableProps) {
+export default function FacilityTimetable({ currDay, setCurrDay, selectedTimes, setSelectedTimes }: FacilityTimetableProps) {
     // Const
-    const days: Day[] = ["월", "화", "수", "목", "금", "토", "일"];
+    const days: Day[] = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
     const timeIntervals = Array.from({ length: 32 }, (_, index) => {
-        const kstOffset = 9;
         const startTime = new Date();
-        startTime.setHours(8 + kstOffset, 0, 0, 0);
+        startTime.setHours(8, 0, 0, 0);
         startTime.setMinutes(startTime.getMinutes() + 30 * index);
 
         const endTime = new Date(startTime);
@@ -41,7 +42,7 @@ export default function FacilityTimetable({ currDay, setCurrDay }: FacilityTimet
 
 
     // State
-    const [hoverDay, sethoverDay] = useState<"Blank" | Day>("월");
+    const [hoverDay, sethoverDay] = useState<"Blank" | Day>("MONDAY");
 
 
     // Hook
@@ -56,6 +57,22 @@ export default function FacilityTimetable({ currDay, setCurrDay }: FacilityTimet
 
     const onHoverDay = (day: "Blank" | Day) => {
         sethoverDay(day);
+    }
+
+    const compareTime = (date1: Date, date2: Date): boolean => {
+        const hours1 = date1.getHours();
+        const minutes1 = date1.getMinutes();
+        const hours2 = date2.getHours();
+        const minutes2 = date2.getMinutes();
+        return hours1 === hours2 && minutes1 === minutes2;
+    }
+
+    const onSelectTime = (selectedTime: Date) => {
+        if (selectedTimes.some((time) => compareTime(time, selectedTime))) {
+            setSelectedTimes(selectedTimes.filter((time) => !compareTime(time, selectedTime)));
+        } else {
+            setSelectedTimes([...selectedTimes, selectedTime]);
+        }
     }
 
 
@@ -129,7 +146,7 @@ export default function FacilityTimetable({ currDay, setCurrDay }: FacilityTimet
                                                         backgroundColor: currDay === day || hoverDay === day ?
                                                             'var(--component-main-color)' : 'var(--component-inner-color)',
                                                     }}>
-                                                    {day}
+                                                    {dayToKor(day)}
                                                 </td>
                                             ))}
                                         </tr>
@@ -190,12 +207,27 @@ export default function FacilityTimetable({ currDay, setCurrDay }: FacilityTimet
                     }
                 }}
                 renderRows={({ index, rowClassName, rowStyle, itemClassName, itemStyles }) => {
+                    const kstOffset = 9;
                     const timeInterval = timeIntervals[index];
+                    const newStart = new Date(timeInterval.start);
+                    const newEnd = new Date(timeInterval.end);
+                    newStart.setHours(newStart.getHours() + kstOffset);
+                    newEnd.setHours(newEnd.getHours() + kstOffset);
+
                     return (
-                        <div key={index} id={`${index}`} className={rowClassName} style={rowStyle}>
+                        <div key={index} id={`${index}`} className={rowClassName}
+                            onClick={() => { onSelectTime(timeInterval.start) }}
+                            style={
+                                selectedTimes.some((time) => compareTime(time, timeInterval.start)) ? {
+                                    ...rowStyle,
+                                    color: 'var(--component-innertext-select-color)',
+                                    backgroundColor: 'var(--component-main-color)'
+                                } : {
+                                    ...rowStyle
+                                }}>
                             <div className={itemClassName} style={itemStyles[0]}>{
-                                `${timeInterval.start.toISOString().split('T')[1].split(':')[0]}:${timeInterval.start.toISOString().split('T')[1].split(':')[1]} ~ 
-                                            ${timeInterval.end.toISOString().split('T')[1].split(':')[0]}:${timeInterval.end.toISOString().split('T')[1].split(':')[1]}`
+                                `${newStart.toISOString().split('T')[1].split(':')[0]}:${newStart.toISOString().split('T')[1].split(':')[1]} ~ 
+                                            ${newEnd.toISOString().split('T')[1].split(':')[0]}:${newEnd.toISOString().split('T')[1].split(':')[1]}`
                             }</div>
                         </div>
                     );

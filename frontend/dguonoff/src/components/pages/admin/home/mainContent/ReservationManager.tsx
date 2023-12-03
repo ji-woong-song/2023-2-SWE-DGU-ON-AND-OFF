@@ -9,11 +9,14 @@ import Facility from "../../../../../types/Facility";
 import VirtualizedTable from "../../../../../modules/virtualizedTable/VirtualizedTable";
 import { useModal } from "../../../../../modules/modal/Modal";
 import { ModalAnimationType } from "../../../../../modules/modal/ModalAnimations";
+import { getAuthToken, getReservations, getUserRole } from "../../../../../api/dguonandoff";
+import { useNavigate } from "react-router-dom";
 
 
 
 export default function ReservationManager() {
     // Const
+    const navigate = useNavigate();
     const [currFacility, setCurrFacility] = useState<FacilityCategory>("강의실");
     const reservationStatuses: ("all" | ReservationStatus)[] = ["all", "pending", "accept", "reject"];
 
@@ -69,6 +72,19 @@ export default function ReservationManager() {
                   Math.floor(Math.random() * 30),
                   ["pending", "accept", "reject"][Math.floor(Math.random() * 3)] as ReservationStatus);
           }));*/
+
+        (async () => {
+            const [token, userRole] = [getAuthToken(), getUserRole()];
+            if (token && userRole === "MASTER") {
+                await getReservations(token);
+
+            } else {
+                alert("권한이 없습니다.");
+                navigate("/admin/login")
+            }
+        })();
+
+
     }, []);
 
 

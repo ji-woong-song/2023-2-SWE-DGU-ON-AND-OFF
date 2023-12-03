@@ -1,18 +1,36 @@
+/*****************************************************************
+ * 관리자 계정 관리 페이지를 렌더링하고, 관리자 계정 관리 기능을 제공하는 컴포넌트입니다.
+ *****************************************************************/
+
 import { useEffect, useRef, useState } from "react";
 import styles from "./AdminAccountManager.module.css";
 import User, { UserRole } from "../../../../../types/User";
 import useElementDimensions from "../../../../../hooks/useElementDimensions";
 import VirtualizedTable from "../../../../../modules/virtualizedTable/VirtualizedTable";
+import { getAuthToken, getUserRole, getUsers, requestDeprivation, requestEmpowerment } from "../../../../../api/dguonandoff";
+import { useNavigate } from "react-router-dom";
 
-
-
+/**
+ * AdminAccountManager 컴포넌트는 'Master'사용자의 관리자 계정 관리를 위한 UI를 제공합니다.
+ * 
+ * 이 컴포넌트는 사용자 목록을 보여주는 테이블, 사용자의 권한을 변경할 수 있는 드롭다운 메뉴, 
+ * 그리고 사용자의 아이디와 역할에 따라 사용자를 필터링할 수 있는 검색 필터를 제공합니다.
+ * 관리자는 사용자 목록을 보고, 각 사용자의 역할을 'NORMAL' 또는 'ADMIN'으로 변경할 수 있습니다.
+ * 사용자 목록은 가상화된 테이블을 통해 효율적으로 렌더링됩니다.
+ * 
+ * 컴포넌트 마운트 시, 관리자 권한을 가진 사용자만이 페이지에 접근할 수 있으며,
+ * 그렇지 않을 경우 로그인 페이지로 이동합니다.
+ * 
+ * @returns {JSX.Element} 관리자 계정 관리 페이지를 렌더링하는 JSX 엘리먼트입니다.
+ */
 export default function AdminAccountManager() {
     // Const 
-    const filterUserRoles: ("all" | UserRole)[] = ["all", "user", "admin"];
-    const userRoles: UserRole[] = ["user", "admin", "master"];
+    const navigate = useNavigate();
+    const filterUserRoles: ("All" | UserRole)[] = ["All", "NORMAL", "ADMIN"];
+    const userRoles: UserRole[] = ["NORMAL", "ADMIN"];
     const userTableColumns: { name: string, style: React.CSSProperties }[] = [
         { name: "ID", style: { width: "20%" } },
-        { name: "이름", style: { width: "20%" } },
+        { name: "SID", style: { width: "20%" } },
         { name: "이메일", style: { width: "40%" } },
         { name: "사용자 권한", style: { width: "20%" } },
     ];
@@ -23,10 +41,10 @@ export default function AdminAccountManager() {
 
 
     // State
-    const [filteringUserRole, setFilteringUserRole] = useState<"all" | UserRole>("all");
+    const [filteringUserRole, setFilteringUserRole] = useState<"All" | UserRole>("All");
+    const [filteringUserId, setFilteringUserId] = useState<string>("");
     const [users, setUsers] = useState<User[]>([]);
-    const [userRoleEdits, setUserRoleEdits] = useState(new Map());
-
+    const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
 
 
     // Hook
@@ -34,39 +52,78 @@ export default function AdminAccountManager() {
 
 
     // Handler
-    const saveChanges = () => {
-        setUsers(users.map(user => {
-            const editedRole = userRoleEdits.get(user.getId());
-            if (editedRole) {
-                return new User(user.getId(), user.getName(), user.getEmail(), editedRole);
+    const handleRoleChange = async (userIndex: number, newRole: UserRole) => {
+        const [token, userRole] = [getAuthToken(), getUserRole()];
+        const user = users[userIndex];
+        if (token && userRole === "MASTER") {
+            switch (newRole) {
+                case "NORMAL": {
+                    // 관리자 권한 박탈
+                    if (user.getRole() === "ADMIN") {
+                        if (await requestDeprivation(token, user.getId())) {
+                            user.setRole("NORMAL");
+                        }
+                    }
+                    break;
+                }
+                case "ADMIN": {
+                    // 관리자 권한 부여
+                    if (user.getRole() === "NORMAL") {
+                        if (await requestEmpowerment(token, user.getId())) {
+                            user.setRole("ADMIN");
+                        }
+                    }
+                    break;
+                }
             }
-            return user;
-        }));
-        setUserRoleEdits(new Map()); // 변경 사항을 저장한 후 초기화
+            setFilteredUsers([...filteredUsers.slice(0, userIndex), user, ...filteredUsers.slice(userIndex + 1)]);
+        } else {
+            alert("권한이 없습니다.");
+            navigate("/admin/login")
+        }
     };
-
-    const undoChanges = () => {
-        setUserRoleEdits(new Map()); // 변경 사항을 초기화
-    };
-
-    const handleRoleChange = (userId: number, newRole: UserRole) => {
-        setUserRoleEdits(new Map(userRoleEdits).set(userId, newRole));
-    };
-
-
 
 
     // Effect
     useEffect(() => {
-        setUsers(Array.from({ length: 50 }, () => {
-            const id = Math.floor(Math.random() * 9000000000) + 1000000000; // 10자리 정수
-            const name = `User_${id}`;
-            const email = `user${id}@example.com`;
-            const roles: UserRole[] = ["user", "admin", "master"];
-            const role = roles[Math.floor(Math.random() * roles.length)];
-            return new User(id, name, email, role);
-        }));
-    }, []);
+        (async () => {
+            const [token, userRole] = [getAuthToken(), getUserRole()];
+            if (token && userRole === "MASTER") {
+                const reponseUsers = await getUsers(token);
+                setUsers(reponseUsers);
+                setFilteredUsers(reponseUsers);
+
+            } else {
+                alert("권한이 없습니다.");
+                navigate("/admin/login")
+            }
+        })();
+    }, [navigate]);
+
+
+    useEffect(() => {
+        // 계정 ID 필터링
+        const newUsers = filteringUserId.length === 0 ? users : users.filter((user) => user.getId().includes(filteringUserId));
+
+        // 계정 권한 필터링
+        switch (filteringUserRole) {
+            case "All": {
+                setFilteredUsers(newUsers.filter((user) => user.getRole() === "ADMIN" || user.getRole() === "NORMAL"));
+                break;
+            }
+            case "NORMAL": {
+                setFilteredUsers(newUsers.filter((user) => user.getRole() === "NORMAL"));
+                break;
+            }
+            case "ADMIN": {
+                setFilteredUsers(newUsers.filter((user) => user.getRole() === "ADMIN"));
+                break;
+            }
+            default: {
+                setFilteredUsers([]);
+            }
+        }
+    }, [filteringUserRole, filteringUserId, users]);
 
 
     // Render
@@ -83,13 +140,12 @@ export default function AdminAccountManager() {
                 </select>
             </div>
             <div className={styles.user_name}>
-                <label htmlFor="user-name">유저 이름</label>
-                <input type="text" maxLength={50} />
-                <button className={styles.search}>조회</button>
-            </div>
-            <div className={styles.buttons}>
-                <button className={styles.save} onClick={saveChanges}>저장</button>
-                <button className={styles.undo} onClick={undoChanges}>되돌리기</button>
+                <label htmlFor="user-name">유저 ID</label>
+                <input type="text" maxLength={50} onChange={(e) => {
+                    const validValue = e.target.value.replace(/[^a-zA-Z0-9!@#$%^&*()_+\-=[\]{};':"|,.<>?]+/g, '');
+                    e.target.value = validValue;
+                    setFilteringUserId(validValue);
+                }} />
             </div>
         </div>
         <div className={styles.user_table} ref={userTable}>
@@ -124,7 +180,7 @@ export default function AdminAccountManager() {
                     );
                 }}
 
-                numRows={users.length}
+                numRows={filteredUsers.length}
                 rowHeight={45}
                 rowStyles={{
                     default: {
@@ -141,12 +197,12 @@ export default function AdminAccountManager() {
                     }
                 }}
                 renderRows={({ index, rowClassName, rowStyle, itemClassName, itemStyles }) => {
-                    const user = users[index];
+                    const user = filteredUsers[index];
                     return (
                         <div key={index} id={`${index}`} className={rowClassName}
                             style={rowStyle}>
                             <div className={itemClassName} style={itemStyles[0]}>{user.getId()}</div>
-                            <div className={itemClassName} style={itemStyles[1]}>{user.getName()}</div>
+                            <div className={itemClassName} style={itemStyles[1]}>{user.getSid()}</div>
                             <div className={itemClassName} style={itemStyles[2]}>{user.getEmail()}</div>
                             <div className={itemClassName} style={itemStyles[3]}>
                                 <select style={{
@@ -161,8 +217,8 @@ export default function AdminAccountManager() {
                                     cursor: "pointer",
                                     userSelect: "none"
                                 }}
-                                    value={userRoleEdits.get(user.getId()) || user.getRole()}
-                                    onChange={(e) => handleRoleChange(user.getId(), e.target.value as UserRole)}
+                                    value={user.getRole()}
+                                    onChange={(e) => handleRoleChange(index, e.currentTarget.value as UserRole)}
                                 >
                                     {userRoles.map((userRole, index) => (
                                         <option key={index} value={userRole}>

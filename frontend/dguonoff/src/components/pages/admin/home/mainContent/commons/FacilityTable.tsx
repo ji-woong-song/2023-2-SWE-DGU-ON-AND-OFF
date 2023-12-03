@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import styles from "./FacilityTable.module.css";
 import VirtualizedTable from "../../../../../../modules/virtualizedTable/VirtualizedTable";
 import Facility from "../../../../../../types/Facility";
@@ -8,10 +8,12 @@ import useElementDimensions from "../../../../../../hooks/useElementDimensions";
 
 export interface FacilityTableProps {
     facilities: Facility[];
+    selectedFacility: Facility | null;
+    setSelectedFacility: React.Dispatch<React.SetStateAction<Facility | null>>;
 }
 
 
-export default function FacilityTable({ facilities }: FacilityTableProps) {
+export default function FacilityTable({ facilities, selectedFacility, setSelectedFacility }: FacilityTableProps) {
     // Const
     const facilityTableColumns: { name: string, style: React.CSSProperties }[] = [
         { name: "시설물명", style: { width: "75%" } },
@@ -80,12 +82,19 @@ export default function FacilityTable({ facilities }: FacilityTableProps) {
                 const facility = facilities[index];
                 return (
                     <div key={index} id={`${index}`} className={rowClassName}
-                        style={rowStyle}>
+                        onClick={() => { setSelectedFacility(facility) }}
+                        style={(selectedFacility && facility.getCode() === selectedFacility.getCode()) ? {
+                            ...rowStyle,
+                            color: 'var(--component-innertext-select-color)',
+                            backgroundColor: 'var(--component-main-color)'
+                        } : {
+                            ...rowStyle
+                        }}>
                         <div className={itemClassName} style={itemStyles[0]}>{facility.getName()}</div>
                         <div className={itemClassName} style={itemStyles[1]}>{facility.getCapacity()}</div>
                     </div>
                 );
             }}
         />
-    </div>);
+    </div >);
 }
