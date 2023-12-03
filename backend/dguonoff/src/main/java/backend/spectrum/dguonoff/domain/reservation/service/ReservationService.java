@@ -26,6 +26,7 @@ import backend.spectrum.dguonoff.email.content.EmailMessage;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -36,6 +37,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.spectrum.dguonoff.DAO.model.FacilityStatus.EMPTY;
+import static backend.spectrum.dguonoff.DAO.model.FacilityStatus.USING;
 import static backend.spectrum.dguonoff.DAO.model.ReservationStatus.*;
 import static backend.spectrum.dguonoff.DAO.model.Role.*;
 import static backend.spectrum.dguonoff.email.CommonMessage.APPROVE_RESERVATION;
@@ -355,7 +358,6 @@ public class ReservationService {
 
     //승인된 모든 예약 목록을 조회하는 함수
     public List<ReservationInfoResponse> getAllApprovedReservationInfoList() {
-
         List<Reservation> reservationList = reservationRepository.findAllApproved();
         return convertToInfoResponse(reservationList);
     }
@@ -436,6 +438,32 @@ public class ReservationService {
         } else if(guestList.size() < usageConstraint.getMin_personnel()){ //최소 이용 인원을 초과한 경우
             throw new InvalidReservationException(ErrorCode.UNDER_MIN_PERSONNEL);
         }
+    }
+
+    //예약 정보에 따라 모든 시설물의 상태를 변경하는 함수
+    @Scheduled(cron = "0 * * * * *")
+    public void updateFacilityStatus() {
+        //승인된 모든 예약 정보 조회
+        List<ReservationInfoResponse> allReservationInfoList = getAllApprovedReservationInfoList();
+
+        LocalDate currentDate = LocalDate.now(); // 현재 날짜 가져오기
+        LocalTime currentTime = LocalTime.now(); // 현재 시간 가져오기
+
+        log.info(currentTime + " " + currentTime + " - " + "Updating facility status...");
+
+        allReservationInfoList.forEach(
+                reservationInfo -> {
+                    if(reservationInfo.getDate().isEqual(currentDate)) { //예약 날짜가 현재 날짜와 같은 경우
+                        if(reservationInfo.getStartTime().isBefore(currentTime) && reservationInfo.getEndTime().isAfter(currentTime)) { //예약 시간이 현재 시간 사이인 경우
+                            //예약된 시설물의 상태를 사용중으로 변경
+                            facilityRepository.updateFacilityStatus(USING, reservationInfo.getFacilityCode());
+                        } else if(reservationInfo.getEndTime().isBefore(currentTime)) { //예약 시간이 현재 시간보다 이른 경우
+                            //예약된 시설물의 상태를 사용 가능으로 변경
+                            facilityRepository.updateFacilityStatus(EMPTY, reservationInfo.getFacilityCode());
+                        }
+                    }
+                }
+        );
     }
 
 
