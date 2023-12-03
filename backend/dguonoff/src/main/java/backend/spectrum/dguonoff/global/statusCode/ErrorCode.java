@@ -26,8 +26,10 @@ public enum ErrorCode {
 
     // Facility
     NOT_EXIST_FACILITY(HttpStatus.NOT_FOUND, "해당 시설물을 찾을 수 없습니다."),
+    NOT_DEFINED_RESERVATION_PERIOD(HttpStatus.NOT_FOUND, "정의되지 않은 기준 예약 기간입니다."),
 
     // Reservation
+    EXCEED_MAX_RESERVATION(HttpStatus.NOT_ACCEPTABLE, "최대 예약 횟수를 초과하였습니다."),
     EXIST_OVERLAPPED_INTERVAL(HttpStatus.CONFLICT, "겹치는 기간이 있습니다."),
 
     // FixedSchedule

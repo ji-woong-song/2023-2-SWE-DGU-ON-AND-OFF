@@ -1,10 +1,7 @@
 package backend.spectrum.dguonoff.DAO;
 
 import backend.spectrum.dguonoff.DAO.model.FacilityStatus;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -17,6 +14,7 @@ import java.util.List;
     })
 })
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Facility {
@@ -35,11 +33,11 @@ public class Facility {
     @Column(name = "floor", nullable = false)
     private Integer floor;
 
-    @Column(name = "is_bookable", columnDefinition = "BOOLEAN default FALSE")
-    private Boolean isBookable;
+    @Column(name = "is_bookable", columnDefinition = "BIT DEFAULT 0")
+    private boolean isBookable;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(15) DEFAULT 'EMPTY'")
+    @Column(nullable = false, columnDefinition = "VARCHAR(15) default 'EMPTY'")
     private FacilityStatus state;
 
     @ManyToOne(fetch = FetchType.LAZY)
