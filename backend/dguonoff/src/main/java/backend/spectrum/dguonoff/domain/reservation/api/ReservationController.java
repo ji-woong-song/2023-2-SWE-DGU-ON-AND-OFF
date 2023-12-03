@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
@@ -98,7 +99,7 @@ public class ReservationController {
 
     //관리자 예약 승인 기능
     @GetMapping("/admin/approval/{reservationId}")
-    public ResponseEntity<String> approveReservation(@PathVariable Long reservationId, Principal principal){
+    public ResponseEntity<String> approveReservation(@PathVariable Long reservationId, Principal principal) throws MessagingException {
         String adminId = principal.getName();
 
         //관리자 권한 확인
@@ -115,12 +116,12 @@ public class ReservationController {
 
     //관리자 예약 거절 기능
     @GetMapping("/admin/reject/{reservationId}")
-    public ResponseEntity<String> rejectReservation(@PathVariable Long reservationId, Principal principal){
+    public ResponseEntity<String> rejectReservation(@PathVariable Long reservationId, Principal principal) throws MessagingException {
         String adminId = principal.getName();
 
         //관리자 권한 확인
         userService.checkAdmin(adminId);
-        
+
         //예약 거절
         reservationService.rejectReservation(reservationId);
 

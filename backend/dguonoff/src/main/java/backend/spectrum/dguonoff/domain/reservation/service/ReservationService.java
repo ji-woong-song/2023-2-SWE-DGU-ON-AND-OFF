@@ -21,11 +21,15 @@ import backend.spectrum.dguonoff.domain.reservation.repository.ParticipationRese
 import backend.spectrum.dguonoff.domain.reservation.repository.ReservationRepository;
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
+import backend.spectrum.dguonoff.email.EmailService;
+import backend.spectrum.dguonoff.email.content.EmailMessage;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.validation.constraints.Email;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -34,6 +38,8 @@ import java.util.List;
 
 import static backend.spectrum.dguonoff.DAO.model.ReservationStatus.*;
 import static backend.spectrum.dguonoff.DAO.model.Role.*;
+import static backend.spectrum.dguonoff.email.CommonMessage.APPROVE_RESERVATION;
+import static backend.spectrum.dguonoff.email.CommonMessage.REJECT_RESERVATION;
 import static backend.spectrum.dguonoff.global.statusCode.ErrorCode.*;
 
 @Service
@@ -55,6 +61,7 @@ public class ReservationService {
     private final EventRepository eventRepository;
     private final ParticipationReservationRepository participationReservationRepository;
     private final FacilityService facilityService;
+    private final EmailService emailService;
 
 
 
@@ -154,8 +161,8 @@ public class ReservationService {
 
         //이벤트 등록하기
         Event event = Event.builder()
-                .hostName(title)
-                .name(user.getName())
+                .hostName(user.getName())
+                .name(title)
                 .outline(outline)
                 .purpose(purpose)
                 .build();
@@ -292,23 +299,41 @@ public class ReservationService {
     }
 
     //예약 승인 함수
-    public void approveReservation(Long reservationId) {
+    public void approveReservation(Long reservationId) throws MessagingException {
         //존재하는 예약인지 확인
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(
                         () -> new ReservationNotFoundException(ErrorCode.NOT_EXIST_RESERVATION));
+        String title = reservation.getEvent().getName();
         //예약 상태 승인으로 변경
         reservationRepository.updateStatus(APPROVED, reservationId);
+        //예약 승인 이메일 전송
+        EmailMessage emailMessage = EmailMessage.builder()
+                .to(reservation.getHotUserId().getEmail())
+                .subject(title + " " + APPROVE_RESERVATION.getTitle())
+                .message(APPROVE_RESERVATION.getMessage())
+                .build();
+        emailService.sendEmail(emailMessage);
+
     }
 
     //예약 거절 함수
-    public void rejectReservation(Long reservationId) {
+    public void rejectReservation(Long reservationId) throws MessagingException {
         //존재하는 예약인지 확인
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(
                         () -> new ReservationNotFoundException(ErrorCode.NOT_EXIST_RESERVATION));
+        String title = reservation.getEvent().getName();
         //예약 상태 거절로 변경
         reservationRepository.updateStatus(REJECTED, reservationId);
+
+        //예약 거절 이메일 전송
+        EmailMessage emailMessage = EmailMessage.builder()
+                .to(reservation.getHotUserId().getEmail())
+                .subject(title + " " + REJECT_RESERVATION.getTitle())
+                .message(REJECT_RESERVATION.getMessage())
+                .build();
+        emailService.sendEmail(emailMessage);
     }
 
 
