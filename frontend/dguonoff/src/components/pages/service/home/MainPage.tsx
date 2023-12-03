@@ -5,6 +5,8 @@ import styles from "../Service.module.css";
 import GrayBorderBox from "../../../../modules/GrayBorderBox";
 import GrayCircle from "../../../../modules/GrayCircle";
 import { Business, LocalLibrary, FilterHdr } from '@mui/icons-material';
+import { useNavigate } from "react-router-dom";
+import useAuth from "../../../../hooks/useAuth";
 
 
 interface FacilityMenu {
@@ -14,6 +16,17 @@ interface FacilityMenu {
 
 
 export default function MainPage() {
+    const navigate = useNavigate();
+    const isUserLoggedIn = useAuth();
+
+    useEffect(() => {
+        console.log('isUserLoggedIn:', isUserLoggedIn)
+        if (!isUserLoggedIn) {
+          navigate('/login'); // 로그인 안되어 있으면 로그인 페이지로 이동
+        }
+      }, [isUserLoggedIn, navigate]);
+
+
     const appName : string = "동국 ON/OFF";
 
     const facilityMenu : FacilityMenu[] = [
