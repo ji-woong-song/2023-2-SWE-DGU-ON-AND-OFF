@@ -4,6 +4,8 @@ import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -84,5 +86,22 @@ public class FixedSchedule {
                 .event(event)
                 .guestNumber(guestNumber)
                 .build();
+    }
+    public List<Reservation> reserve() {
+        List<Reservation> result = new ArrayList<>();
+        LocalDate date = LocalDate.from(startDate);
+
+        if (LocalDate.now().isAfter(startDate)) {
+            date = LocalDate.from(LocalTime.now());
+        }
+        int searchInterval = 1;
+        while (date.isBefore(endDate) || date.equals(endDate)) {
+            if (date.getDayOfMonth() == day.getValue()) {
+                searchInterval = 7;
+                result.add(toReservation(date));
+            }
+            date = date.plusDays(searchInterval);
+        }
+        return result;
     }
 }

@@ -28,4 +28,6 @@ public interface TempReservationRepository extends JpaRepository<Reservation, Lo
      */
     List<Reservation> findByDateAfterThanEqualOrDateEqualAndStartTimeAfterAndEvent_EventId(
             LocalDate date, LocalTime time, Long eventId);
+
+    List<Reservation> findByDateAfterThanEqualOrDateEqualAndStartTimeAfter(LocalDate date, LocalTime time);
 }
