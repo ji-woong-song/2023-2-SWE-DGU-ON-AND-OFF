@@ -21,6 +21,8 @@ public class ReservationInfoResponse {
     private LocalTime startTime;
     private LocalTime endTime;
     private String facilityCode;
+    private String buildingName;
+    private String facilityName;
     private String outline;
     private String purpose;
     private List<GuestInfo> guests;

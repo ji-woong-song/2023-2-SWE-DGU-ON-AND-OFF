@@ -34,11 +34,11 @@ public class ReservationController {
     @GetMapping
     public ResponseEntity<String> getReservationInfo(Principal principal){
         String userId = principal.getName();
-        log.info("userId: {}", userId);
-
         List<ReservationInfoResponse> reservationInfoList = reservationService.getReservationInfoList(userId);
 
-        return new ResponseEntity(reservationInfoList, HttpStatus.OK);
+        HttpStatus successStatus = SUCCESS_FACILITY_LOOKUP.getStatus();
+
+        return new ResponseEntity(reservationInfoList, successStatus);
     }
 
     //전체 예약 목록 조회

@@ -345,7 +345,6 @@ public class ReservationService {
     public List<ReservationInfoResponse> getReservationInfoList(String userId) {
         //유저의 예약 목록 조회
         List<Reservation> reservationList = reservationRepository.findReservationList(userId);
-
         return convertToInfoResponse(reservationList);
     }
 
@@ -384,6 +383,8 @@ public class ReservationService {
                             .startTime(reservation.getStartTime())
                             .endTime(reservation.getEndTime())
                             .facilityCode(reservation.getFacility().getCode())
+                            .facilityName(reservation.getFacility().getName())
+                            .buildingName(reservation.getFacility().getBuilding().getName())
                             .outline(event.getOutline())
                             .purpose(event.getPurpose())
                             .guests(guestInfoList)
