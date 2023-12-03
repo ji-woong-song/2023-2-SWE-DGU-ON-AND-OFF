@@ -62,6 +62,9 @@ export default function SignupPage() {
                     break;
                 }
             }
+        }else{
+            let errorInfo = "값을 입력해주세요";
+            alert(errorInfo);
         }
  
         console.log('UserId:', userId, 'userPw:', userPw);
