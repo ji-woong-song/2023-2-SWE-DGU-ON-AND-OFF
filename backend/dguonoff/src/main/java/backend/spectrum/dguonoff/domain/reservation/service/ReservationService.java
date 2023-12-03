@@ -32,8 +32,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static backend.spectrum.dguonoff.DAO.model.ReservationStatus.APPROVED;
-import static backend.spectrum.dguonoff.DAO.model.ReservationStatus.PENDING;
+import static backend.spectrum.dguonoff.DAO.model.ReservationStatus.*;
 import static backend.spectrum.dguonoff.DAO.model.Role.*;
 import static backend.spectrum.dguonoff.global.statusCode.ErrorCode.*;
 
@@ -292,6 +291,25 @@ public class ReservationService {
         }
     }
 
+    //예약 승인 함수
+    public void approveReservation(Long reservationId) {
+        //존재하는 예약인지 확인
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(
+                        () -> new ReservationNotFoundException(ErrorCode.NOT_EXIST_RESERVATION));
+        //예약 상태 승인으로 변경
+        reservationRepository.updateStatus(APPROVED, reservationId);
+    }
+
+    //예약 거절 함수
+    public void rejectReservation(Long reservationId) {
+        //존재하는 예약인지 확인
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(
+                        () -> new ReservationNotFoundException(ErrorCode.NOT_EXIST_RESERVATION));
+        //예약 상태 거절로 변경
+        reservationRepository.updateStatus(REJECTED, reservationId);
+    }
 
 
 

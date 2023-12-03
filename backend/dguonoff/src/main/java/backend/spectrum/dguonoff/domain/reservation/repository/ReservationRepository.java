@@ -36,4 +36,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("select r.status from Reservation r where r.reservationId = ?1")
     Optional<ReservationStatus> findStatusById(Long reservationId);
+
+    @Transactional
+    @Modifying
+    @Query("update Reservation r set r.status = ?1 where r.reservationId = ?2")
+    int updateStatus(ReservationStatus status, Long reservationId);
 }

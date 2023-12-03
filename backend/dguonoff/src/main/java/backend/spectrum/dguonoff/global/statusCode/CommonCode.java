@@ -17,6 +17,8 @@ public enum CommonCode {
     SUCCESS_RESERVATION(HttpStatus.OK, "예약 신청이 완료되었습니다."),
     SUCCESS_MODIFICATION(HttpStatus.OK, "예약 수정이 완료되었습니다."),
     SUCCESS_DELETION(HttpStatus.OK, "예약 삭제가 완료되었습니다."),
+    SUCCESS_APPROVAL(HttpStatus.OK, "예약 승인이 완료되었습니다."),
+    SUCCESS_REJECTION(HttpStatus.OK, "예약 거절이 완료되었습니다."),
 
 
 
