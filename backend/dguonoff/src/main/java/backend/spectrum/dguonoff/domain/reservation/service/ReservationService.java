@@ -7,10 +7,7 @@ import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
 import backend.spectrum.dguonoff.DAO.model.Role;
 import backend.spectrum.dguonoff.domain.facility.repository.FacilityRepository;
 import backend.spectrum.dguonoff.domain.facility.service.FacilityService;
-import backend.spectrum.dguonoff.domain.reservation.dto.GuestInfo;
-import backend.spectrum.dguonoff.domain.reservation.dto.ReservationInfoResponse;
-import backend.spectrum.dguonoff.domain.reservation.dto.ReservationModificationRequest;
-import backend.spectrum.dguonoff.domain.reservation.dto.ReservationRequest;
+import backend.spectrum.dguonoff.domain.reservation.dto.*;
 import backend.spectrum.dguonoff.domain.reservation.dto.constraint.DateConstraint;
 import backend.spectrum.dguonoff.domain.reservation.dto.constraint.MaxReservationConstraint;
 import backend.spectrum.dguonoff.domain.reservation.dto.constraint.UsageConstraint;
@@ -374,6 +371,16 @@ public class ReservationService {
                     //이벤트 조회
                     Event event = reservation.getEvent();
 
+                    //유저 조회
+                    User hostUser = reservation.getHotUserId();
+                    HostUserInfo hostUserInfo = HostUserInfo.builder()
+                            .id(hostUser.getId())
+                            .role(hostUser.getRole())
+                            .sid(hostUser.getSid())
+                            .name(hostUser.getName())
+                            .email(hostUser.getEmail())
+                            .build();
+
                     //예약에 참여한 유저 목록 조회
                     List<GuestInfo> guestInfoList = participationReservationRepository.findGuestInfoByReservation(reservation.getReservationId());
 
@@ -389,6 +396,7 @@ public class ReservationService {
                             .buildingName(reservation.getFacility().getBuilding().getName())
                             .outline(event.getOutline())
                             .purpose(event.getPurpose())
+                            .host(hostUserInfo)
                             .guests(guestInfoList)
                             .build());
                 }
