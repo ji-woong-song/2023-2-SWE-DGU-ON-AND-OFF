@@ -390,7 +390,7 @@ export async function getReservations(token: string): Promise<Reservation[]> {
     let responseData: GetReservationsResponse = [];
     try {
         const response = await axios.get(
-            getApiUrl("/api/reservation/"),
+            getApiUrl("/api/reservation/admin/all"),
             {
                 headers: {
                     "Authorization": `Bearer ${token}`
