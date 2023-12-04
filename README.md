@@ -1,10 +1,12 @@
-# Dongguk 온앤오프
+
 <div align="center">
-   
-  <img width="405" alt="스크린샷 2023-12-04 오후 6 49 35" src="https://github.com/shortboy7/2023-2-SWE-DGU-ON-AND-OFF/assets/45763117/cef0f87e-4dcd-4bc9-a01f-5a86e1193709">
- <h2>스펙트럼 - 2023년도 2학기 소프트웨어 공학 개론</h2>
+   <br />
+   <img width="400" alt="Logo" src="https://github.com/shortboy7/2023-2-SWE-DGU-ON-AND-OFF/assets/45763117/8960284a-984d-4530-99a9-5bf007b79e0d">
+<h1>Dongguk 온앤오프</h1>
   <br />
 </div>
+
+## 2023년도 2학기 소프트웨어 공학 개론 - 스펙트럼 팀
 
 ## 🧑‍💻 팀원 소개
 
