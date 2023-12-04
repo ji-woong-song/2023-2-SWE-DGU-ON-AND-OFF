@@ -25,6 +25,7 @@ public class ReservationInfoResponse {
     private String facilityName;
     private String outline;
     private String purpose;
+    private HostUserInfo host;
     private List<GuestInfo> guests;
 
 
