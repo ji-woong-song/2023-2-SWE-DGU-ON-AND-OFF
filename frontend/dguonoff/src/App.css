@@ -2,6 +2,8 @@
     /* component */
     --component-main-color: #FBAF3E;
     --component-main-light-color: #ffe7c2;
+    --component-disable-color: #8a8a8a;
+    --component-disable-light-color: #d2d2d2;
     --component-inner-color: white;
     --component-inner-select-color: black;
     --component-innertext-color: black;

@@ -42,11 +42,12 @@ function ModalPortal({ children }: ModalPortalProps) {
  * backgroundColor: 모달 배경색입니다.
  */
 interface ModalWrapperProps {
-    backgroundColor: string;
+    $backgroundColor: string;
 }
 
 /** 
  * ModalWrapper 컴포넌트는 모달의 배경을 렌더링합니다.
+ * shouldForwardProp를 사용하여 backgroundColor prop이 DOM으로 전달되지 않도록 합니다.
  */
 const ModalWrapper = styled.div<ModalWrapperProps>`
   position: fixed;
@@ -55,7 +56,7 @@ const ModalWrapper = styled.div<ModalWrapperProps>`
   z-index: 1050;
   width: 100%;
   height: 100%;
-  background-color: ${({ backgroundColor }) => backgroundColor};
+  background-color: ${({ $backgroundColor }) => $backgroundColor};
 `;
 
 /** 
@@ -64,12 +65,13 @@ const ModalWrapper = styled.div<ModalWrapperProps>`
  * isUnmount: 마운트 해제 상태 여부입니다.
  */
 interface ModalInnerProps {
-    modalAnimationMotion: ModalAnimationMotion;
-    isUnmount: boolean;
+    $modalAnimationMotion: ModalAnimationMotion;
+    $isUnmount: boolean;
 }
 
 /** 
  * ModalInner 컴포넌트는 모달의 내부 컨텐츠를 렌더링합니다.
+ * shouldForwardProp를 사용하여 modalAnimationMotion과 isUnmount prop이 DOM으로 전달되지 않도록 합니다.
  */
 const ModalInner = styled.div<ModalInnerProps>`
   position: relative;
@@ -80,8 +82,9 @@ const ModalInner = styled.div<ModalInnerProps>`
   display: flex;
   align-items: center;
   justify-content: center;
-  ${({ modalAnimationMotion: modalAnimation, isUnmount }) => css`
-  animation: ${isUnmount ? modalAnimation.onDisappear : modalAnimation.onAppear} ${modalAnimation.duration / 1000}s ease-in-out;
+
+  ${({ $modalAnimationMotion, $isUnmount }) => css`
+    animation: ${$isUnmount ? $modalAnimationMotion.onDisappear : $modalAnimationMotion.onAppear} ${$modalAnimationMotion.duration / 1000}s ease-in-out;
   `}
 `;
 
@@ -109,13 +112,13 @@ function ModalFrame({ modalAnimation, isUnmount, isOpen, onClose, children, back
             {isOpen && (
                 <ModalPortal>
                     <ModalWrapper
-                        backgroundColor={backgroundColor}
+                        $backgroundColor={backgroundColor}
                         onClick={onClose}
                     >
                         <ModalInner
                             onClick={onClose}
-                            modalAnimationMotion={modalAnimation}
-                            isUnmount={isUnmount}
+                            $modalAnimationMotion={modalAnimation}
+                            $isUnmount={isUnmount}
                         >
                             <div onClick={handleClickInnerModal}>
                                 {children}

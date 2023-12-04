@@ -6,8 +6,8 @@ import FixedTimetableManager from "./mainContent/FixedTimetableManager";
 import IndividualTimetableManager from "./mainContent/IndividualTimetableManager";
 import AdminAccountManager from "./mainContent/AdminAccountManager";
 import { useNavigate } from "react-router-dom";
-import { getBuildingNames, getFacilities } from "../../../../api/dguonandoff";
-import { CookieStorageProvider } from "../../../../modules/storage/AppStorageProvider";
+import { getAuthToken, getBuildings, getUserRole, requestAuthLogout } from "../../../../api/dguonandoff";
+import Building from "../../../../types/Building";
 
 
 type SidebarMenu = "Blank" | "예약 신청 관리" | "고정 시간표 관리" | "개별 시간표 관리" | "관리자 계정 관리";
@@ -15,13 +15,14 @@ type SidebarMenu = "Blank" | "예약 신청 관리" | "고정 시간표 관리" 
 
 export default function AdminHome() {
     // Const
-    const sidebarMenus: SidebarMenu[] = ["예약 신청 관리", "고정 시간표 관리", "개별 시간표 관리", "관리자 계정 관리"];
     const navigate = useNavigate();
 
 
     // State
+    const [sidebarMenus, setSidebarMenus] = useState<SidebarMenu[]>(["예약 신청 관리", "고정 시간표 관리", "개별 시간표 관리"]);
     const [currMenu, setCurrMenu] = useState<SidebarMenu>("Blank");
     const [hoverMenu, sethoverMenu] = useState<SidebarMenu>("Blank");
+    const [buildings, setBuildings] = useState<Building[]>([]);
 
 
     // Handler
@@ -34,6 +35,7 @@ export default function AdminHome() {
     }
 
     const onLogoutClick = () => {
+        requestAuthLogout();
         navigate('/admin/login');
     };
 
@@ -43,13 +45,13 @@ export default function AdminHome() {
                 return <Welcome />;
             }
             case "예약 신청 관리": {
-                return <ReservationManager />;
+                return <ReservationManager buildings={buildings} />;
             }
             case "고정 시간표 관리": {
-                return <FixedTimetableManager />;
+                return <FixedTimetableManager buildings={buildings} />;
             }
             case "개별 시간표 관리": {
-                return <IndividualTimetableManager />;
+                return <IndividualTimetableManager buildings={buildings} />;
             }
             case "관리자 계정 관리": {
                 return <AdminAccountManager />
@@ -63,15 +65,22 @@ export default function AdminHome() {
 
     // Effect
     useEffect(() => {
-        const token = CookieStorageProvider.get("userAuthToken");
-        if (token) {
-            getBuildingNames(token);
-            getFacilities(token);
-        }
+        (async () => {
+            const [token, userRole] = [getAuthToken(), getUserRole()];
+            if (token && userRole) {
+                if (userRole === "MASTER") {
+                    setSidebarMenus(["예약 신청 관리", "고정 시간표 관리", "개별 시간표 관리", "관리자 계정 관리"]);
+                }
+                setBuildings(await getBuildings(token));
+            } else {
+                alert("로그인 시간이 만료되었습니다.");
+                navigate("/admin/login")
+            }
+        })();
+    }, [navigate]);
 
-    }, []);
 
-
+    // Render
     return (
         <div className={styles.adminHome}>
             <div className={styles.sidebar}>

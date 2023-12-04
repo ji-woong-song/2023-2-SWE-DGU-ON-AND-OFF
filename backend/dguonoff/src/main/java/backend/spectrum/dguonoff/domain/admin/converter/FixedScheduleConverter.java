@@ -18,7 +18,7 @@ public class FixedScheduleConverter {
                 .outline(event.getOutline())
                 .name(event.getName())
                 .hostName(event.getHostName())
-                .guestNumber(fixedSchedule.getFacility().getCapacity())
+                .guestNumber(fixedSchedule.getGuestNumber())
                 .build();
     }
 
@@ -43,6 +43,7 @@ public class FixedScheduleConverter {
 
     public static FixedSchedule toFixedScheduleEntity(PostNewScheduleRequest request, Facility facility, User admin) {
         return FixedSchedule.builder()
+                .guestNumber(request.getEvent().getGuestNumber())
                 .facility(facility)
                 .reservationAdmin(admin)
                 .startDate(request.getEffectiveDate().getStart())
@@ -51,6 +52,18 @@ public class FixedScheduleConverter {
                 .startTime(request.getTime().getStart())
                 .endTime(request.getTime().getEnd())
                 .event(toEventEntity(request.getEvent()))
+                .build();
+    }
+    public static FixedSchedule toFixedScheduleEntity(PostNewScheduleRequest request, Facility facility, Event event) {
+        return FixedSchedule.builder()
+                .guestNumber(request.getEvent().getGuestNumber())
+                .facility(facility)
+                .startDate(request.getEffectiveDate().getStart())
+                .endDate(request.getEffectiveDate().getEnd())
+                .day(request.getDay())
+                .startTime(request.getTime().getStart())
+                .endTime(request.getTime().getEnd())
+                .event(event)
                 .build();
     }
 }

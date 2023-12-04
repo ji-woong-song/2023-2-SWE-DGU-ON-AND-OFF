@@ -37,7 +37,7 @@
 }
 
 .memo_field {
-    height: 24%;
+    height: 36%;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -60,7 +60,6 @@
     border-radius: 10px;
     border: 2px solid var(--component-main-color);
     font-size: 17px;
-    text-align: center;
 }
 
 .memo_field textarea {
@@ -71,7 +70,7 @@
     resize: none;
     border: 2px solid var(--component-main-color);
     font-size: 17px;
-    text-align: center;
+    font-weight: 600;
 }
 
 .event_info__body .buttons {

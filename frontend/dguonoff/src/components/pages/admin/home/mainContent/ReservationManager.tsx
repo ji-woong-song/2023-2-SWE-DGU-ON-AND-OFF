@@ -1,21 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./ReservationManager.module.css";
-
 import FacilityCategoryTable, { FacilityCategory } from "./commons/FacilityCategoryTable";
 import Reservation, { ReservationStatus } from "../../../../../types/Reservation";
 import Building from "../../../../../types/Building";
 import useElementDimensions from "../../../../../hooks/useElementDimensions";
-import Facility from "../../../../../types/Facility";
 import VirtualizedTable from "../../../../../modules/virtualizedTable/VirtualizedTable";
 import { useModal } from "../../../../../modules/modal/Modal";
 import { ModalAnimationType } from "../../../../../modules/modal/ModalAnimations";
+import { approveReservation, getAuthToken, getReservations, getUserRole, rejectReservation } from "../../../../../api/dguonandoff";
+import { useNavigate } from "react-router-dom";
 
 
+interface ReservationManagerParams {
+    buildings: Building[];
+}
 
-export default function ReservationManager() {
+export default function ReservationManager({ buildings }: ReservationManagerParams) {
     // Const
+    const navigate = useNavigate();
     const [currFacility, setCurrFacility] = useState<FacilityCategory>("강의실");
-    const reservationStatuses: ("all" | ReservationStatus)[] = ["all", "pending", "accept", "reject"];
+    const reservationStatuses: ("ALL" | ReservationStatus)[] = ["ALL", "PENDING", "APPROVED", "REJECTED"];
 
     const tableColumns: { name: string, style: React.CSSProperties }[] = [
         { name: "예약 번호", style: { minWidth: "100px" } },
@@ -44,44 +48,99 @@ export default function ReservationManager() {
     // State
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date>(new Date());
-    const [buildings, setBuildings] = useState<Building[]>([]);
-    const [selectedBuilding, setSelectedBuilding] = useState<Building>(new Building());
-    const [selectedReservationStatus, setSelectedReservationStatus] = useState<"all" | ReservationStatus>("all");
+    const [selectedBuilding, setSelectedBuilding] = useState<Building>(new Building("전체"));
+    const [selectedReservationStatus, setSelectedReservationStatus] = useState<"ALL" | ReservationStatus>("ALL");
     const [reservations, setReservations] = useState<Reservation[]>([]);
+    const [filteredReservations, setFilteredReservations] = useState<Reservation[]>([]);
     const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
+    const [refreshReservation, setRefreshReservation] = useState<boolean>(true);
 
 
     // Hook
-    const [reservationTableWidth, reservationTableHeight] = useElementDimensions(reservationTableRef, "Pure");
+    const reservationTableHeight = useElementDimensions(reservationTableRef, "Pure")[1];
     const [ReservationDetailsModal, openReservationDetailsModal, closeReservationDetailsModal] = useModal(ModalAnimationType.ZOOM);
-
-    // Effect
-    useEffect(() => {
-        /*  setBuildings([new Building("신공학관", [new Facility("3144")])]);
-          setReservations(Array.from({ length: 50 }, (_, index) => {
-              return new Reservation(
-                  (1000 + index).toString(),
-                  `MJH`,
-                  "학습 목적",
-                  new Facility(`신공학관 ${3105 + index}`, Math.floor(Math.random() * 100)),
-                  new Date(),
-                  new Date(),
-                  Math.floor(Math.random() * 30),
-                  ["pending", "accept", "reject"][Math.floor(Math.random() * 3)] as ReservationStatus);
-          }));*/
-    }, []);
 
 
     // Handler
-    const statusToString = (status: ReservationStatus | "all"): string => {
+    const onReject = async (reservation: Reservation) => {
+        const [token, userRole] = [getAuthToken(), getUserRole()];
+        if (token && userRole) {
+            await rejectReservation(token, reservation);
+            closeReservationDetailsModal();
+            setRefreshReservation(!refreshReservation);
+        } else {
+            alert("권한이 없습니다.");
+            navigate("/admin/login")
+        }
+    }
+
+    const onApprove = async (reservation: Reservation) => {
+        const [token, userRole] = [getAuthToken(), getUserRole()];
+        if (token && userRole) {
+            await approveReservation(token, reservation);
+            closeReservationDetailsModal();
+            setRefreshReservation(!refreshReservation);
+        } else {
+            alert("권한이 없습니다.");
+            navigate("/admin/login")
+        }
+    }
+
+
+    // Effect
+    useEffect(() => {
+        const currDate = new Date();
+        currDate.setHours(0, 0, 0, 0);
+        const nextDate = new Date(currDate.getFullYear(), currDate.getMonth() + 1, currDate.getDate());
+        nextDate.setHours(0, 0, 0, 0);
+        nextDate.setSeconds(nextDate.getSeconds() - 1);
+        setStartDate(currDate);
+        setEndDate(nextDate);
+    }, [setStartDate, setEndDate]);
+
+
+    useEffect(() => {
+        (async () => {
+            const [token, userRole] = [getAuthToken(), getUserRole()];
+            if (token && userRole) {
+                const reservationsResponse = await getReservations(token);
+                const stringToDate = (dateStr: string): Date => {
+                    const [year, month, day] = dateStr.split("-").map(Number);
+                    return new Date(year, month - 1, day);
+                };
+                setReservations(reservationsResponse);
+                setFilteredReservations(reservationsResponse.filter((reservation) => startDate <= stringToDate(reservation.getDate()) && stringToDate(reservation.getDate()) <= endDate))
+            } else {
+                alert("권한이 없습니다.");
+                navigate("/admin/login")
+            }
+        })();
+    }, [navigate, setReservations, startDate, endDate]);
+
+    useEffect(() => {
+        const stringToDate = (dateStr: string): Date => {
+            const [year, month, day] = dateStr.split("-").map(Number);
+            return new Date(year, month - 1, day);
+        };
+
+        let newReservations = reservations.filter((reservation) => startDate <= stringToDate(reservation.getDate()) && stringToDate(reservation.getDate()) <= endDate);
+        newReservations = newReservations.filter((reservation) => selectedBuilding.getName() === "전체" || selectedBuilding.getName() === reservation.getBuildingName());
+        newReservations = newReservations.filter((reservation) => selectedReservationStatus === "ALL" || selectedReservationStatus === reservation.getStatus());
+        setFilteredReservations(newReservations);
+
+    }, [startDate, endDate, selectedBuilding, reservations, selectedReservationStatus, refreshReservation]);
+
+
+    // Handler
+    const statusToString = (status: "ALL" | ReservationStatus): string => {
         switch (status) {
-            case "all":
+            case "ALL":
                 return "전체";
-            case "pending":
+            case "PENDING":
                 return "대기";
-            case "accept":
+            case "APPROVED":
                 return "승인";
-            case "reject":
+            case "REJECTED":
                 return "거절";
             default:
                 return "";
@@ -112,7 +171,11 @@ export default function ReservationManager() {
                             id="start-date"
                             name="start-date"
                             value={startDate.toISOString().split('T')[0]}
-                            onChange={(e) => { setStartDate(new Date(e.target.value)); }}
+                            onChange={(e) => {
+                                const newStartDate = new Date(e.target.value);
+                                newStartDate.setHours(0, 0, 0, 0); // 자정으로 설정
+                                setStartDate(newStartDate);
+                            }}
                         />
 
                         <span>~</span>
@@ -122,7 +185,11 @@ export default function ReservationManager() {
                             id="end-date"
                             name="end-date"
                             value={endDate.toISOString().split('T')[0]}
-                            onChange={(e) => { setEndDate(new Date(e.target.value)); }}
+                            onChange={(e) => {
+                                const newEndDate = new Date(e.target.value);
+                                newEndDate.setHours(23, 59, 59, 999); // 하루의 끝으로 설정
+                                setEndDate(newEndDate);
+                            }}
                         />
                     </div>
 
@@ -130,9 +197,9 @@ export default function ReservationManager() {
                         <label htmlFor="building-select">건물 코드</label>
                         <select
                             id="building-select"
-                            onChange={(e) => setSelectedBuilding(buildings[e.target.selectedIndex])}
+                            onChange={(e) => setSelectedBuilding([new Building("전체"), ...buildings][e.target.selectedIndex])}
                         >
-                            {buildings.map((building, index) => (
+                            {[new Building("전체"), ...buildings].map((building, index) => (
                                 <option key={index} value={building.getName()}>
                                     {building.getName()}
                                 </option>
@@ -144,7 +211,6 @@ export default function ReservationManager() {
                         <label htmlFor="status-select">예약 상태</label>
                         <select
                             id="status-select"
-                            value={selectedReservationStatus}
                             onChange={(e) => setSelectedReservationStatus(reservationStatuses[e.target.selectedIndex])}
                         >
                             {reservationStatuses.map((status, index) => (
@@ -182,7 +248,7 @@ export default function ReservationManager() {
                             );
                         }}
 
-                        numRows={reservations.length}
+                        numRows={filteredReservations.length}
                         rowHeight={35}
                         rowStyles={{
                             default: {
@@ -199,22 +265,14 @@ export default function ReservationManager() {
                             }
                         }}
                         renderRows={({ index, rowClassName, rowStyle, itemClassName, itemStyles }) => {
-                            const reservation = reservations[index];
+                            const reservation = filteredReservations[index];
                             return (
                                 <div key={index} id={`${index}`} className={rowClassName}
                                     style={rowStyle}>
-                                    <div className={itemClassName} style={itemStyles[0]}>{reservation.getId()}</div>
-                                    <div className={itemClassName} style={itemStyles[1]}>{reservation.getReserver()}</div>
-                                    <div className={itemClassName} style={itemStyles[2]}>{reservation.getFacility().getName()}</div>
-                                    <div className={itemClassName} style={itemStyles[3]}>{
-                                        (() => {
-                                            const startTime = reservation.getStartTime().toISOString();
-                                            const endTime = reservation.getEndTime().toISOString();
-                                            return `${startTime.split('T')[0]} - 
-                                        ${startTime.split('T')[1].split(':')[0]}:${startTime.split('T')[1].split(':')[1]} ~ 
-                                        ${endTime.split('T')[1].split(':')[0]}:${endTime.split('T')[1].split(':')[1]}`;
-                                        })()
-                                    }
+                                    <div className={itemClassName} style={itemStyles[0]}>{reservation.getReservationId()}</div>
+                                    <div className={itemClassName} style={itemStyles[1]}>{reservation.getTitle()}</div>
+                                    <div className={itemClassName} style={itemStyles[2]}>{reservation.getFacilityName()}</div>
+                                    <div className={itemClassName} style={itemStyles[3]}>{`${reservation.getDate()}, ${reservation.getStartTime()} ~ ${reservation.getEndTime()}`}
                                     </div>
                                     <div className={itemClassName} style={itemStyles[4]}>
                                         <button className={`${styles.manage_button} ${styles['manage_button_' + reservation.getStatus()]}`}
@@ -243,21 +301,15 @@ export default function ReservationManager() {
                                 <label htmlFor="group-info">예약 인원 및 정보</label>
                             </div>
                             <div className={styles.data}>
-                                <label htmlFor="user-name">{selectedReservation.getReserver()}</label>
+                                <label htmlFor="user-name">{"undefined"}</label>
                                 <label htmlFor="use-purpose">{selectedReservation.getPurpose()}</label>
-                                <label htmlFor="date-time">{(() => {
-                                    const startTime = selectedReservation.getStartTime().toISOString();
-                                    const endTime = selectedReservation.getEndTime().toISOString();
-                                    return `${startTime.split('T')[0]} - 
-                                        ${startTime.split('T')[1].split(':')[0]}:${startTime.split('T')[1].split(':')[1]} ~ 
-                                        ${endTime.split('T')[1].split(':')[0]}:${endTime.split('T')[1].split(':')[1]}`;
-                                })()}</label>
-                                <label htmlFor="group-info">{`${selectedReservation.getReserver()} 외 ${selectedReservation.getGroupNum() - 1} >`}</label>
+                                <label htmlFor="date-time">{`${selectedReservation.getDate()}, ${selectedReservation.getStartTime()} ~ ${selectedReservation.getEndTime()}`}</label>
+                                <label htmlFor="group-info">{`${"undefined"} 외 ${selectedReservation.getGuests().length}명`}</label>
                             </div>
                         </div>
                         <div className={styles.bottom}>
-                            <button className={styles.accept} onClick={() => { closeReservationDetailsModal() }}>예약 승인</button>
-                            <button className={styles.reject} onClick={() => { closeReservationDetailsModal() }}>예약 거절</button>
+                            <button className={styles.APPROVED} onClick={() => { onReject(selectedReservation) }}>예약 승인</button>
+                            <button className={styles.REJECTED} onClick={() => { onApprove(selectedReservation) }}>예약 거절</button>
                         </div>
                     </div>
                 </ReservationDetailsModal>

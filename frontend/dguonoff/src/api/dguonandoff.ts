@@ -1,5 +1,13 @@
 import axios from "axios";
 import Bookmark from "../types/Bookmark";
+import User, { UserRole } from "../types/User";
+import { CookieStorageProvider } from "../modules/storage/AppStorageProvider";
+import Building from "../types/Building";
+import Facility from "../types/Facility";
+import { Day } from "../types/Day";
+import FacilitySchedule from "../types/FacilitySchedule";
+import { FacilityEvent } from "../types/FacilityEvent";
+import Reservation from "../types/Reservation";
 
 
 
@@ -25,26 +33,109 @@ function getApiUrl(path: string): string {
 
 
 /*****************************************************************
+ * 사용자의 인증 토큰을 쿠키에 저장하는 메서드입니다.
+ *****************************************************************/
+
+/**
+ * setAuthToken 메서드는 사용자의 인증 토큰을 쿠키에 저장합니다.
+ * 이 메서드는 주어진 토큰을 'authToken'이라는 이름으로 쿠키에 저장하는 역할을 합니다.
+ * @param {string} token 사용자의 인증 토큰입니다.
+ */
+export function setAuthToken(token: string): void {
+    CookieStorageProvider.set("authToken", token);
+}
+
+
+
+
+/*****************************************************************
+ * 쿠키에서 사용자의 인증 토큰을 가져오는 메서드입니다.
+ *****************************************************************/
+
+/**
+ * getAuthToken 메서드는 쿠키에서 'authToken'이라는 이름으로 저장된 사용자의 인증 토큰을 가져옵니다.
+ * 이 메서드는 쿠키에 저장된 인증 토큰을 조회하고, 해당 토큰이 존재하면 그 값을 반환합니다.
+ * 만약 토큰이 존재하지 않는 경우 undefined를 반환합니다.
+ * @returns {string | undefined} 쿠키에 저장된 인증 토큰이 있으면 해당 토큰을, 없으면 undefined를 반환합니다.
+ */
+export function getAuthToken(): string | undefined {
+    return CookieStorageProvider.get("authToken");
+}
+
+
+
+
+/*****************************************************************
+ * 사용자의 역할을 쿠키에 저장하는 메서드입니다.
+ *****************************************************************/
+
+/**
+ * setUserRole 메서드는 사용자의 역할을 쿠키에 저장합니다.
+ * 이 메서드는 주어진 역할을 'userRole'이라는 이름으로 쿠키에 저장하는 역할을 합니다.
+ * @param {UserRole} userRole 사용자의 역할입니다.
+ */
+export function setUserRole(userRole: UserRole): void {
+    CookieStorageProvider.set("userRole", userRole);
+}
+
+
+
+
+/*****************************************************************
+ * 쿠키에서 사용자의 역할을 가져오는 메서드입니다.
+ *****************************************************************/
+
+/**
+ * getUserRole 메서드는 쿠키에서 'userRole'이라는 이름으로 저장된 사용자의 역할을 가져옵니다.
+ * 이 메서드는 쿠키에 저장된 역할을 조회하고, 해당 역할이 존재하면 그 값을 반환합니다.
+ * 만약 역할이 존재하지 않는 경우 undefined를 반환합니다.
+ * @returns {UserRole | undefined} 쿠키에 저장된 사용자의 역할이 있으면 해당 역할을, 없으면 undefined를 반환합니다.
+ */
+export function getUserRole(): UserRole | undefined {
+    const userRole = CookieStorageProvider.get("userRole");
+    return userRole ? userRole as UserRole : undefined;
+}
+
+
+
+
+/*****************************************************************
  * 사용자의 로그인 요청을 처리하고 결과를 반환하는 API 메서드입니다.
  *****************************************************************/
 
 /** 로그인 응답 데이터 타입 */
-type AuthLoginResponse = { token: string } | {
+type AuthLoginResponse = {
+    token: string;
+    role: "NORMAL" | "ADMIN" | "MASTER";
+} | {
     message: string;
     code: "LOGIN_FAIL" | "SERVER_ERROR";
 };
 
 /**
- * requestAuthLogin 메서드는 서버에 로그인 요청을 보냅니다.
- * @param id 사용자의 아이디입니다.
- * @param password 사용자의 비밀번호입니다.
- * @returns {Promise<{ result: "LOGIN_SUCCESS" | "LOGIN_FAIL" | "SERVER_ERROR", token: string }>}
- * 로그인 요청의 성공 여부와 토큰을 반환합니다.
- * "LOGIN_SUCCESS"는 로그인 성공, "LOGIN_FAIL"은 로그인 실패, "SERVER_ERROR"는 서버 오류를 나타냅니다.
- * 성공 시, JWT 토큰을 반환하고, 실패 시 빈 문자열을 반환합니다.
+ * requestAuthLogin 메서드는 사용자의 ID와 비밀번호를 서버에 전송하여 로그인을 시도합니다.
+ * 로그인 성공 시, 서버로부터 사용자의 토큰과 역할을 포함한 응답을 받습니다.
+ * 로그인 실패 또는 서버 오류 발생 시, 오류 메시지와 오류 코드를 받습니다.
+ * 
+ * @param {string} id 사용자의 ID입니다.
+ * @param {string} password 사용자의 비밀번호입니다.
+ * @returns {Promise<{
+ *   message: "LOGIN_SUCCESS" | "LOGIN_FAIL" | "SERVER_ERROR",
+ *   data: {
+ *     token: string,
+ *     role: "NORMAL" | "ADMIN" | "MASTER"
+ *   } | undefined
+ * }>} 로그인 시도의 결과를 나타내는 객체를 반환합니다. 
+ * 로그인 성공 시, 'data' 필드에 토큰과 역할이 포함되며, 실패 시 'data'는 undefined입니다.
  */
-export async function requestAuthLogin(id: string, password: string): Promise<{ result: "LOGIN_SUCCESS" | "LOGIN_FAIL" | "SERVER_ERROR", token: string }> {
-    let result: AuthLoginResponse | undefined = undefined;
+export async function requestAuthLogin(id: string, password: string): Promise<{
+    message: "LOGIN_SUCCESS" | "LOGIN_FAIL" | "SERVER_ERROR";
+    data: {
+        token: string,
+        role: "NORMAL" | "ADMIN" | "MASTER"
+    } | undefined;
+}> {
+    let responseData: AuthLoginResponse | undefined = undefined;
     try {
         const postData = { id, password };
         const response = await axios.post(
@@ -57,13 +148,30 @@ export async function requestAuthLogin(id: string, password: string): Promise<{ 
                 withCredentials: true
             }
         );
-        result = response.data;
+        responseData = response.data;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-            result = error.response.data;
+            responseData = error.response.data;
         }
     }
-    return "token" in result! ? { result: "LOGIN_SUCCESS", token: result.token } : { result: result!.code, token: "" };
+    return "token" in responseData! ? { message: "LOGIN_SUCCESS", data: responseData } : { message: responseData!.code, data: undefined };
+}
+
+
+
+
+/*****************************************************************
+ * 사용자의 로그아웃 요청을 처리하는 메서드입니다.
+ *****************************************************************/
+
+/**
+ * requestAuthLogout 메서드는 사용자의 로그아웃을 처리합니다.
+ * 이 메서드는 사용자의 인증 토큰('authToken')과 사용자 역할('userRole')을 쿠키에서 제거함으로써 로그아웃을 수행합니다.
+ * 로그아웃 이후, 사용자는 인증이 필요한 페이지나 기능에 접근할 수 없게 됩니다.
+ */
+export function requestAuthLogout(): void {
+    CookieStorageProvider.remove("authToken");
+    CookieStorageProvider.remove("userRole");
 }
 
 
@@ -91,8 +199,8 @@ type AuthSinUpResponse = "SUCCESS" | {
  * 회원가입 요청의 성공 여부를 문자열로 반환합니다. 
  * "SUCCESS"는 성공, "USER_ID_DUPLICATE"는 중복된 아이디, "SERVER_ERROR"는 서버 오류를 나타냅니다.
  */
-export async function requestAuthSinUp(id: string, sid: string, name: string, major: string, password: string, email: string): Promise<"SUCCESS" | "USER_ID_DUPLICATE" | "SERVER_ERROR"> {
-    let result: AuthSinUpResponse | undefined = undefined;
+export async function requestAuthSinUp(id: string, sid: string, name: string, major: string, password: string, email: string): Promise<{ message: "SUCCESS" | "USER_ID_DUPLICATE" | "SERVER_ERROR" }> {
+    let responseData: AuthSinUpResponse | undefined = undefined;
     try {
         const postData = { id, sid, name, major, password, email };
         const response = await axios.post(
@@ -105,41 +213,331 @@ export async function requestAuthSinUp(id: string, sid: string, name: string, ma
                 withCredentials: true
             }
         );
-        result = response.data;
+        responseData = response.data;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-            result = error.response.data;
+            responseData = error.response.data;
         }
     }
-    return result === "SUCCESS" ? result : result!.code;
+    return responseData === "SUCCESS" ? { message: "SUCCESS" } : { message: responseData!.code };
 }
 
 
 
 
-// TODO: API 구현이 변경될 예정
 /*****************************************************************
- * 서버로부터 건물 이름 목록을 가져오는 API 메서드입니다.
+ * 서버로부터 모든 유저 정보를 조회하고 반환하는 API 메서드입니다.
  *****************************************************************/
 
-/** 건물 이름 응답 데이터 타입 */
-type BuildingNamesResponse = {
-    buildingNames: string[];
+/** 유저 정보 응답 데이터 타입 */
+type UsersResponse = {
+    sid: string;
+    id: string;
+    major: string;
+    email: string;
+    role: "NORMAL" | "ADMIN" | "MASTER";
+}[];
+
+/**
+ * getUsers 메서드는 서버에 저장된 모든 사용자 정보를 조회합니다.
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @returns {Promise<User[]>} 사용자 정보 객체 배열을 반환합니다. 
+ * 각 객체에는 사용자의 학교 ID(sid), 고유 ID(id), 전공(major), 이메일(email), 역할(role)이 포함됩니다.
+ * 에러 발생 시 빈 배열을 반환합니다.
+ */
+export async function getUsers(token: string): Promise<User[]> {
+    let responseData: UsersResponse = [];
+    try {
+        const response = await axios.get(
+            getApiUrl("/admin/master/users"),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+    return responseData.map((user) => new User(user.id, user.sid, user.major, user.email, user.role));
+}
+
+
+
+
+/*****************************************************************
+ * 지정된 유저에게 관리자 권한을 부여하는 API 메서드입니다.
+ *****************************************************************/
+
+/** 관리자 권한 부여 응답 데이터 타입 */
+type EmpowermentResponse = string;
+
+/**
+ * requestEmpowerment 메서드는 지정된 유저에게 관리자 권한을 부여하는 요청을 서버에 보냅니다.
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {string} userId 관리자 권한을 부여할 사용자의 ID입니다.
+ * @returns {Promise<boolean>} 권한 부여 성공 여부를 반환합니다. 
+ * 서버로부터 "권한이 부여됐습니다"라는 응답을 받으면 true, 그렇지 않으면 false를 반환합니다.
+ */
+export async function requestEmpowerment(token: string, userId: string): Promise<boolean> {
+    let responseData: EmpowermentResponse = "";
+    try {
+        const postData = { userId };
+        const response = await axios.post(
+            getApiUrl("/admin/master/empowerment"),
+            postData,
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            responseData = error.response.data;
+        }
+    }
+    return responseData.includes("권한이 부여됐습니다");
+}
+
+
+
+
+/*****************************************************************
+ * 지정된 유저에게 관리자 권한을 박탈하는 API 메서드입니다.
+ *****************************************************************/
+
+/** 관리자 권한 박탈 응답 데이터 타입 */
+type DeprivationResponse = string;
+
+/**
+ * requestDeprivation 메서드는 지정된 유저에게 관리자 권한을 박탈하는 요청을 서버에 보냅니다.
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {string} userId 관리자 권한을 박탈할 사용자의 ID입니다.
+ * @returns {Promise<boolean>} 권한 박탈 성공 여부를 반환합니다. 
+ * 서버로부터 "권한이 박탈됐습니다"라는 응답을 받으면 true, 그렇지 않으면 false를 반환합니다.
+ */
+export async function requestDeprivation(token: string, userId: string): Promise<boolean> {
+    let responseData: DeprivationResponse = "";
+    try {
+        const postData = { userId };
+        const response = await axios.post(
+            getApiUrl("/admin/master/deprivation"),
+            postData,
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            responseData = error.response.data;
+        }
+    }
+    return responseData.includes("권한이 박탈됐습니다");
+}
+
+
+
+
+/*****************************************************************
+ * 서버로부터 모든 예약 정보를 가져오는 API 메서드입니다.
+ * 이 메서드는 관리자에게만 사용 가능합니다.
+ *****************************************************************/
+
+/** 예약 요청리스트 응답 데이터 타입 */
+type GetReservationsResponse = {
+    reservationId: number;
+    title: string;
+    status: "PENDING" | "APPROVED" | "REJECTED";
+    date: string;
+    startTime: string;
+    endTime: string;
+    facilityCode: string;
+    buildingName: string;
+    facilityName: string;
+    outline: string;
+    purpose: string;
+    host: {
+        id: string;
+        role: "NORMAL" | "ADMIN" | "MASTER";
+        sid: string;
+        name: string;
+        major: string | null;
+        email: string;
+    };
+    guests: { id: string; name: string; }[];
+}[];
+
+/**
+ * getReservations 메서드는 관리자가 모든 예약 정보를 조회하기 위해 서버에 요청합니다.
+ * 이 메서드는 인증 토큰을 사용하여 관리자 권한을 인증받고, 서버로부터 예약 목록을 받아옵니다.
+ *
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @returns {Promise<Reservation[]>} 서버로부터 받은 예약 정보를 Reservation 객체 배열로 반환합니다.
+ * 각 객체에는 예약 ID, 제목, 상태, 날짜, 시작 및 종료 시간, 시설 코드, 건물 이름, 시설 이름, 개요, 목적, 게스트 목록이 포함됩니다.
+ * 에러 발생 시 빈 배열을 반환합니다.
+ */
+export async function getReservations(token: string): Promise<Reservation[]> {
+    let responseData: GetReservationsResponse = [];
+    try {
+        const response = await axios.get(
+            getApiUrl("/api/reservation/"),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+    return responseData.map((reservations) => new Reservation(
+        reservations.reservationId,
+        reservations.title,
+        reservations.status,
+        reservations.date,
+        reservations.startTime,
+        reservations.endTime,
+        reservations.facilityCode,
+        reservations.buildingName,
+        reservations.facilityName,
+        reservations.outline,
+        reservations.purpose,
+        new User(reservations.host.id, reservations.host.sid, reservations.host.name, reservations.host.major || "", reservations.host.email, reservations.host.role),
+        reservations.guests));
+}
+
+
+
+
+/** TODO: API가 작동하지 않음 */
+export async function rejectReservation(token: string, reservation: Reservation) {
+    let responseData: any;
+    try {
+        const response = await axios.get(
+            getApiUrl(`api/reservation/admin/reject/${reservation.getReservationId()}`),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+    console.log(responseData)
+}
+
+export async function approveReservation(token: string, reservation: Reservation) {
+    let responseData: any;
+    try {
+        const response = await axios.get(
+            getApiUrl(`/api/reservation/admin/approval/${reservation.getReservationId()}`),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+    console.log(responseData)
+}
+
+
+
+
+/*****************************************************************
+ * 서버로부터 건물 목록을 가져오는 API 메서드입니다.
+ *****************************************************************/
+
+/** 건물 응답 데이터 타입 */
+type BuildingsResponse = {
+    buildingName: string;
+    maxFloor: number;
+}[];
+
+/**
+ * getBuildings 메서드는 서버에 저장된 건물 정보를 조회합니다.
+ * 이 메서드는 인증 토큰을 사용하여 서버에 요청을 보내고, 서버로부터 건물의 이름과 최대 층수 정보를 포함한 응답을 받습니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @returns {Promise<Building[]>} 서버로부터 받은 건물 정보를 Building 객체 배열로 반환합니다. 
+ * 각 객체에는 건물의 이름(buildingName)과 최대 층수(maxFloor)가 포함됩니다.
+ * 에러 발생 시 빈 배열을 반환합니다.
+ */
+export async function getBuildings(token: string): Promise<Building[]> {
+    let responseData: BuildingsResponse = [];
+    try {
+        const response = await axios.get(
+            getApiUrl("/api/building/"),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+    return responseData.map((building) => new Building(building.buildingName, building.maxFloor));
+}
+
+
+
+
+/*****************************************************************
+ * 서버로부터 특정 건물의 층별 시설 목록을 가져오는 API 메서드입니다.
+ *****************************************************************/
+
+/** 시설 응답 데이터 타입 */
+type FacilitiesResponse = {
+    floor: number;
+    facility: {
+        name: string;
+        code: string;
+        bookmarked: boolean;
+        status: "EMPTY" | "USING";
+        capacity: number;
+    }[];
 };
 
 /**
- * getBuildingNames 메서드는 서버에 건물 이름 목록 요청을 보냅니다.
- * 이 함수는 로그인 후 받은 토큰을 사용하여 인증된 요청을 서버로 보냅니다.
+ * getFacilities 메서드는 서버에 저장된 특정 건물의 층별 시설 정보를 조회합니다.
+ * 이 메서드는 인증 토큰과 함께 건물의 이름 및 층수 정보를 서버에 요청하고, 서버로부터 해당 층의 시설 정보를 포함한 응답을 받습니다.
  * 
- * @param token 사용자 인증을 위한 JWT 토큰입니다.
- * @returns {Promise<string[]>} 서버로부터 받은 건물 이름 목록을 반환합니다.
- * 성공 시 건물 이름 배열을 반환하고, 실패 시 빈 배열을 반환합니다.
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {number} floor 조회할 건물의 층수입니다.
+ * @param {string} buildingName 조회할 건물의 이름입니다.
+ * @returns {Promise<Facility[]>} 서버로부터 받은 시설 정보를 Facility 객체 배열로 반환합니다.
+ * 각 객체에는 시설의 이름(name), 코드(code), 북마크 여부(bookmarked), 사용 상태(status), 수용 인원(capacity)이 포함됩니다.
+ * 에러 발생 시 빈 배열을 반환합니다.
  */
-export async function getBuildingNames(token: string): Promise<string[]> {
-    let result: BuildingNamesResponse = { buildingNames: [] };
+export async function getFacilities(token: string, floor: number, buildingName: string): Promise<Facility[]> {
+    let responseData: FacilitiesResponse = { floor: floor, facility: [] };
     try {
+        const queryParams = new URLSearchParams({ floor: floor.toString(), buildingName }).toString();
         const response = await axios.get(
-            getApiUrl("/api/building/names"),
+            getApiUrl(`/api/facility/?${queryParams}`),
             {
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -147,22 +545,80 @@ export async function getBuildingNames(token: string): Promise<string[]> {
                 withCredentials: true
             }
         );
-        result = response.data;
+        responseData = response.data;
     } catch (error) {
         console.error(error);
     }
-    return result.buildingNames;
+    return responseData.facility.map((facility) => new Facility(facility.name, facility.code, facility.bookmarked, facility.status, facility.capacity));
 }
 
 
 
-//http://3.37.162.40:8080
-// TODO: 아직 API 구현이 안되어있음
-export async function getFacilities(token: string): Promise<string[]> {
-    let result: any;
+
+/*****************************************************************
+ * 서버로부터 특정 요일에 특정 시설과 건물에서의 고정 일정 목록을 가져오는 API 메서드입니다.
+ *****************************************************************/
+
+/** 고정 일정 응답 데이터 타입 */
+type GetFixedSchedulesResponse = {
+    id: number;
+    day: "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY";
+    time: {
+        start: string;
+        end: string;
+    };
+    event: {
+        name: string;
+        hostName: string;
+        outline: string;
+        purpose: string;
+        guestNumber: number;
+    };
+}[];
+
+/**
+ * getFixedSchedules 메서드는 서버에 저장된 특정 시설의 특정 기간에 대한 고정 일정 정보를 조회합니다.
+ * 이 메서드는 인증 토큰과 함께 요일, 시작/종료 날짜, 시설 객체, 건물 객체를 서버에 요청하고,
+ * 서버로부터 해당 조건을 만족하는 고정 일정 정보를 포함한 응답을 받습니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {Day} day 조회할 요일입니다.
+ * @param {Date} startDate 조회할 시작 날짜입니다.
+ * @param {Date} endDate 조회할 종료 날짜입니다.
+ * @param {Facility} facility 조회할 시설 객체입니다.
+ * @param {Building} building 조회할 건물 객체입니다.
+ * @returns {Promise<FacilitySchedule[]>} 서버로부터 받은 고정 일정 정보를 FacilitySchedule 객체 배열로 반환합니다.
+ * 각 객체에는 일정의 ID, 요일, 시간(start, end), 이벤트(name, hostName, outline, purpose, guestNumber)가 포함됩니다.
+ * 에러 발생 시 빈 배열을 반환합니다.
+ */
+export async function getFixedSchedules(token: string, day: Day, startDate: Date, endDate: Date, facility: Facility, building: Building): Promise<FacilitySchedule[]> {
+    let responseData: GetFixedSchedulesResponse = [];
+
+    const formatDate = (date: Date): string => {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    const stringToTime = (timeStr: string): Date => {
+        const [hours, minutes, seconds] = timeStr.split(":").map(Number);
+        const time = new Date();
+        time.setHours(hours, minutes, seconds, 0);
+        return time;
+    };
+
+    const queryParams = new URLSearchParams({
+        day: day,
+        startDate: formatDate(startDate),
+        endDate: formatDate(endDate),
+        code: facility.getCode(),
+        buildingName: building.getName()
+    }).toString();
+
     try {
         const response = await axios.get(
-            getApiUrl("/api/facility/1/신공학관"),
+            getApiUrl(`/api/fixedSchedules/?${queryParams}`),
             {
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -170,31 +626,273 @@ export async function getFacilities(token: string): Promise<string[]> {
                 withCredentials: true
             }
         );
-        result = response.data;
+        responseData = response.data;
     } catch (error) {
-        console.error(error);
+        if (axios.isAxiosError(error) && error.response) {
+            responseData = [];
+        }
     }
-    console.log(result);
-    return result;
+
+    return responseData.map((fixedSchedule) => new FacilitySchedule(
+        fixedSchedule.id,
+        stringToTime(fixedSchedule.time.start),
+        stringToTime(fixedSchedule.time.end),
+        new FacilityEvent(fixedSchedule.event.name, fixedSchedule.event.hostName, fixedSchedule.event.outline, fixedSchedule.event.purpose, fixedSchedule.event.guestNumber)
+    ));
+}
+
+
+
+
+/*****************************************************************
+ * 서버에 새로운 고정 일정을 등록하는 API 메서드입니다.
+ *****************************************************************/
+
+/** 고정 일정 등록 응답 데이터 타입 */
+type RegisterFixedScheduleResponse = {
+    scheduleId: number;
+} | {
+    message: string;
+    code: string;
+};
+
+/**
+ * registerFixedSchedule 메서드는 새 고정 일정을 서버에 등록합니다.
+ * 이 메서드는 인증 토큰과 함께 시설, 건물, 시작/종료 날짜, 요일, 시작/종료 시간, 이벤트 정보를 포함한 데이터를 서버에 전송합니다.
+ * 성공적으로 일정이 등록되면, 서버로부터 할당된 일정 ID를 받습니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {Facility} facility 등록할 시설 객체입니다.
+ * @param {Building} building 등록할 건물 객체입니다.
+ * @param {Date} startDate 일정의 시작 날짜입니다.
+ * @param {Date} endDate 일정의 종료 날짜입니다.
+ * @param {Day} day 일정이 적용될 요일입니다.
+ * @param {Date} startTime 일정의 시작 시간입니다.
+ * @param {Date} endTime 일정의 종료 시간입니다.
+ * @param {FacilityEvent} event 등록할 이벤트 정보를 담은 객체입니다.
+ * @returns {Promise<boolean>} 일정 등록 성공 시 true를, 실패 시 false를 반환합니다.
+ * 에러 발생 시, 오류 메시지와 코드를 포함한 객체가 반환될 수 있습니다.
+ */
+export async function registerFixedSchedule(token: string, facility: Facility, building: Building, startDate: Date, endDate: Date, day: Day, startTime: Date, endTime: Date, event: FacilityEvent): Promise<boolean> {
+    let responseData: RegisterFixedScheduleResponse | undefined = undefined;
+
+    const formatDate = (date: Date) => {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    const formatTime = (time: Date): string => {
+        const hours = time.getHours().toString().padStart(2, '0');
+        const minutes = time.getMinutes().toString().padStart(2, '0');
+        const seconds = time.getSeconds().toString().padStart(2, '0');
+        return `${hours}:${minutes}:${seconds}`;
+    };
+
+    try {
+        const postData = {
+            facility: {
+                code: facility.getCode(),
+                buildingName: building.getName()
+            },
+            effectiveDate: {
+                start: formatDate(startDate),
+                end: formatDate(endDate)
+            },
+            day: day,
+            time: {
+                start: formatTime(startTime),
+                end: formatTime(endTime)
+            },
+            event: {
+                name: event.getName(),
+                hostName: event.getHostName(),
+                outline: event.getOutline(),
+                purpose: event.getPurpose(),
+                guestNumber: event.getGuestNumber()
+            }
+        };
+        const response = await axios.post(
+            getApiUrl("/api/fixedSchedules/"),
+            postData,
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            responseData = error.response.data;
+        }
+    }
+    return "scheduleId" in responseData!;
+}
+
+
+
+
+/*****************************************************************
+ * 서버에 저장된 고정 일정을 수정하는 API 메서드입니다.
+ *****************************************************************/
+
+/** 고정 일정 수정 응답 데이터 타입 */
+type ModifyFixedScheduleResponse = {
+    scheduleId: number;
+} | {
+    message: string;
+    code: string;
+};
+
+/**
+ * modifyFixedSchedule 메서드는 서버에 저장된 특정 고정 일정을 수정합니다.
+ * 이 메서드는 인증 토큰과 함께 고정 일정 객체(FacilitySchedule), 시설(Facility), 건물(Building), 시작/종료 날짜, 요일, 이벤트 정보를 포함한 데이터를 서버에 전송합니다.
+ * 성공적으로 일정이 수정되면, 서버로부터 업데이트된 일정 ID를 받습니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {FacilitySchedule} facilitySchedule 수정할 고정 일정 객체입니다.
+ * @param {Facility} facility 수정할 시설 객체입니다.
+ * @param {Building} building 수정할 건물 객체입니다.
+ * @param {Date} startDate 수정할 일정의 시작 날짜입니다.
+ * @param {Date} endDate 수정할 일정의 종료 날짜입니다.
+ * @param {Day} day 수정할 일정이 적용될 요일입니다.
+ * @param {FacilityEvent} event 수정할 이벤트 정보를 담은 객체입니다.
+ * @returns {Promise<boolean>} 일정 수정 성공 시 true를, 실패 시 false를 반환합니다.
+ * 에러 발생 시, 오류 메시지와 코드를 포함한 객체가 반환될 수 있습니다.
+ */
+export async function modifyFixedSchedule(token: string, facilitySchedule: FacilitySchedule, facility: Facility, building: Building, startDate: Date, endDate: Date, day: Day, event: FacilityEvent): Promise<boolean> {
+    let responseData: ModifyFixedScheduleResponse | undefined = undefined;
+
+    const formatDate = (date: Date) => {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    const formatTime = (time: Date): string => {
+        const hours = time.getHours().toString().padStart(2, '0');
+        const minutes = time.getMinutes().toString().padStart(2, '0');
+        const seconds = time.getSeconds().toString().padStart(2, '0');
+        return `${hours}:${minutes}:${seconds}`;
+    };
+
+    try {
+        const postData = {
+            scheduleId: facilitySchedule.getScheduleId(),
+            scheduleInfo: {
+                facility: {
+                    code: facility.getCode(),
+                    buildingName: building.getName()
+                },
+                effectiveDate: {
+                    start: formatDate(startDate),
+                    end: formatDate(endDate)
+                },
+                day: day,
+                time: {
+                    start: formatTime(facilitySchedule.getStartTime()),
+                    end: formatTime(facilitySchedule.getEndTime())
+                },
+                event: {
+                    name: event.getName(),
+                    hostName: event.getHostName(),
+                    outline: event.getOutline(),
+                    purpose: event.getPurpose(),
+                    guestNumber: event.getGuestNumber()
+                }
+            }
+        };
+        console.log(postData)
+        console.log(token)
+        const response = await axios.patch(
+            getApiUrl("/api/fixedSchedules/"),
+            postData,
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            }
+        );
+        console.log(response.data)
+        responseData = response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            responseData = error.response.data;
+        }
+    }
+    console.log(responseData);
+    return "scheduleId" in responseData!;
+}
+
+
+
+
+/*****************************************************************
+ * 서버에 저장된 고정 일정을 삭제하는 API 메서드입니다.
+ *****************************************************************/
+
+/** 고정 일정 삭제 응답 데이터 타입 */
+type DeleteFixedScheduleResponse = "success" | {
+    message: string;
+    code: string;
+};
+
+/**
+ * deleteFixedSchedule 메서드는 서버에 저장된 특정 고정 일정을 삭제합니다.
+ * 이 메서드는 인증 토큰과 함께 고정 일정 객체(FacilitySchedule)에서 가져온 일정 ID를 사용하여,
+ * 해당 일정을 삭제하는 요청을 서버에 전송합니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {FacilitySchedule} facilitySchedule 삭제할 고정 일정 객체입니다.
+ * @returns {Promise<boolean>} 일정 삭제 성공 시 true를, 실패 시 false를 반환합니다.
+ * 에러 발생 시, 오류 메시지와 코드를 포함한 객체가 반환될 수 있으며, 이 경우 false가 반환됩니다.
+ */
+export async function deleteFixedSchedule(token: string, facilitySchedule: FacilitySchedule): Promise<boolean> {
+    let responseData: DeleteFixedScheduleResponse | undefined = undefined;
+    try {
+        const queryParams = facilitySchedule.getScheduleId();
+        const response = await axios.delete(
+            getApiUrl(`/api/fixedSchedules/${queryParams}`),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            responseData = error.response.data;
+        }
+    }
+    return responseData === "success";
 }
 
 
 export async function getMyBookmark(token: string): Promise<Bookmark[]> {
-    let result: Bookmark[] = [];
-    try {
-        const response = await axios.get(
-            getApiUrl("/api/user/bookmark"),
-            {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
+let result: Bookmark[] = [];
+try {
+    const response = await axios.get(
+        getApiUrl("/api/user/bookmark"),
+        {
+            headers: {
+                "Authorization": `Bearer ${token}`
             }
-        );
+        }
+    );
 
-        console.log(response.data);
-        result = response.data.map((item: any) => new Bookmark(item.facilityName, item.facilityCode, item.buildingName));
-    } catch (error) {
-        console.error(error);
-    }
-    return result;
+    console.log(response.data);
+    result = response.data.map((item: any) => new Bookmark(item.facilityName, item.facilityCode, item.buildingName));
+} catch (error) {
+    console.error(error);
+}
+return result;
 }
