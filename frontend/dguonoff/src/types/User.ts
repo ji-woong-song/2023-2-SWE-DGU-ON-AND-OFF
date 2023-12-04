@@ -1,33 +1,45 @@
+
+/**
+ * UserRole 타입은 사용자의 역할을 나타내는 문자열 상수 타입입니다.
+ * 이 타입은 사용자가 일반 사용자(NORMAL), 관리자(ADMIN),
+ * 또는 마스터(MASTER) 역할을 가지고 있는지를 나타내는데 사용됩니다.
+ */
 export type UserRole = "NORMAL" | "ADMIN" | "MASTER";
+
+
+
 
 /**
  * User 클래스는 사용자 정보를 나타냅니다.
- * 이 클래스는 사용자의 SID, ID, 전공, 이메일, 역할 정보를 관리합니다.
+ * 이 클래스는 사용자의 고유 ID, 학교 ID, 이름, 전공, 이메일, 역할 정보를 관리합니다.
  */
 export default class User {
     private id: string;
     private sid: string;
+    private name: string;
     private major: string;
     private email: string;
     private role: UserRole;
 
     /**
      * User 클래스의 생성자입니다.
-     * @param {string} sid - 사용자의 학교 ID입니다.
      * @param {string} id - 사용자의 고유 ID입니다.
+     * @param {string} sid - 사용자의 학교 ID입니다.
+     * @param {string} name - 사용자의 이름입니다.
      * @param {string} major - 사용자의 전공입니다.
      * @param {string} email - 사용자의 이메일 주소입니다.
      * @param {UserRole} role - 사용자의 역할입니다.
      */
-    constructor(id: string = "", sid: string = "", major: string = "", email: string = "", role: UserRole = "NORMAL") {
+    constructor(id: string = "", sid: string = "", name: string = "", major: string = "", email: string = "", role: UserRole = "NORMAL") {
         this.id = id;
         this.sid = sid;
+        this.name = name;
         this.major = major;
         this.email = email;
         this.role = role;
     }
 
-    // ID 관련 getter 및 setter
+    // getter 및 setter
     public getId(): string {
         return this.id;
     }
@@ -35,7 +47,6 @@ export default class User {
         this.id = id;
     }
 
-    // SID 관련 getter 및 setter
     public getSid(): string {
         return this.sid;
     }
@@ -43,7 +54,13 @@ export default class User {
         this.sid = sid;
     }
 
-    // 전공 관련 getter 및 setter
+    public getName(): string {
+        return this.name;
+    }
+    public setName(name: string): void {
+        this.name = name;
+    }
+
     public getMajor(): string {
         return this.major;
     }
@@ -51,7 +68,6 @@ export default class User {
         this.major = major;
     }
 
-    // 이메일 관련 getter 및 setter
     public getEmail(): string {
         return this.email;
     }
@@ -59,7 +75,6 @@ export default class User {
         this.email = email;
     }
 
-    // 역할 관련 getter 및 setter
     public getRole(): UserRole {
         return this.role;
     }

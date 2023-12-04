@@ -7,7 +7,7 @@ import useElementDimensions from "../../../../../hooks/useElementDimensions";
 import VirtualizedTable from "../../../../../modules/virtualizedTable/VirtualizedTable";
 import { useModal } from "../../../../../modules/modal/Modal";
 import { ModalAnimationType } from "../../../../../modules/modal/ModalAnimations";
-import { getAuthToken, getReservations, getUserRole } from "../../../../../api/dguonandoff";
+import { approveReservation, getAuthToken, getReservations, getUserRole, rejectReservation } from "../../../../../api/dguonandoff";
 import { useNavigate } from "react-router-dom";
 
 
@@ -53,11 +53,39 @@ export default function ReservationManager({ buildings }: ReservationManagerPara
     const [reservations, setReservations] = useState<Reservation[]>([]);
     const [filteredReservations, setFilteredReservations] = useState<Reservation[]>([]);
     const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
+    const [refreshReservation, setRefreshReservation] = useState<boolean>(true);
 
 
     // Hook
     const reservationTableHeight = useElementDimensions(reservationTableRef, "Pure")[1];
     const [ReservationDetailsModal, openReservationDetailsModal, closeReservationDetailsModal] = useModal(ModalAnimationType.ZOOM);
+
+
+    // Handler
+    const onReject = async (reservation: Reservation) => {
+        const [token, userRole] = [getAuthToken(), getUserRole()];
+        if (token && userRole) {
+            await rejectReservation(token, reservation);
+            closeReservationDetailsModal();
+            setRefreshReservation(!refreshReservation);
+        } else {
+            alert("권한이 없습니다.");
+            navigate("/admin/login")
+        }
+    }
+
+    const onApprove = async (reservation: Reservation) => {
+        const [token, userRole] = [getAuthToken(), getUserRole()];
+        if (token && userRole) {
+            await approveReservation(token, reservation);
+            closeReservationDetailsModal();
+            setRefreshReservation(!refreshReservation);
+        } else {
+            alert("권한이 없습니다.");
+            navigate("/admin/login")
+        }
+    }
+
 
     // Effect
     useEffect(() => {
@@ -74,7 +102,7 @@ export default function ReservationManager({ buildings }: ReservationManagerPara
     useEffect(() => {
         (async () => {
             const [token, userRole] = [getAuthToken(), getUserRole()];
-            if (token && userRole === "MASTER") {
+            if (token && userRole) {
                 const reservationsResponse = await getReservations(token);
                 const stringToDate = (dateStr: string): Date => {
                     const [year, month, day] = dateStr.split("-").map(Number);
@@ -82,7 +110,6 @@ export default function ReservationManager({ buildings }: ReservationManagerPara
                 };
                 setReservations(reservationsResponse);
                 setFilteredReservations(reservationsResponse.filter((reservation) => startDate <= stringToDate(reservation.getDate()) && stringToDate(reservation.getDate()) <= endDate))
-
             } else {
                 alert("권한이 없습니다.");
                 navigate("/admin/login")
@@ -101,7 +128,7 @@ export default function ReservationManager({ buildings }: ReservationManagerPara
         newReservations = newReservations.filter((reservation) => selectedReservationStatus === "ALL" || selectedReservationStatus === reservation.getStatus());
         setFilteredReservations(newReservations);
 
-    }, [startDate, endDate, selectedBuilding, reservations, selectedReservationStatus]);
+    }, [startDate, endDate, selectedBuilding, reservations, selectedReservationStatus, refreshReservation]);
 
 
     // Handler
@@ -281,8 +308,8 @@ export default function ReservationManager({ buildings }: ReservationManagerPara
                             </div>
                         </div>
                         <div className={styles.bottom}>
-                            <button className={styles.APPROVED} onClick={() => { closeReservationDetailsModal() }}>예약 승인</button>
-                            <button className={styles.REJECTED} onClick={() => { closeReservationDetailsModal() }}>예약 거절</button>
+                            <button className={styles.APPROVED} onClick={() => { onReject(selectedReservation) }}>예약 승인</button>
+                            <button className={styles.REJECTED} onClick={() => { onApprove(selectedReservation) }}>예약 거절</button>
                         </div>
                     </div>
                 </ReservationDetailsModal>
