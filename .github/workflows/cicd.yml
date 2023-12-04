@@ -53,10 +53,10 @@ jobs:
           JWT_EXPIRATION_MILLISECOND: ${{ secrets.JWT_EXPIRATION_MILLISECOND }}
           JWT_TOKEN_PREFIX: ${{ secrets.JWT_TOKEN_PREFIX }}
           JWT_TOKEN_HEADER: ${{ secrets.JWT_TOKEN_HEADER }}
-          HOST: ${{secrets.MAIL_HOST}}
-          PORT: ${{secrets.MAIL_PORT}}
-          USERNAME: ${{secrets.MAIL_USERNAME}}
-          PASSWORD: ${{secrets.MAIL_PASSWORD}}
+          MAIL_HOST: ${{secrets.MAIL_HOST}}
+          MAIL_PORT: ${{secrets.MAIL_PORT}}
+          MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
+          MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
 
 
 
