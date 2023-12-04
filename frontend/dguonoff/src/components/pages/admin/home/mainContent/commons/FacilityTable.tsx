@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import styles from "./FacilityTable.module.css";
 import VirtualizedTable from "../../../../../../modules/virtualizedTable/VirtualizedTable";
 import Facility from "../../../../../../types/Facility";
@@ -26,7 +26,7 @@ export default function FacilityTable({ facilities, selectedFacility, setSelecte
 
 
     // Hook
-    const [facilityTableWidth, facilityTableHeight] = useElementDimensions(facilityTable, "Pure");
+    const facilityTableHeight = useElementDimensions(facilityTable, "Pure")[1];
 
 
     // Render

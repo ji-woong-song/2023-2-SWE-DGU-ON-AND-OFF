@@ -4,7 +4,9 @@ import { CookieStorageProvider } from "../modules/storage/AppStorageProvider";
 import Building from "../types/Building";
 import Facility from "../types/Facility";
 import { Day } from "../types/Day";
-import { FacilityEvent } from "../components/pages/admin/home/mainContent/commons/FacilityEventInfo";
+import FacilitySchedule from "../types/FacilitySchedule";
+import { FacilityEvent } from "../types/FacilityEvent";
+import Reservation from "../types/Reservation";
 
 
 
@@ -346,9 +348,38 @@ export async function requestDeprivation(token: string, userId: string): Promise
 
 
 
-/**TODO: API명세가 필요함 */
-export async function getReservations(token: string): Promise<void> {
-    let responseData: any;
+/*****************************************************************
+ * 서버로부터 모든 예약 정보를 가져오는 API 메서드입니다.
+ * 이 메서드는 관리자에게만 사용 가능합니다.
+ *****************************************************************/
+
+/** 예약 응답 데이터 타입 */
+type GetReservationsResponse = {
+    reservationId: number;
+    title: string;
+    status: "PENDING" | "APPROVED" | "REJECTED";
+    date: string;
+    startTime: string;
+    endTime: string;
+    facilityCode: string;
+    buildingName: string;
+    facilityName: string;
+    outline: string;
+    purpose: string;
+    guests: string[];
+}[];
+
+/**
+ * getReservations 메서드는 관리자가 모든 예약 정보를 조회하기 위해 서버에 요청합니다.
+ * 이 메서드는 인증 토큰을 사용하여 관리자 권한을 인증받고, 서버로부터 예약 목록을 받아옵니다.
+ *
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @returns {Promise<Reservation[]>} 서버로부터 받은 예약 정보를 Reservation 객체 배열로 반환합니다.
+ * 각 객체에는 예약 ID, 제목, 상태, 날짜, 시작 및 종료 시간, 시설 코드, 건물 이름, 시설 이름, 개요, 목적, 게스트 목록이 포함됩니다.
+ * 에러 발생 시 빈 배열을 반환합니다.
+ */
+export async function getReservations(token: string): Promise<Reservation[]> {
+    let responseData: GetReservationsResponse = [];
     try {
         const response = await axios.get(
             getApiUrl("/api/reservation/admin/all"),
@@ -359,12 +390,25 @@ export async function getReservations(token: string): Promise<void> {
                 withCredentials: true
             }
         );
-        console.log(response.data)
         responseData = response.data;
     } catch (error) {
         console.error(error);
     }
+    return responseData.map((reservations) => new Reservation(
+        reservations.reservationId,
+        reservations.title,
+        reservations.status,
+        reservations.date,
+        reservations.startTime,
+        reservations.endTime,
+        reservations.facilityCode,
+        reservations.buildingName,
+        reservations.facilityName,
+        reservations.outline,
+        reservations.purpose,
+        reservations.guests));
 }
+
 
 
 
@@ -459,8 +503,45 @@ export async function getFacilities(token: string, floor: number, buildingName: 
 
 
 
-export async function getFixedSchedules(token: string, day: Day, startDate: Date, endDate: Date, facility: Facility, building: Building): Promise<any> {
-    let responseData: any;
+/*****************************************************************
+ * 서버로부터 특정 요일에 특정 시설과 건물에서의 고정 일정 목록을 가져오는 API 메서드입니다.
+ *****************************************************************/
+
+/** 고정 일정 응답 데이터 타입 */
+type GetFixedSchedulesResponse = {
+    id: number;
+    day: "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY";
+    time: {
+        start: string;
+        end: string;
+    };
+    event: {
+        name: string;
+        hostName: string;
+        outline: string;
+        purpose: string;
+        guestNumber: number;
+    };
+}[];
+
+/**
+ * getFixedSchedules 메서드는 서버에 저장된 특정 시설의 특정 기간에 대한 고정 일정 정보를 조회합니다.
+ * 이 메서드는 인증 토큰과 함께 요일, 시작/종료 날짜, 시설 객체, 건물 객체를 서버에 요청하고,
+ * 서버로부터 해당 조건을 만족하는 고정 일정 정보를 포함한 응답을 받습니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {Day} day 조회할 요일입니다.
+ * @param {Date} startDate 조회할 시작 날짜입니다.
+ * @param {Date} endDate 조회할 종료 날짜입니다.
+ * @param {Facility} facility 조회할 시설 객체입니다.
+ * @param {Building} building 조회할 건물 객체입니다.
+ * @returns {Promise<FacilitySchedule[]>} 서버로부터 받은 고정 일정 정보를 FacilitySchedule 객체 배열로 반환합니다.
+ * 각 객체에는 일정의 ID, 요일, 시간(start, end), 이벤트(name, hostName, outline, purpose, guestNumber)가 포함됩니다.
+ * 에러 발생 시 빈 배열을 반환합니다.
+ */
+export async function getFixedSchedules(token: string, day: Day, startDate: Date, endDate: Date, facility: Facility, building: Building): Promise<FacilitySchedule[]> {
+    let responseData: GetFixedSchedulesResponse = [];
+
     const formatDate = (date: Date): string => {
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -468,10 +549,17 @@ export async function getFixedSchedules(token: string, day: Day, startDate: Date
         return `${year}-${month}-${day}`;
     }
 
+    const stringToTime = (timeStr: string): Date => {
+        const [hours, minutes, seconds] = timeStr.split(":").map(Number);
+        const time = new Date();
+        time.setHours(hours, minutes, seconds, 0);
+        return time;
+    };
+
     const queryParams = new URLSearchParams({
         day: day,
         startDate: formatDate(startDate),
-        endDate: formatDate(startDate),
+        endDate: formatDate(endDate),
         code: facility.getCode(),
         buildingName: building.getName()
     }).toString();
@@ -486,52 +574,56 @@ export async function getFixedSchedules(token: string, day: Day, startDate: Date
                 withCredentials: true
             }
         );
-        console.log(response.data)
         responseData = response.data;
     } catch (error) {
-        console.error(error);
+        if (axios.isAxiosError(error) && error.response) {
+            responseData = [];
+        }
     }
-    return responseData;
+
+    return responseData.map((fixedSchedule) => new FacilitySchedule(
+        fixedSchedule.id,
+        stringToTime(fixedSchedule.time.start),
+        stringToTime(fixedSchedule.time.end),
+        new FacilityEvent(fixedSchedule.event.name, fixedSchedule.event.hostName, fixedSchedule.event.outline, fixedSchedule.event.purpose, fixedSchedule.event.guestNumber)
+    ));
 }
 
 
-/*
-{
-  "facility": {
-    "code": "string",
-    "buildingName": "string"
-  },
-  "effectiveDate": {
-    "start": "2023-12-03",
-    "end": "2023-12-03"
-  },
-  "day": "MONDAY",
-  "time": {
-    "start": {
-      "hour": 0,
-      "minute": 0,
-      "second": 0,
-      "nano": 0
-    },
-    "end": {
-      "hour": 0,
-      "minute": 0,
-      "second": 0,
-      "nano": 0
-    }
-  },
-  "event": {
-    "name": "string",
-    "hostName": "string",
-    "outline": "string",
-    "purpose": "string",
-    "guestNumber": 0
-  }
-}
-*/
 
-export async function registerFixedSchedules(token: string, facility: Facility, building: Building, startDate: Date, endDate: Date, day: Day, time: Date, event: FacilityEvent): Promise<void> {
-    let responseData: any;
+
+/*****************************************************************
+ * 서버에 새로운 고정 일정을 등록하는 API 메서드입니다.
+ *****************************************************************/
+
+/** 고정 일정 등록 응답 데이터 타입 */
+type RegisterFixedScheduleResponse = {
+    scheduleId: number;
+} | {
+    message: string;
+    code: string;
+};
+
+/**
+ * registerFixedSchedule 메서드는 새 고정 일정을 서버에 등록합니다.
+ * 이 메서드는 인증 토큰과 함께 시설, 건물, 시작/종료 날짜, 요일, 시작/종료 시간, 이벤트 정보를 포함한 데이터를 서버에 전송합니다.
+ * 성공적으로 일정이 등록되면, 서버로부터 할당된 일정 ID를 받습니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {Facility} facility 등록할 시설 객체입니다.
+ * @param {Building} building 등록할 건물 객체입니다.
+ * @param {Date} startDate 일정의 시작 날짜입니다.
+ * @param {Date} endDate 일정의 종료 날짜입니다.
+ * @param {Day} day 일정이 적용될 요일입니다.
+ * @param {Date} startTime 일정의 시작 시간입니다.
+ * @param {Date} endTime 일정의 종료 시간입니다.
+ * @param {FacilityEvent} event 등록할 이벤트 정보를 담은 객체입니다.
+ * @returns {Promise<boolean>} 일정 등록 성공 시 true를, 실패 시 false를 반환합니다.
+ * 에러 발생 시, 오류 메시지와 코드를 포함한 객체가 반환될 수 있습니다.
+ */
+export async function registerFixedSchedule(token: string, facility: Facility, building: Building, startDate: Date, endDate: Date, day: Day, startTime: Date, endTime: Date, event: FacilityEvent): Promise<boolean> {
+    let responseData: RegisterFixedScheduleResponse | undefined = undefined;
+
     const formatDate = (date: Date) => {
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -539,13 +631,11 @@ export async function registerFixedSchedules(token: string, facility: Facility, 
         return `${year}-${month}-${day}`;
     }
 
-    const formatTime = (date: Date) => {
-        const newDate = new Date(date);
-        newDate.setMinutes(date.getMinutes() + 30);
-        return {
-            start: { hour: date.getHours(), minute: date.getMinutes(), second: 0, nano: 0 },
-            end: { hour: newDate.getHours(), minute: newDate.getMinutes(), second: 0, nano: 0 }
-        }
+    const formatTime = (time: Date): string => {
+        const hours = time.getHours().toString().padStart(2, '0');
+        const minutes = time.getMinutes().toString().padStart(2, '0');
+        const seconds = time.getSeconds().toString().padStart(2, '0');
+        return `${hours}:${minutes}:${seconds}`;
     };
 
     try {
@@ -559,11 +649,115 @@ export async function registerFixedSchedules(token: string, facility: Facility, 
                 end: formatDate(endDate)
             },
             day: day,
-            time: formatTime(time),
-            event: event
+            time: {
+                start: formatTime(startTime),
+                end: formatTime(endTime)
+            },
+            event: {
+                name: event.getName(),
+                hostName: event.getHostName(),
+                outline: event.getOutline(),
+                purpose: event.getPurpose(),
+                guestNumber: event.getGuestNumber()
+            }
+        };
+        const response = await axios.post(
+            getApiUrl("/api/fixedSchedules/"),
+            postData,
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            responseData = error.response.data;
+        }
+    }
+    return "scheduleId" in responseData!;
+}
+
+
+
+
+/*****************************************************************
+ * 서버에 저장된 고정 일정을 수정하는 API 메서드입니다.
+ *****************************************************************/
+
+/** 고정 일정 수정 응답 데이터 타입 */
+type ModifyFixedScheduleResponse = {
+    scheduleId: number;
+} | {
+    message: string;
+    code: string;
+};
+
+/**
+ * modifyFixedSchedule 메서드는 서버에 저장된 특정 고정 일정을 수정합니다.
+ * 이 메서드는 인증 토큰과 함께 고정 일정 객체(FacilitySchedule), 시설(Facility), 건물(Building), 시작/종료 날짜, 요일, 이벤트 정보를 포함한 데이터를 서버에 전송합니다.
+ * 성공적으로 일정이 수정되면, 서버로부터 업데이트된 일정 ID를 받습니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {FacilitySchedule} facilitySchedule 수정할 고정 일정 객체입니다.
+ * @param {Facility} facility 수정할 시설 객체입니다.
+ * @param {Building} building 수정할 건물 객체입니다.
+ * @param {Date} startDate 수정할 일정의 시작 날짜입니다.
+ * @param {Date} endDate 수정할 일정의 종료 날짜입니다.
+ * @param {Day} day 수정할 일정이 적용될 요일입니다.
+ * @param {FacilityEvent} event 수정할 이벤트 정보를 담은 객체입니다.
+ * @returns {Promise<boolean>} 일정 수정 성공 시 true를, 실패 시 false를 반환합니다.
+ * 에러 발생 시, 오류 메시지와 코드를 포함한 객체가 반환될 수 있습니다.
+ */
+export async function modifyFixedSchedule(token: string, facilitySchedule: FacilitySchedule, facility: Facility, building: Building, startDate: Date, endDate: Date, day: Day, event: FacilityEvent): Promise<boolean> {
+    let responseData: ModifyFixedScheduleResponse | undefined = undefined;
+
+    const formatDate = (date: Date) => {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    const formatTime = (time: Date): string => {
+        const hours = time.getHours().toString().padStart(2, '0');
+        const minutes = time.getMinutes().toString().padStart(2, '0');
+        const seconds = time.getSeconds().toString().padStart(2, '0');
+        return `${hours}:${minutes}:${seconds}`;
+    };
+
+    try {
+        const postData = {
+            scheduleId: facilitySchedule.getScheduleId(),
+            scheduleInfo: {
+                facility: {
+                    code: facility.getCode(),
+                    buildingName: building.getName()
+                },
+                effectiveDate: {
+                    start: formatDate(startDate),
+                    end: formatDate(endDate)
+                },
+                day: day,
+                time: {
+                    start: formatTime(facilitySchedule.getStartTime()),
+                    end: formatTime(facilitySchedule.getEndTime())
+                },
+                event: {
+                    name: event.getName(),
+                    hostName: event.getHostName(),
+                    outline: event.getOutline(),
+                    purpose: event.getPurpose(),
+                    guestNumber: event.getGuestNumber()
+                }
+            }
         };
         console.log(postData)
-        const response = await axios.post(
+        console.log(token)
+        const response = await axios.patch(
             getApiUrl("/api/fixedSchedules/"),
             postData,
             {
@@ -581,4 +775,51 @@ export async function registerFixedSchedules(token: string, facility: Facility, 
             responseData = error.response.data;
         }
     }
+    console.log(responseData);
+    return "scheduleId" in responseData!;
+}
+
+
+
+
+/*****************************************************************
+ * 서버에 저장된 고정 일정을 삭제하는 API 메서드입니다.
+ *****************************************************************/
+
+/** 고정 일정 삭제 응답 데이터 타입 */
+type DeleteFixedScheduleResponse = "success" | {
+    message: string;
+    code: string;
+};
+
+/**
+ * deleteFixedSchedule 메서드는 서버에 저장된 특정 고정 일정을 삭제합니다.
+ * 이 메서드는 인증 토큰과 함께 고정 일정 객체(FacilitySchedule)에서 가져온 일정 ID를 사용하여,
+ * 해당 일정을 삭제하는 요청을 서버에 전송합니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {FacilitySchedule} facilitySchedule 삭제할 고정 일정 객체입니다.
+ * @returns {Promise<boolean>} 일정 삭제 성공 시 true를, 실패 시 false를 반환합니다.
+ * 에러 발생 시, 오류 메시지와 코드를 포함한 객체가 반환될 수 있으며, 이 경우 false가 반환됩니다.
+ */
+export async function deleteFixedSchedule(token: string, facilitySchedule: FacilitySchedule): Promise<boolean> {
+    let responseData: DeleteFixedScheduleResponse | undefined = undefined;
+    try {
+        const queryParams = facilitySchedule.getScheduleId();
+        const response = await axios.delete(
+            getApiUrl(`/api/fixedSchedules/${queryParams}`),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            responseData = error.response.data;
+        }
+    }
+    return responseData === "success";
 }

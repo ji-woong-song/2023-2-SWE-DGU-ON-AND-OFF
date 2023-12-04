@@ -48,7 +48,7 @@ export default function AdminAccountManager() {
 
 
     // Hook
-    const [userTableWidth, userTableHeight] = useElementDimensions(userTable, "Pure");
+    const userTableHeight = useElementDimensions(userTable, "Pure")[1];
 
 
     // Handler

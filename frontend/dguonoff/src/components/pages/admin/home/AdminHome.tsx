@@ -45,13 +45,13 @@ export default function AdminHome() {
                 return <Welcome />;
             }
             case "예약 신청 관리": {
-                return <ReservationManager />;
+                return <ReservationManager buildings={buildings} />;
             }
             case "고정 시간표 관리": {
                 return <FixedTimetableManager buildings={buildings} />;
             }
             case "개별 시간표 관리": {
-                return <IndividualTimetableManager />;
+                return <IndividualTimetableManager buildings={buildings} />;
             }
             case "관리자 계정 관리": {
                 return <AdminAccountManager />
