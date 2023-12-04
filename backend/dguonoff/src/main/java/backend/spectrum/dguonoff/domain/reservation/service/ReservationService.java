@@ -30,6 +30,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import javax.transaction.Transactional;
 import javax.validation.constraints.Email;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -442,7 +443,8 @@ public class ReservationService {
     }
 
     //예약 정보에 따라 모든 시설물의 상태를 변경하는 함수
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0/30 * * * *")
+    @Transactional
     public void updateFacilityStatus() {
         //승인된 모든 예약 정보 조회
         List<ReservationInfoResponse> allReservationInfoList = getAllApprovedReservationInfoList();
