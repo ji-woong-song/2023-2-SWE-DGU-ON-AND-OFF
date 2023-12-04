@@ -8,16 +8,17 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Setter;
 
 @Entity
 @Table(name = "Reservation")
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reservation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reservation_id", nullable = false)
     private Long reservationId;
 
@@ -34,6 +35,9 @@ public class Reservation {
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
+    @Column(nullable = false)
+    private Integer guestNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Facility facility;
 
@@ -48,5 +52,8 @@ public class Reservation {
     public void setEvent(Event event) {
         this.event = event;
         this.event.addReservation(this);
+    }
+    public void setFacility(Facility facility) {
+        this.facility = facility;
     }
 }

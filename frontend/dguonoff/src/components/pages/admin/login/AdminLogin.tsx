@@ -1,28 +1,52 @@
+/*****************************************************************
+ * 관리자 로그인 페이지를 렌더링하고, 로그인 기능을 제공하는 컴포넌트입니다.
+ *****************************************************************/
+
 import { useNavigate } from "react-router-dom";
 import styles from "./AdminLogin.module.css";
 import { useState } from "react";
-import { requestAuthLogin } from "../../../../api/dguonandoff";
-import { CookieStorageProvider } from "../../../../modules/storage/AppStorageProvider";
+import { requestAuthLogin, setAuthToken, setUserRole } from "../../../../api/dguonandoff";
 
+/**
+ * AdminLogin 컴포넌트는 관리자 로그인을 위한 UI를 제공합니다.
+ * 
+ * 이 컴포넌트는 로그인을 위한 아이디와 비밀번호 입력 필드, 로그인 버튼, 회원가입 페이지로의 링크를 제공합니다.
+ * 사용자가 로그인 버튼을 클릭하면, 입력된 아이디와 비밀번호로 로그인을 시도하고 결과에 따라 다른 동작을 수행합니다.
+ * 로그인 성공 시, 사용자 역할에 따라 적절한 페이지로 이동하거나 접근 제한 메시지를 표시합니다.
+ * 로그인 실패 시, 오류 메시지를 표시합니다.
+ * 
+ * 또한, 사용자가 회원가입 링크를 클릭하면 회원가입 페이지로 이동합니다.
+ * 
+ * @returns {JSX.Element} 관리자 로그인 페이지를 렌더링하는 JSX 엘리먼트입니다.
+ */
 export default function AdminLogin() {
     // Const
     const navigate = useNavigate();
 
 
     // State
-    const [id, setId] = useState<string>("cat");
-    const [password, setPassword] = useState<string>("123456789");
+    const [id, setId] = useState<string>("root");
+    const [password, setPassword] = useState<string>("password");
 
 
     // Handler
     const onLoginClick = async () => {
         if (id.length > 0 && password.length > 0) {
-            const result = await requestAuthLogin(id, password);
-            switch (result.result) {
+            const { message, data } = await requestAuthLogin(id, password);
+            switch (message) {
                 case "LOGIN_SUCCESS": {
-                    CookieStorageProvider.set("userAuthToken", result.token);
-                    alert(`${id}님 환영합니다.`);
-                    navigate("/admin");
+                    if (data) {
+                        if (data.role === "NORMAL") {
+                            alert("관리자만 접근할 수 있는 페이지 입니다.");
+                        } else {
+                            setAuthToken(data.token);
+                            setUserRole(data.role);
+                            alert(`${id}(${data!.role})님 환영합니다.`);
+                            navigate("/admin");
+                        }
+                    } else {
+                        alert("예기치 못한 오류로 로그인에 실패했습니다.");
+                    }
                     break;
                 }
                 case "LOGIN_FAIL": {
