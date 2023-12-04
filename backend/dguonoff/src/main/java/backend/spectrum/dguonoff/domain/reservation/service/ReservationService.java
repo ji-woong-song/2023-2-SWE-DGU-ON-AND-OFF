@@ -30,7 +30,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import javax.validation.constraints.Email;
+import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -57,6 +57,8 @@ public class ReservationService {
     private static final int ONE_DAY = 1;
     private static final int NEXT_SEMESTER_MONTH = 5;
     private static final int NO_MAX_TIME = 0;
+    public static final String FACILITY_STATUS_CRON = "0 0/30 * * * *";
+
 
     private final FacilityRepository facilityRepository;
     private final UserRepository userRepository;
@@ -442,7 +444,8 @@ public class ReservationService {
     }
 
     //예약 정보에 따라 모든 시설물의 상태를 변경하는 함수
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = FACILITY_STATUS_CRON)
+    @Transactional
     public void updateFacilityStatus() {
         //승인된 모든 예약 정보 조회
         List<ReservationInfoResponse> allReservationInfoList = getAllApprovedReservationInfoList();

@@ -45,8 +45,10 @@ public class Event {
     @Column
     private String purpose;
 
+
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reservation> reservations = new ArrayList<>();
+
 
     public void addReservation(Reservation reservation) {
         this.reservations.add(reservation);
