@@ -422,28 +422,28 @@ export async function getReservations(token: string): Promise<Reservation[]> {
 
 
 
-/** TODO: API가 작동하지 않음 */
-export async function rejectReservation(token: string, reservation: Reservation) {
-    let responseData: any;
-    try {
-        const response = await axios.get(
-            getApiUrl(`api/reservation/admin/reject/${reservation.getReservationId()}`),
-            {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                },
-                withCredentials: true
-            }
-        );
-        responseData = response.data;
-    } catch (error) {
-        console.error(error);
-    }
-    console.log(responseData)
-}
+/*****************************************************************
+ * 관리자가 특정 예약을 승인하는 API 메서드입니다.
+ * 이 메서드는 관리자에게만 사용 가능합니다.
+ *****************************************************************/
 
-export async function approveReservation(token: string, reservation: Reservation) {
-    let responseData: any;
+/** 예약 승인 응답 데이터 타입 */
+type ApproveReservationResponse = string | {
+    message: string;
+    code: string;
+};
+
+/**
+ * approveReservation 메서드는 관리자가 특정 예약을 승인하기 위해 서버에 요청합니다.
+ * 이 메서드는 인증 토큰과 예약 객체를 사용하여 서버에 예약 승인 요청을 보냅니다.
+ *
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {Reservation} reservation 승인할 예약 객체입니다.
+ * @returns {Promise<boolean>} 예약 승인이 성공적으로 완료되었는지 여부를 반환합니다.
+ * 서버로부터 "예약 승인이 완료되었습니다"라는 응답을 받으면 true, 그렇지 않으면 false를 반환합니다.
+ */
+export async function approveReservation(token: string, reservation: Reservation): Promise<boolean> {
+    let responseData: ApproveReservationResponse = "";
     try {
         const response = await axios.get(
             getApiUrl(`/api/reservation/admin/approval/${reservation.getReservationId()}`),
@@ -456,9 +456,55 @@ export async function approveReservation(token: string, reservation: Reservation
         );
         responseData = response.data;
     } catch (error) {
-        console.error(error);
+        if (axios.isAxiosError(error) && error.response) {
+            responseData = error.response.data;
+        }
     }
-    console.log(responseData)
+    return typeof responseData === "string" && responseData.includes("예약 승인이 완료되었습니다");
+}
+
+
+
+
+/*****************************************************************
+ * 관리자가 특정 예약을 거절하는 API 메서드입니다.
+ * 이 메서드는 관리자에게만 사용 가능합니다.
+ *****************************************************************/
+
+/** 예약 거절 응답 데이터 타입 */
+type RejectReservationResponse = string | {
+    message: string;
+    code: string;
+};
+
+/**
+ * rejectReservation 메서드는 관리자가 특정 예약을 거절하기 위해 서버에 요청합니다.
+ * 이 메서드는 인증 토큰과 예약 객체를 사용하여 서버에 예약 거절 요청을 보냅니다.
+ *
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {Reservation} reservation 거절할 예약 객체입니다.
+ * @returns {Promise<boolean>} 예약 거절이 성공적으로 완료되었는지 여부를 반환합니다.
+ * 서버로부터 "예약 거절이 완료되었습니다"라는 응답을 받으면 true, 그렇지 않으면 false를 반환합니다.
+ */
+export async function rejectReservation(token: string, reservation: Reservation): Promise<boolean> {
+    let responseData: RejectReservationResponse = "";
+    try {
+        const response = await axios.get(
+            getApiUrl(`/api/reservation/admin/reject/${reservation.getReservationId()}`),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            responseData = error.response.data;
+        }
+    }
+    return typeof responseData === "string" && responseData.includes("예약 거절이 완료되었습니다");
 }
 
 
