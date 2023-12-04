@@ -110,32 +110,32 @@
     font-size: 15px;
 }
 
-.manage_button_pending {
+.manage_button_PENDING {
     border: 2px solid var(--button-blank-color);
     background-color: var(--button-blank-light-color);
 }
 
-.manage_button_pending:hover {
+.manage_button_PENDING:hover {
     background-color: var(--button-blank-color);
     color: var(--button-text-light-color);
 }
 
-.manage_button_accept {
+.manage_button_APPROVED {
     border: 2px solid var(--button-positive-color);
     background-color: var(--button-positive-light-color);
 }
 
-.manage_button_accept:hover {
+.manage_button_APPROVED:hover {
     background-color: var(--button-positive-color);
     color: var(--button-text-light-color);
 }
 
-.manage_button_reject {
+.manage_button_REJECTED {
     border: 2px solid var(--button-negative-color);
     background-color: var(--button-negative-light-color);
 }
 
-.manage_button_reject:hover {
+.manage_button_REJECTED :hover {
     background-color: var(--button-negative-color);
     color: var(--button-text-light-color);
 }

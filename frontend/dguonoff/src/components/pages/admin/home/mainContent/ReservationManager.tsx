@@ -62,24 +62,28 @@ export default function ReservationManager({ buildings }: ReservationManagerPara
 
 
     // Handler
-    const onReject = async (reservation: Reservation) => {
+    const onApprove = async (reservation: Reservation) => {
         const [token, userRole] = [getAuthToken(), getUserRole()];
         if (token && userRole) {
-            await rejectReservation(token, reservation);
+            if (reservation.getStatus() !== "APPROVED") {
+                await approveReservation(token, reservation);
+                setRefreshReservation(!refreshReservation);
+            }
             closeReservationDetailsModal();
-            setRefreshReservation(!refreshReservation);
         } else {
             alert("권한이 없습니다.");
             navigate("/admin/login")
         }
     }
 
-    const onApprove = async (reservation: Reservation) => {
+    const onReject = async (reservation: Reservation) => {
         const [token, userRole] = [getAuthToken(), getUserRole()];
         if (token && userRole) {
-            await approveReservation(token, reservation);
+            if (reservation.getStatus() !== "REJECTED") {
+                await rejectReservation(token, reservation);
+                setRefreshReservation(!refreshReservation);
+            }
             closeReservationDetailsModal();
-            setRefreshReservation(!refreshReservation);
         } else {
             alert("권한이 없습니다.");
             navigate("/admin/login")
@@ -115,7 +119,7 @@ export default function ReservationManager({ buildings }: ReservationManagerPara
                 navigate("/admin/login")
             }
         })();
-    }, [navigate, setReservations, startDate, endDate]);
+    }, [navigate, setReservations, startDate, endDate, refreshReservation]);
 
     useEffect(() => {
         const stringToDate = (dateStr: string): Date => {
@@ -128,7 +132,7 @@ export default function ReservationManager({ buildings }: ReservationManagerPara
         newReservations = newReservations.filter((reservation) => selectedReservationStatus === "ALL" || selectedReservationStatus === reservation.getStatus());
         setFilteredReservations(newReservations);
 
-    }, [startDate, endDate, selectedBuilding, reservations, selectedReservationStatus, refreshReservation]);
+    }, [startDate, endDate, selectedBuilding, reservations, selectedReservationStatus]);
 
 
     // Handler
@@ -270,7 +274,7 @@ export default function ReservationManager({ buildings }: ReservationManagerPara
                                 <div key={index} id={`${index}`} className={rowClassName}
                                     style={rowStyle}>
                                     <div className={itemClassName} style={itemStyles[0]}>{reservation.getReservationId()}</div>
-                                    <div className={itemClassName} style={itemStyles[1]}>{reservation.getTitle()}</div>
+                                    <div className={itemClassName} style={itemStyles[1]}>{reservation.getHost().getName()}</div>
                                     <div className={itemClassName} style={itemStyles[2]}>{reservation.getFacilityName()}</div>
                                     <div className={itemClassName} style={itemStyles[3]}>{`${reservation.getDate()}, ${reservation.getStartTime()} ~ ${reservation.getEndTime()}`}
                                     </div>
@@ -301,15 +305,15 @@ export default function ReservationManager({ buildings }: ReservationManagerPara
                                 <label htmlFor="group-info">예약 인원 및 정보</label>
                             </div>
                             <div className={styles.data}>
-                                <label htmlFor="user-name">{"undefined"}</label>
+                                <label htmlFor="user-name">{selectedReservation.getHost().getName()}</label>
                                 <label htmlFor="use-purpose">{selectedReservation.getPurpose()}</label>
                                 <label htmlFor="date-time">{`${selectedReservation.getDate()}, ${selectedReservation.getStartTime()} ~ ${selectedReservation.getEndTime()}`}</label>
-                                <label htmlFor="group-info">{`${"undefined"} 외 ${selectedReservation.getGuests().length}명`}</label>
+                                <label htmlFor="group-info">{`${selectedReservation.getHost().getName()} 외 ${selectedReservation.getGuests().length}명`}</label>
                             </div>
                         </div>
                         <div className={styles.bottom}>
-                            <button className={styles.APPROVED} onClick={() => { onReject(selectedReservation) }}>예약 승인</button>
-                            <button className={styles.REJECTED} onClick={() => { onApprove(selectedReservation) }}>예약 거절</button>
+                            <button className={styles.APPROVED} onClick={() => { onApprove(selectedReservation) }}>예약 승인</button>
+                            <button className={styles.REJECTED} onClick={() => { onReject(selectedReservation) }}>예약 거절</button>
                         </div>
                     </div>
                 </ReservationDetailsModal>
