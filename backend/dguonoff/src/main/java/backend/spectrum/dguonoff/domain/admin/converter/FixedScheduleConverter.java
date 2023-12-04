@@ -18,7 +18,7 @@ public class FixedScheduleConverter {
                 .outline(event.getOutline())
                 .name(event.getName())
                 .hostName(event.getHostName())
-                .guestNumber(fixedSchedule.getFacility().getCapacity())
+                .guestNumber(fixedSchedule.getGuestNumber())
                 .build();
     }
 

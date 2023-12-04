@@ -43,9 +43,12 @@ public class FixedScheduleService {
     @Transactional(readOnly = true)
     public List<DailyScheduleResponse> getFixedTimeTables(DayOfWeek day, LocalDate startDate, LocalDate endDate,
                                                           String code, String buildingName) {
-        List<FixedSchedule> schedules = fixedScheduleRepository.findByDayAndStartDateBetweenAndFacility_Building_NameAndFacility_Code(
-                day, startDate, endDate, buildingName, code);
+        List<FixedSchedule> schedules = fixedScheduleRepository.findByDayAndFacility_Building_NameAndFacility_Code(
+                day, buildingName, code);
         return schedules.stream()
+                .filter(schedule ->
+                    (!(schedule.getEndDate().isBefore(startDate) || schedule.getStartDate().isAfter(endDate)))
+                )
                 .map(FixedScheduleConverter::toFixedScheduleDTO)
                 .collect(Collectors.toList());
     }
