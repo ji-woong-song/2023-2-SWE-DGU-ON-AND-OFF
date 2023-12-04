@@ -1,8 +1,9 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import styles from "./FacilityTimetable.module.css";
 import { Day, dayToKor } from "../../../../../../types/Day";
 import useElementDimensions from "../../../../../../hooks/useElementDimensions";
 import VirtualizedTable from "../../../../../../modules/virtualizedTable/VirtualizedTable";
+import FacilitySchedule from "../../../../../../types/FacilitySchedule";
 
 
 export interface FacilityTimetableProps {
@@ -10,10 +11,13 @@ export interface FacilityTimetableProps {
     setCurrDay: React.Dispatch<React.SetStateAction<Day>>;
     selectedTimes: Date[];
     setSelectedTimes: React.Dispatch<React.SetStateAction<Date[]>>
+    facilitySchedules: FacilitySchedule[];
+    selectedFacilitySchedule: FacilitySchedule | null;
+    setSelectedFacilitySchedule: React.Dispatch<React.SetStateAction<FacilitySchedule | null>>;
 }
 
 
-export default function FacilityTimetable({ currDay, setCurrDay, selectedTimes, setSelectedTimes }: FacilityTimetableProps) {
+export default function FacilityTimetable({ currDay, setCurrDay, selectedTimes, setSelectedTimes, facilitySchedules, selectedFacilitySchedule, setSelectedFacilitySchedule }: FacilityTimetableProps) {
     // Const
     const days: Day[] = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
     const timeIntervals = Array.from({ length: 32 }, (_, index) => {
@@ -46,8 +50,8 @@ export default function FacilityTimetable({ currDay, setCurrDay, selectedTimes, 
 
 
     // Hook
-    const [timetableDaysWidth, timetableDaysHeight] = useElementDimensions(timetableDays, "Pure");
-    const [timetableWidth, timetableHeight] = useElementDimensions(timetable, "Pure");
+    const timetableDaysHeight = useElementDimensions(timetableDays, "Pure")[1];
+    const timetableHeight = useElementDimensions(timetable, "Pure")[1];
 
 
     // Handler
@@ -68,12 +72,30 @@ export default function FacilityTimetable({ currDay, setCurrDay, selectedTimes, 
     }
 
     const onSelectTime = (selectedTime: Date) => {
-        if (selectedTimes.some((time) => compareTime(time, selectedTime))) {
-            setSelectedTimes(selectedTimes.filter((time) => !compareTime(time, selectedTime)));
+        const regisedSchedule = facilitySchedules.find((schedule) => compareTime(schedule.getStartTime(), selectedTime));
+        if (regisedSchedule) {
+            if (selectedFacilitySchedule && compareTime(regisedSchedule.getStartTime(), selectedFacilitySchedule.getStartTime())) {
+                setSelectedFacilitySchedule(null);
+            } else {
+                setSelectedFacilitySchedule(regisedSchedule);
+                setSelectedTimes([]);
+            }
         } else {
-            setSelectedTimes([...selectedTimes, selectedTime]);
+            if (selectedTimes.some((time) => compareTime(time, selectedTime))) {
+                setSelectedTimes(selectedTimes.filter((time) => !compareTime(time, selectedTime)));
+            } else {
+                setSelectedFacilitySchedule(null);
+                setSelectedTimes([...selectedTimes, selectedTime]);
+            }
         }
     }
+
+    
+    // Effect
+    useEffect(() => {
+        setSelectedFacilitySchedule(null);
+        setSelectedTimes([]);
+    }, [currDay, setSelectedFacilitySchedule, setSelectedTimes]);
 
 
     // Render
@@ -218,13 +240,21 @@ export default function FacilityTimetable({ currDay, setCurrDay, selectedTimes, 
                         <div key={index} id={`${index}`} className={rowClassName}
                             onClick={() => { onSelectTime(timeInterval.start) }}
                             style={
-                                selectedTimes.some((time) => compareTime(time, timeInterval.start)) ? {
-                                    ...rowStyle,
-                                    color: 'var(--component-innertext-select-color)',
-                                    backgroundColor: 'var(--component-main-color)'
-                                } : {
-                                    ...rowStyle
-                                }}>
+                                facilitySchedules.some((schedule) => compareTime(schedule.getStartTime(), timeInterval.start)) ? (
+                                    (selectedFacilitySchedule && compareTime(selectedFacilitySchedule.getStartTime(), timeInterval.start)) ? {
+                                        ...rowStyle,
+                                        color: 'var(--component-innertext-select-color)',
+                                        backgroundColor: 'var(--component-disable-color)'
+                                    } : {
+                                        ...rowStyle,
+                                        backgroundColor: 'var(--component-disable-light-color)'
+                                    }) : (selectedTimes.some((time) => compareTime(time, timeInterval.start)) ? {
+                                        ...rowStyle,
+                                        color: 'var(--component-innertext-select-color)',
+                                        backgroundColor: 'var(--component-main-color)'
+                                    } : {
+                                        ...rowStyle
+                                    })}>
                             <div className={itemClassName} style={itemStyles[0]}>{
                                 `${newStart.toISOString().split('T')[1].split(':')[0]}:${newStart.toISOString().split('T')[1].split(':')[1]} ~ 
                                             ${newEnd.toISOString().split('T')[1].split(':')[0]}:${newEnd.toISOString().split('T')[1].split(':')[1]}`

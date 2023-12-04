@@ -215,7 +215,7 @@
 
 
 /* bottom's components */
-.reservation_details .accept {
+.reservation_details .APPROVED {
     height: calc(100% - 4px);
     width: 45%;
     cursor: pointer;
@@ -228,12 +228,12 @@
     user-select: none;
 }
 
-.reservation_details .accept:hover {
+.reservation_details .APPROVED:hover {
     background-color: var(--button-positive-color);
     color: var(--component-innertext-select-color);
 }
 
-.reservation_details .reject {
+.reservation_details .REJECTED {
     height: calc(100% - 4px);
     width: 45%;
     cursor: pointer;
@@ -246,7 +246,7 @@
     user-select: none;
 }
 
-.reservation_details .reject:hover {
+.reservation_details .REJECTED:hover {
     background-color: var(--button-negative-color);
     color: var(--component-innertext-select-color);
 }
