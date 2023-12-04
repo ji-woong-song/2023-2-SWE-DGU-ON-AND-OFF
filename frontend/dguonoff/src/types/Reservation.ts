@@ -1,3 +1,4 @@
+import User from "./User";
 
 /**
  * ReservationStatus 타입은 예약의 상태를 나타내는 문자열 상수 타입입니다.
@@ -11,7 +12,8 @@ export type ReservationStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 /**
  * Reservation 클래스는 예약 정보를 나타냅니다.
- * 이 클래스는 예약의 ID, 제목, 상태, 날짜, 시작/종료 시간, 시설 코드, 건물 이름, 시설 이름, 개요, 목적 및 참석자 목록을 관리합니다.
+ * 이 클래스는 예약의 ID, 제목, 상태, 날짜, 시작/종료 시간, 시설 코드, 건물 이름, 시설 이름, 개요, 목적,
+ * 주최자 및 참석자 목록을 관리합니다.
  */
 export default class Reservation {
     private reservationId: number;
@@ -25,13 +27,14 @@ export default class Reservation {
     private facilityName: string;
     private outline: string;
     private purpose: string;
-    private guests: string[];
+    private host: User;
+    private guests: { id: string; name: string }[];
 
     /**
      * Reservation 클래스의 생성자입니다.
      * @param {number} reservationId - 예약의 고유 ID입니다.
      * @param {string} title - 예약의 제목입니다.
-     * @param {"PENDING" | "APPROVED" | "REJECTED" | "CANCELED"} status - 예약의 상태입니다.
+     * @param {ReservationStatus} status - 예약의 상태입니다.
      * @param {string} date - 예약 날짜입니다.
      * @param {string} startTime - 예약 시작 시간입니다.
      * @param {string} endTime - 예약 종료 시간입니다.
@@ -40,7 +43,8 @@ export default class Reservation {
      * @param {string} facilityName - 예약된 시설의 이름입니다.
      * @param {string} outline - 예약의 개요입니다.
      * @param {string} purpose - 예약의 목적입니다.
-     * @param {string[]} guests - 참석자 목록입니다.
+     * @param {User} host - 예약의 주최자 정보입니다.
+     * @param {{ id: string; name: string }[]} guests - 참석자 목록입니다.
      */
     constructor(
         reservationId: number = -1,
@@ -54,7 +58,8 @@ export default class Reservation {
         facilityName: string = '',
         outline: string = '',
         purpose: string = '',
-        guests: string[] = []
+        host: User = new User(),
+        guests: { id: string; name: string }[] = []
     ) {
         this.reservationId = reservationId;
         this.title = title;
@@ -67,6 +72,7 @@ export default class Reservation {
         this.facilityName = facilityName;
         this.outline = outline;
         this.purpose = purpose;
+        this.host = host;
         this.guests = guests;
     }
 
@@ -148,10 +154,17 @@ export default class Reservation {
         this.purpose = purpose;
     }
 
-    public getGuests(): string[] {
+    public getHost(): User {
+        return this.host;
+    }
+    public setHost(host: User): void {
+        this.host = host;
+    }
+
+    public getGuests(): { id: string; name: string; }[] {
         return this.guests;
     }
-    public setGuests(guests: string[]): void {
+    public setGuests(guests: { id: string; name: string; }[]): void {
         this.guests = guests;
     }
 }

@@ -353,7 +353,7 @@ export async function requestDeprivation(token: string, userId: string): Promise
  * 이 메서드는 관리자에게만 사용 가능합니다.
  *****************************************************************/
 
-/** 예약 응답 데이터 타입 */
+/** 예약 요청리스트 응답 데이터 타입 */
 type GetReservationsResponse = {
     reservationId: number;
     title: string;
@@ -366,7 +366,15 @@ type GetReservationsResponse = {
     facilityName: string;
     outline: string;
     purpose: string;
-    guests: string[];
+    host: {
+        id: string;
+        role: "NORMAL" | "ADMIN" | "MASTER";
+        sid: string;
+        name: string;
+        major: string | null;
+        email: string;
+    };
+    guests: { id: string; name: string; }[];
 }[];
 
 /**
@@ -382,7 +390,7 @@ export async function getReservations(token: string): Promise<Reservation[]> {
     let responseData: GetReservationsResponse = [];
     try {
         const response = await axios.get(
-            getApiUrl("/api/reservation/admin/all"),
+            getApiUrl("/api/reservation/"),
             {
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -406,7 +414,50 @@ export async function getReservations(token: string): Promise<Reservation[]> {
         reservations.facilityName,
         reservations.outline,
         reservations.purpose,
+        new User(reservations.host.id, reservations.host.sid, reservations.host.name, reservations.host.major || "", reservations.host.email, reservations.host.role),
         reservations.guests));
+}
+
+
+
+
+/** TODO: API가 작동하지 않음 */
+export async function rejectReservation(token: string, reservation: Reservation) {
+    let responseData: any;
+    try {
+        const response = await axios.get(
+            getApiUrl(`api/reservation/admin/reject/${reservation.getReservationId()}`),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+    console.log(responseData)
+}
+
+export async function approveReservation(token: string, reservation: Reservation) {
+    let responseData: any;
+    try {
+        const response = await axios.get(
+            getApiUrl(`/api/reservation/admin/approval/${reservation.getReservationId()}`),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+    console.log(responseData)
 }
 
 
