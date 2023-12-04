@@ -53,6 +53,11 @@ jobs:
           JWT_EXPIRATION_MILLISECOND: ${{ secrets.JWT_EXPIRATION_MILLISECOND }}
           JWT_TOKEN_PREFIX: ${{ secrets.JWT_TOKEN_PREFIX }}
           JWT_TOKEN_HEADER: ${{ secrets.JWT_TOKEN_HEADER }}
+          HOST: ${{secrets.MAIL_HOST}}
+          PORT: ${{secrets.MAIL_PORT}}
+          USERNAME: ${{secrets.MAIL_USERNAME}}
+          PASSWORD: ${{secrets.MAIL_PASSWORD}}
+
 
 
       - name: Grant execute permission for gradlew
