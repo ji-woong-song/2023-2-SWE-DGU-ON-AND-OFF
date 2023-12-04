@@ -25,10 +25,10 @@ export default function LoginPage() {
         // 여기에서 로그인 로직 처리
 
         if (userId.length > 0 && userPw.length > 0) {
-            const result = await requestAuthLogin(userId, userPw);
-            switch (result.result) {
+            const { message, data } = await requestAuthLogin(userId, userPw);
+            switch (message) {
                 case "LOGIN_SUCCESS": {
-                    CookieStorageProvider.set("userAuthToken", result.token);
+                    CookieStorageProvider.set("userAuthToken", data!.token);
                     alert(`${userId}님 환영합니다.`);
                     navigate("/");
                     break;

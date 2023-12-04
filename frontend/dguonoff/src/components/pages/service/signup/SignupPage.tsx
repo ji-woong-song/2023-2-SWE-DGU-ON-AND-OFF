@@ -46,8 +46,8 @@ export default function SignupPage() {
 
         if (userId.length > 0 && userPw.length > 0 && userName.length > 0 && userSid.length > 0 && userEmail.length > 0 && userMajor.length > 0) {
             // 여기에서 로그인 로직 처리
-            const result = await requestAuthSinUp(userId, userSid, userName, userMajor, userPw, userEmail);
-            switch (result) {
+            const {message} = await requestAuthSinUp(userId, userSid, userName, userMajor, userPw, userEmail);
+            switch (message) {
                 case "SUCCESS": {
                     alert("회원가입에 성공하였습니다.");
                     navigate('/login');
