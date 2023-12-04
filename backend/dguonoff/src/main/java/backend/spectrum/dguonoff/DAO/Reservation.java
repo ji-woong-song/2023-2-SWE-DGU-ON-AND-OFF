@@ -53,6 +53,12 @@ public class Reservation {
         this.event = event;
         this.event.addReservation(this);
     }
+
+    public void setOneReservationEvent(Event event) {
+        this.event = event;
+        this.event.addOneReservation(this);
+    }
+
     public void setFacility(Facility facility) {
         this.facility = facility;
     }

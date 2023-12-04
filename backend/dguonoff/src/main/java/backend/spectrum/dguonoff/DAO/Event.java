@@ -21,10 +21,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Getter
 @Setter
+@Slf4j
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -51,6 +53,11 @@ public class Event {
 
 
     public void addReservation(Reservation reservation) {
+        this.reservations.add(reservation);
+    }
+
+    public void addOneReservation(Reservation reservation) {
+        reservations = new ArrayList<Reservation>();
         this.reservations.add(reservation);
     }
 

@@ -170,6 +170,7 @@ public class ReservationService {
                 .build();
         eventRepository.saveAndFlush(event);
 
+
         //예약 등록하기
         Reservation reservation = Reservation.builder()
                 .status(status)
@@ -178,8 +179,9 @@ public class ReservationService {
                 .endTime(endTime)
                 .facility(facility)
                 .hotUserId(user)
+                .guestNumber(guestList.size() + 1)
                 .build();
-        reservation.setEvent(event);
+        reservation.setOneReservationEvent(event);
         reservationRepository.saveAndFlush(reservation);
 
 
