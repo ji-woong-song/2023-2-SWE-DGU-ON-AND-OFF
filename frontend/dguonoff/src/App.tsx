@@ -10,6 +10,7 @@ import LoginPage from './components/pages/service/login/LoginPage';
 import SignupPage from './components/pages/service/signup/SignupPage';
 import React, { createContext, useState } from 'react';
 import Reservation from './types/Reservation';
+import AnnouncementPage from './components/pages/service/information/Announcement';
 // import UserInfo from './components/pages/service/information/UserInfo';
 // import ReservationDetailPage from './components/pages/service/reservation/ReservationDetailPage';
 
@@ -34,9 +35,9 @@ function App() {
       <ReservationContext.Provider value={{reservationInfo, setReservationInfo}}>
         <BrowserRouter>
           <Routes>
-              <Route path="/" element={<MainPage/>} />
-              <Route path="/reservationInfo" element={<ReservationInfo reservation={reservationInfo!}/>} />
-
+            <Route path="/" element={<MainPage/>} />
+            <Route path="/reservationInfo" element={<ReservationInfo reservation={reservationInfo!}/>} />
+            <Route path="/announcement" element={<AnnouncementPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             {/* <Route path="/userInfo" element={<UserInfo/>} />
