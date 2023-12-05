@@ -1156,3 +1156,52 @@ export async function getAnnouncementBody(token: string, boardId: number): Promi
     }
     return responseData;
 }
+
+export async function deleteReservation(token: string, reservationId : number): Promise<boolean> {
+    let responseData: DeleteFixedScheduleResponse | undefined = undefined;
+    try {
+        const response = await axios.delete(
+            getApiUrl(`/api/fixedSchedules/${reservationId}`),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            responseData = error.response.data;
+        }
+    }
+    return responseData === "success";
+}
+
+export async function modifyReservation(token: string, reservationId: number ,outline : string): Promise<boolean>{
+    let responseData: DeleteFixedScheduleResponse | undefined = undefined;
+    const postData = { 
+        "reservationId" : reservationId,
+        "outline" : outline,
+        "guestIds": []
+    };
+    try {
+        const response = await axios.post(
+            getApiUrl("/api/reservation/modification"),
+            postData,
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            responseData = error.response.data;
+        }
+    }
+    return responseData === "success";
+}
