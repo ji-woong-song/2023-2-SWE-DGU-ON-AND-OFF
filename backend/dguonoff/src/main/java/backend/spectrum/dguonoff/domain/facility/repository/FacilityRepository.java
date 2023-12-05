@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface FacilityRepository extends JpaRepository<Facility, Long> {
-    @Query("select f from Facility f where f.code = ?1")
-    Optional<Facility> findByCode(String code);
+    @Query("select f from Facility f where f.code = ?1 AND f.building.name = ?2")
+    Optional<Facility> findByCodeAndBuilding(String code, String buildingName);
     List<Facility> findAllByBuilding_NameAndFloorAndIsBookable(String buildingName, Integer floor, Boolean bookable);
     List<Facility> findAllByBuilding_NameAndFloor(String buildingName, Integer floor);
     Optional<Facility> findByBuilding_NameAndCode(String buildingName, String code);

@@ -15,6 +15,7 @@ public class ReservationRequest {
     private String startTime;
     private String endTime;
     private String facilityCode;
+    private String buildingName;
     private String outline;
     private String purpose;
     private List<String> guestIds;

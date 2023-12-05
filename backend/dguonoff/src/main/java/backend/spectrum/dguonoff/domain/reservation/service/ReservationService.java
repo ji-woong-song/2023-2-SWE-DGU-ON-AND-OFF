@@ -133,6 +133,7 @@ public class ReservationService {
         LocalTime startTime = LocalTime.parse(reservationRequest.getStartTime());
         LocalTime endTime = LocalTime.parse(reservationRequest.getEndTime());
         String facilityCode = reservationRequest.getFacilityCode();
+        String buildingName = reservationRequest.getBuildingName();
         String outline = reservationRequest.getOutline();
         String purpose = reservationRequest.getPurpose();
         List<String> guestList = reservationRequest.getGuestIds();
@@ -142,7 +143,7 @@ public class ReservationService {
                 .orElseThrow(
                         () -> new UserNotFoundException(ErrorCode.NOT_EXIST_USER));
 
-        Facility facility = facilityRepository.findByCode(facilityCode) //시설물이 존재하지 않는 경우
+        Facility facility = facilityRepository.findByCodeAndBuilding(facilityCode, buildingName) //시설물이 존재하지 않는 경우
                 .orElseThrow(
                         () -> new FacilityNotFoundException(ErrorCode.NOT_EXIST_FACILITY));
 
