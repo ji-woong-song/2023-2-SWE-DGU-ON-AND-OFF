@@ -30,7 +30,8 @@
 
 .usingTime{
     font-size : 18px;
-    color : '#646464';
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.5);
 }
 
 .infoFacility{
@@ -130,4 +131,9 @@
     font-size : 14px;
     color : '#646464';
     font-weight: bold;
+}
+
+.announcementAuthor{
+    font-size : 12px;
+    color : '#646464';
 }

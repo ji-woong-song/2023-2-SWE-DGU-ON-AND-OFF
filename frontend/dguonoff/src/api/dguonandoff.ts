@@ -366,6 +366,7 @@ type GetReservationsResponse = {
     facilityCode: string;
     buildingName: string;
     facilityName: string;
+    facilityState: "EMPTY" | "USING";
     outline: string;
     purpose: string;
     host: {
@@ -414,6 +415,7 @@ export async function getReservations(token: string): Promise<Reservation[]> {
         reservations.facilityCode,
         reservations.buildingName,
         reservations.facilityName,
+        "EMPTY",
         reservations.outline,
         reservations.purpose,
         new User(reservations.host.id, reservations.host.sid, reservations.host.name, reservations.host.major || "", reservations.host.email, reservations.host.role),
@@ -950,6 +952,7 @@ export async function getMyBookmark(token: string): Promise<Bookmark[]> {
 type GetAnnouncementsResponse = {
     authorId: string;
     boardId: number;
+    body : string;
     title: string;
 }[];
 
@@ -978,7 +981,7 @@ export async function getAnnouncements(token: string): Promise<Announcement[]> {
     } catch (error) {
         console.error(error);
     }
-    return responseData.map((announcement) => new Announcement(announcement.boardId, announcement.title, "", announcement.authorId));
+    return responseData.map((announcement) => new Announcement(announcement.boardId, announcement.title, announcement.body, announcement.authorId));
 }
 
 
@@ -1158,10 +1161,10 @@ export async function getAnnouncementBody(token: string, boardId: number): Promi
 }
 
 export async function deleteReservation(token: string, reservationId : number): Promise<boolean> {
-    let responseData: DeleteFixedScheduleResponse | undefined = undefined;
+    let responseData: number = 0;
     try {
         const response = await axios.delete(
-            getApiUrl(`/api/fixedSchedules/${reservationId}`),
+            getApiUrl(`/api/reservation/deletion/${reservationId}`),
             {
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -1169,17 +1172,17 @@ export async function deleteReservation(token: string, reservationId : number): 
                 withCredentials: true
             }
         );
-        responseData = response.data;
+        responseData = response.status;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             responseData = error.response.data;
         }
     }
-    return responseData === "success";
+    return responseData === 200;
 }
 
 export async function modifyReservation(token: string, reservationId: number ,outline : string): Promise<boolean>{
-    let responseData: DeleteFixedScheduleResponse | undefined = undefined;
+    let responseData: number = 0;
     const postData = { 
         "reservationId" : reservationId,
         "outline" : outline,
@@ -1197,11 +1200,66 @@ export async function modifyReservation(token: string, reservationId: number ,ou
                 withCredentials: true
             }
         );
-        responseData = response.data;
+        responseData = response.status
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             responseData = error.response.data;
         }
     }
-    return responseData === "success";
+    return responseData === 200;
+}
+
+
+export async function getMyReservations(token: string): Promise<Reservation[]> {
+    let responseData: GetReservationsResponse = [];
+    try {
+        const response = await axios.get(
+            getApiUrl("/api/reservation"),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+    return responseData.map((reservations) => new Reservation(
+        reservations.reservationId,
+        reservations.title,
+        reservations.status,
+        reservations.date,
+        reservations.startTime,
+        reservations.endTime,
+        reservations.facilityCode,
+        reservations.buildingName,
+        reservations.facilityName,
+        reservations.facilityState,
+        reservations.outline,
+        reservations.purpose,
+        new User(reservations.host.id, reservations.host.sid, reservations.host.name, reservations.host.major || "", reservations.host.email, reservations.host.role),
+        reservations.guests));
+}
+
+export async function finishFacilityUsing(token: string, buildingName: string, facilityCode: string): Promise<boolean>{
+    let responseData: number = 0;
+    try {
+        const response = await axios.get(
+            getApiUrl(`/api/facility/finish/${buildingName}/${facilityCode}`),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.status
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            responseData = error.response.data;
+        }
+    }
+    return responseData === 200;
 }

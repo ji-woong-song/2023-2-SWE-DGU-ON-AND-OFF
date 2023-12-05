@@ -8,7 +8,7 @@ import { Business, LocalLibrary, FilterHdr, BlindsClosedSharp } from '@mui/icons
 import { Route, Routes, useNavigate } from "react-router-dom";
 import useAuth from "../../../../hooks/useAuth";
 import Bookmark from "../../../../types/Bookmark";
-import { getBuildings, getMyBookmark, getReservations } from "../../../../api/dguonandoff";
+import { finishFacilityUsing, getBuildings, getMyBookmark, getMyReservations } from "../../../../api/dguonandoff";
 import { CookieStorageProvider } from "../../../../modules/storage/AppStorageProvider";
 import { useModal } from "../../../../modules/modal/Modal";
 import { ModalAnimationType } from "../../../../modules/modal/ModalAnimations";
@@ -62,12 +62,6 @@ export default function MainPage() {
             handleLoadBookmark();
             handleLoadReservation();
             handleLoadBuildings();
-            let { isActiveNow, ActiveReservation } = findActiveReservation(myReservations);
-            setIsActive(isActiveNow);
-
-            if(isActiveNow){
-                setNowUsingReservation(ActiveReservation!);
-            }
         }
       }, [isUserLoggedIn, navigate]);
 
@@ -78,12 +72,19 @@ export default function MainPage() {
     }
 
     const handleLoadReservation = async () => {
-        const reservations : Reservation[] = await getReservations(userToken);
+        const reservations : Reservation[] = await getMyReservations(userToken);
         setMyReservations(reservations);
+
+        let { isActiveNow, ActiveReservation } = findActiveReservation(reservations);
+            setIsActive(isActiveNow);
+
+        if(isActiveNow){
+            setNowUsingReservation(ActiveReservation!);
+        }
     }
 
     const handleBellClick = () => {
-        console.log("bell clicked");
+        navigate('/announcement');
     }
 
     const handleMenuClick = async () => {
@@ -100,18 +101,27 @@ export default function MainPage() {
         navigate('/reservationInfo');
     }
 
-    const handleEndUsing = () => {
+    const handleEndUsing = async () => {
+        const userConfirmed = window.confirm("이용을 종료하시겠습니까?");
 
+        if(!userConfirmed) return;
+        
+        let success = await finishFacilityUsing(userToken, nowUsingReservation!.getBuildingName(), nowUsingReservation!.getFacilityName());
+        if(success){
+            alert("이용이 종료되었습니다.");
+            setIsActive(false);
+            setNowUsingReservation(undefined);
+        }
     }
 
     const findActiveReservation = (reservationList: Reservation[]): { isActiveNow: boolean, ActiveReservation: Reservation | null } => {
         const now = new Date();
       
         for (const reservation of reservationList) {
-          const startDate = new Date(`${reservation.getDate}T${reservation.getStartTime}`);
-          const endDate = new Date(`${reservation.getDate}T${reservation.getEndTime}`);
+          const startDate = new Date(`${reservation.getDate()}T${reservation.getStartTime()}`);
+          const endDate = new Date(`${reservation.getDate()}T${reservation.getEndTime()}`);
       
-          if (now >= startDate && now <= endDate) {
+          if (now >= startDate && now <= endDate && reservation.getFacilityState() === "USING") {
             return { isActiveNow: true, ActiveReservation :reservation };
           }
         }
@@ -121,6 +131,7 @@ export default function MainPage() {
 
     return (
             <Container>
+            <Box sx={{ height: '12px' }} />
             <Toolbar>
                 <div className={styles.mainTitle}>
                     {appName}
@@ -149,13 +160,14 @@ export default function MainPage() {
                         </div>
                         <div style={{ height: '12px' }} />
                         <div className={styles.usingTime}>
-                            {nowUsingReservation!.getStartTime()} ~ {nowUsingReservation!.getEndTime()} 이용중
+                            {nowUsingReservation!.getStartTime().slice(0,5)} ~ {nowUsingReservation!.getEndTime().slice(0,5)} 이용중
                         </div>
                         <div style={{ height: '12px' }} />
                         <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end'}}>
                             <Button 
                             variant="contained"
                             style={{ backgroundColor: '#EDEBE7', color: '#959494', fontWeight : 'bold', boxShadow: 'none' }}
+                            onClick={handleEndUsing}
                             >이용 종료</Button>
                         </div>  
                     </div> :

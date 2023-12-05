@@ -28,7 +28,6 @@ export default function ReservationInfo({reservation} : ReservationInfoProps) {
         let success = await modifyReservation(userToken,reservationInfo.getReservationId(), newOutline);
         if(success){
             alert("메모가 수정 되었습니다.");
-            navigate(-1);
         }
     }
 
@@ -43,6 +42,7 @@ export default function ReservationInfo({reservation} : ReservationInfoProps) {
 
     return (
         <Container>
+            <Box sx={{ height: '12px' }} />
             <Toolbar>
                 <div className={styles.mainTitle}>
                     {title}

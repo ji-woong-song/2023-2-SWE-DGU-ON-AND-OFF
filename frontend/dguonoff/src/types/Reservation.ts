@@ -7,7 +7,7 @@ import User from "./User";
  */
 export type ReservationStatus = "PENDING" | "APPROVED" | "REJECTED";
 
-
+export type ReservationOnOff = "EMPTY" | "USING";
 
 
 /**
@@ -25,6 +25,7 @@ export default class Reservation {
     private facilityCode: string;
     private buildingName: string;
     private facilityName: string;
+    private facilityState: ReservationOnOff;
     private outline: string;
     private purpose: string;
     private host: User;
@@ -56,6 +57,7 @@ export default class Reservation {
         facilityCode: string = '',
         buildingName: string = '',
         facilityName: string = '',
+        facilityState : ReservationOnOff = "EMPTY",
         outline: string = '',
         purpose: string = '',
         host: User = new User(),
@@ -70,6 +72,7 @@ export default class Reservation {
         this.facilityCode = facilityCode;
         this.buildingName = buildingName;
         this.facilityName = facilityName;
+        this.facilityState = facilityState;
         this.outline = outline;
         this.purpose = purpose;
         this.host = host;
@@ -138,6 +141,14 @@ export default class Reservation {
     }
     public setFacilityName(facilityName: string): void {
         this.facilityName = facilityName;
+    }
+
+    public getFacilityState(): ReservationOnOff {
+        return this.facilityState;
+    }
+
+    public setFacilityState(facilityState: ReservationOnOff): void {
+        this.facilityState = facilityState;
     }
 
     public getOutline(): string {
