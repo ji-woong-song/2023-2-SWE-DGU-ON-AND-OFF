@@ -46,9 +46,9 @@ public class FacilityController {
     }
 
     //특정 시설물 이용상태 확인 기능
-    @GetMapping("/status/{facilityCode}")
-    public ResponseEntity<String> getFacilityStatus(@PathVariable String facilityCode){
-        FacilityStatus facilityStatus = facilityService.getFacilityStatus(facilityCode);
+    @GetMapping("/status/{buildingName}/{facilityCode}")
+    public ResponseEntity<String> getFacilityStatus(@PathVariable String buildingName, @PathVariable String facilityCode){
+        FacilityStatus facilityStatus = facilityService.getFacilityStatus(facilityCode, buildingName);
 
         HttpStatus successStatus = SUCCESS_FACILITY_LOOKUP.getStatus();
 
@@ -56,9 +56,9 @@ public class FacilityController {
     }
 
     //시설물 이용 종료 기능
-    @GetMapping("/finish/{facilityCode}")
-    public ResponseEntity<String> endFacility(@PathVariable String facilityCode){
-        facilityService.endFacility(facilityCode);
+    @GetMapping("/finish/{buildingName}/{facilityCode}")
+    public ResponseEntity<String> endFacility(@PathVariable String buildingName, @PathVariable String facilityCode){
+        facilityService.endFacility(facilityCode, buildingName);
 
         String successMessage = SUCCESS_FACILITY_FINISH.getMessage();
         HttpStatus successStatus = SUCCESS_FACILITY_FINISH.getStatus();

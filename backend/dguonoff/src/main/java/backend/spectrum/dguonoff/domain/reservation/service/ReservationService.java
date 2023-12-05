@@ -68,16 +68,16 @@ public class ReservationService {
 
 
     //예약할 수 있는 날짜 기준일을 반환해주는 함수
-    public DateConstraint getAvailableDate(String facilityCode) {
+    public DateConstraint getAvailableDate(String facilityCode, String buildingName) {
         DateConstraint constraint = facilityRepository
-                .findDateConstraint(facilityCode)
+                .findDateConstraint(facilityCode, buildingName)
                 .orElseThrow(
                         () -> new FacilityNotFoundException(ErrorCode.NOT_EXIST_FACILITY));
         return constraint;
     }
 
     //시설물 이용 횟수 초과를 확인하는 함수
-    public void validateMaxReservation(String facilityCode, LocalDate date, String userId) {
+    public void validateMaxReservation(String facilityCode, String buildingName, LocalDate date, String userId) {
 
         //관리자인 경우 이용 횟수 초과를 확인하지 않음
         if (!userRepository.findById(userId).get().getRole().equals(NORMAL)) {
@@ -86,7 +86,7 @@ public class ReservationService {
 
         //시설물의 예약 제한 정보를 가져옴
         MaxReservationConstraint constraint = facilityRepository
-                .findReservationConstraint(facilityCode)
+                .findReservationConstraint(facilityCode, buildingName)
                 .orElseThrow(
                         () -> new FacilityNotFoundException(ErrorCode.NOT_EXIST_FACILITY));
 
@@ -149,11 +149,11 @@ public class ReservationService {
 
 
         //예약 유효성 검사
-        validateMaxReservation(facilityCode, reservationDate, userId); // 최대 예약 횟수를 초과한 경우 예외 발생
-        validateAvailableDate(reservationDate, facilityCode); //예약 가능 날짜인지 검사
+        validateMaxReservation(facilityCode, buildingName, reservationDate, userId); // 최대 예약 횟수를 초과한 경우 예외 발생
+        validateAvailableDate(reservationDate, facilityCode, buildingName); //예약 가능 날짜인지 검사
         validateTime(startTime, endTime); //예약 시간이 유효한지 검사
-        validateTimeConflict(startTime, endTime, facilityCode, reservationDate); //다른 예약과 시간이 곂치는지 검사
-        validateUsageConstraint(startTime, endTime, facilityCode, guestList); //시설물 이용 제한을 위반한 경우 예외 발생
+        validateTimeConflict(startTime, endTime, facilityCode, buildingName,reservationDate); //다른 예약과 시간이 곂치는지 검사
+        validateUsageConstraint(startTime, endTime, facilityCode, buildingName, guestList); //시설물 이용 제한을 위반한 경우 예외 발생
 
         //예약자의 권한에 따라 예약 상태 설정
         if(user.getRole().equals(NORMAL)) {
@@ -388,8 +388,8 @@ public class ReservationService {
     }
 
     //예약 가능 날짜인지 검사하는 함수
-    private void validateAvailableDate(LocalDate reservationDate, String facilityCode) {
-        DateConstraint availableDate = getAvailableDate(facilityCode);
+    private void validateAvailableDate(LocalDate reservationDate, String facilityCode, String buildingName) {
+        DateConstraint availableDate = getAvailableDate(facilityCode, buildingName);
         LocalDate currentDate = LocalDate.now();
 
         LocalDate maxDate = reservationDate.minusDays(availableDate.getMaxDate());
@@ -401,8 +401,8 @@ public class ReservationService {
     }
 
     //기존 예약과 시간이 곂치는지 검증하는 함수
-    private void validateTimeConflict(LocalTime startTime, LocalTime endTime, String facilityCode, LocalDate reservationDate) {
-        List<Reservation> reservationList = reservationRepository.findByFacilityCodeAndDate(facilityCode, reservationDate);
+    private void validateTimeConflict(LocalTime startTime, LocalTime endTime, String facilityCode, String buildingName, LocalDate reservationDate) {
+        List<Reservation> reservationList = reservationRepository.findByFacilityCodeAndDate(facilityCode, buildingName, reservationDate);
         for (Reservation reservation : reservationList) {
             if (startTime.isBefore(reservation.getEndTime()) && endTime.isAfter(reservation.getStartTime())) {
                 throw new InvalidReservationException(ErrorCode.TIME_CONFLICT); //다른 예약과 시간이 곂치는 경우 예외 발생
@@ -411,8 +411,8 @@ public class ReservationService {
     }
 
     //시설물 이용 제한을 위반했는지 검증하는 함수
-    private void validateUsageConstraint(LocalTime startTime, LocalTime endTime, String facilityCode, List<String> guestList) {
-        UsageConstraint usageConstraint = facilityService.getUsageConstraint(facilityCode);
+    private void validateUsageConstraint(LocalTime startTime, LocalTime endTime, String facilityCode, String buildingName, List<String> guestList) {
+        UsageConstraint usageConstraint = facilityService.getUsageConstraint(facilityCode, buildingName);
         long usageTime = Duration.between(startTime, endTime).toHours();
 
         //예약 유효성 검사: 최대 이용 시간, 최대 이용 인원, 최소 이용 인원을 초과한 경우 예외 발생
@@ -442,10 +442,10 @@ public class ReservationService {
                     if(reservationInfo.getDate().isEqual(currentDate)) { //예약 날짜가 현재 날짜와 같은 경우
                         if(reservationInfo.getStartTime().isBefore(currentTime) && reservationInfo.getEndTime().isAfter(currentTime)) { //예약 시간이 현재 시간 사이인 경우
                             //예약된 시설물의 상태를 사용중으로 변경
-                            facilityRepository.updateFacilityStatus(USING, reservationInfo.getFacilityCode());
+                            facilityRepository.updateFacilityStatus(USING, reservationInfo.getFacilityCode(), reservationInfo.getBuildingName());
                         } else if(reservationInfo.getEndTime().isBefore(currentTime)) { //예약 시간이 현재 시간보다 이른 경우
                             //예약된 시설물의 상태를 사용 가능으로 변경
-                            facilityRepository.updateFacilityStatus(EMPTY, reservationInfo.getFacilityCode());
+                            facilityRepository.updateFacilityStatus(EMPTY, reservationInfo.getFacilityCode(), reservationInfo.getBuildingName());
                         }
                     }
                 }

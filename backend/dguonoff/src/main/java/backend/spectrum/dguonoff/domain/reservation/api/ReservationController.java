@@ -133,16 +133,16 @@ public class ReservationController {
 
 
     //예약 가능 확인하기 기능
-    @GetMapping("/available/{facilityCode}/{date}")
-    public ResponseEntity<AvailabilityResponse> checkReservationAvailability(@PathVariable String facilityCode, @PathVariable String date, Principal principal){
+    @GetMapping("/available/{buildingName}/{facilityCode}/{date}")
+    public ResponseEntity<AvailabilityResponse> checkReservationAvailability(@PathVariable String buildingName, @PathVariable String facilityCode, @PathVariable String date, Principal principal){
         String userId = principal.getName();
         LocalDate parsedDate = LocalDate.parse(date);
 
         //예약 신청 가능 기간 검증
-        DateConstraint constraint = reservationService.getAvailableDate(facilityCode);
+        DateConstraint constraint = reservationService.getAvailableDate(facilityCode, buildingName);
 
         //최대 예약 횟수 초과 검증
-        reservationService.validateMaxReservation(facilityCode, parsedDate, userId);
+        reservationService.validateMaxReservation(facilityCode, buildingName, parsedDate, userId);
 
         HttpStatus successStatus = AVAILABLE_FACILITY.getStatus();
         String successMessage = AVAILABLE_FACILITY.getMessage();
