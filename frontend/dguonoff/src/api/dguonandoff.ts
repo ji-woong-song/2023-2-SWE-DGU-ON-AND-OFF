@@ -920,7 +920,8 @@ export async function deleteFixedSchedule(token: string, facilitySchedule: Facil
 }
 
 
-<<<<<<< Updated upstream
+
+
 export async function getMyBookmark(token: string): Promise<Bookmark[]> {
     let result: Bookmark[] = [];
     try {
@@ -939,7 +940,8 @@ export async function getMyBookmark(token: string): Promise<Bookmark[]> {
     }
     return result;
 }
-=======
+
+
 
 
 /*****************************************************************
@@ -1156,4 +1158,3 @@ export async function getAnnouncementBody(token: string, boardId: number): Promi
     }
     return responseData;
 }
->>>>>>> Stashed changes
