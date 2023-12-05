@@ -112,8 +112,8 @@ export default function VirtualizedTable({
                 style={{
                     height: `${headerHeight}px`,
                     maxHeight: `${headerHeight}px`,
-                    width: `${hideScrollbar ? "100%" : "calc(100% - 17px)"}`,
-                    marginRight: `${hideScrollbar ? "none" : "17px solid"}`,
+                    width: `${hideScrollbar ? "100%" : "calc(100% - 20px)"}`,
+                    borderRight: `${hideScrollbar ? "none" : `40px solid ${(columnStyles?.backgroundColor as string)?.split(' ').pop()}`}`,
                     borderRightColor: `${(columnStyles?.backgroundColor as string)?.split(' ').pop()}`
                 }}>
                 <div className={styles.table__headers_columns}>

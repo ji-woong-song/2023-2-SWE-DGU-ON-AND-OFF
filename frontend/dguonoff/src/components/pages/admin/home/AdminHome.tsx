@@ -8,9 +8,10 @@ import AdminAccountManager from "./mainContent/AdminAccountManager";
 import { useNavigate } from "react-router-dom";
 import { getAuthToken, getBuildings, getUserRole, requestAuthLogout } from "../../../../api/dguonandoff";
 import Building from "../../../../types/Building";
+import AnnouncementManager from "./mainContent/AnnouncementManager";
 
 
-type SidebarMenu = "Blank" | "예약 신청 관리" | "고정 시간표 관리" | "개별 시간표 관리" | "관리자 계정 관리";
+type SidebarMenu = "Blank" | "예약 신청 관리" | "고정 시간표 관리" | "개별 시간표 관리" | "관리자 계정 관리" | "공지사항 등록";
 
 
 export default function AdminHome() {
@@ -19,7 +20,7 @@ export default function AdminHome() {
 
 
     // State
-    const [sidebarMenus, setSidebarMenus] = useState<SidebarMenu[]>(["예약 신청 관리", "고정 시간표 관리", "개별 시간표 관리"]);
+    const [sidebarMenus, setSidebarMenus] = useState<SidebarMenu[]>(["예약 신청 관리", "고정 시간표 관리", "개별 시간표 관리", "공지사항 등록"]);
     const [currMenu, setCurrMenu] = useState<SidebarMenu>("Blank");
     const [hoverMenu, sethoverMenu] = useState<SidebarMenu>("Blank");
     const [buildings, setBuildings] = useState<Building[]>([]);
@@ -56,6 +57,9 @@ export default function AdminHome() {
             case "관리자 계정 관리": {
                 return <AdminAccountManager />
             }
+            case "공지사항 등록": {
+                return <AnnouncementManager />
+            }
             default: {
                 return <></>;
             }
@@ -69,7 +73,7 @@ export default function AdminHome() {
             const [token, userRole] = [getAuthToken(), getUserRole()];
             if (token && userRole) {
                 if (userRole === "MASTER") {
-                    setSidebarMenus(["예약 신청 관리", "고정 시간표 관리", "개별 시간표 관리", "관리자 계정 관리"]);
+                    setSidebarMenus(["예약 신청 관리", "고정 시간표 관리", "개별 시간표 관리", "공지사항 등록", "관리자 계정 관리"]);
                 }
                 setBuildings(await getBuildings(token));
             } else {

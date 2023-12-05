@@ -1,0 +1,234 @@
+.AnnouncementManager {
+    width: 100%;
+    height: calc(100% - 40px - 20px);
+    padding-top: 40px;
+    padding-bottom: 20px;
+}
+
+
+
+/* adminAccountManager's components */
+.search_filter {
+    width: calc(100% - 30px);
+    height: 50px;
+    padding: 20px 15px 15px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user_table {
+    width: calc(100% - 30px);
+    height: calc(100% - 85px - 35px);
+    padding: 15px 15px 20px 15px;
+    display: flex;
+    overflow: hidden;
+}
+
+
+
+/* search_filter's components */
+.search_filter .announcement_title {
+    width: calc(40% - 30px);
+    height: 100%;
+    min-width: 520px;
+    padding-left: 15px;
+    padding-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search_filter .authorId {
+    width: calc(40% - 30px);
+    height: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search_filter .buttons {
+    width: calc(20% - 30px);
+    height: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search_filter label {
+    margin-right: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    user-select: none;
+}
+
+.announcement_title input,
+.authorId input {
+    flex-grow: 1;
+    height: calc(40px - 10px - 4px);
+    padding: 5px;
+    border-radius: 10px;
+    border: 2px solid var(--component-main-color);
+    font-size: 17px;
+}
+
+.search_filter .write {
+    height: 70%;
+    width: 80%;
+    cursor: pointer;
+    border: 2px solid var(--component-main-color);
+    background-color: var(--component-main-light-color);
+    border-radius: 15px;
+    padding: 1px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--component-innertext-color);
+    user-select: none;
+}
+
+.search_filter .write:hover {
+    background-color: var(--component-main-color);
+    color: var(--component-innertext-select-color);
+}
+
+
+/* ReservationDetailsModal's components */
+.write_announcement {
+    width: calc(85vw - 40px - 16px);
+    height: calc(85vh - 40px - 16px);
+    padding: 20px;
+    border: 8px solid var(--component-main-color);
+    border-radius: 15px;
+    background-color: var(--component-inner-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.write_modal_top {
+    width: calc(100% - 30px);
+    height: 50px;
+    padding: 20px 15px 15px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.write_modal_middle {
+    width: calc(100% - 30px);
+    height: calc(100% - 85px - 35px);
+    padding: 15px 15px 20px 15px;
+}
+
+
+/* write_modal_top's components*/
+.write_announcement .announcement_title {
+    width: calc(75% - 30px);
+    height: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.write_announcement .announcement_buttons {
+    width: calc(25% - 30px);
+    height: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.write_announcement label {
+    margin-right: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    user-select: none;
+}
+
+.write_announcement .submit,
+.write_announcement .modify {
+    height: 70%;
+    width: 50%;
+    cursor: pointer;
+    border: 2px solid var(--button-positive-color);
+    background-color: var(--button-positive-light-color);
+    border-radius: 15px;
+    margin: 2px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--component-innertext-color);
+    user-select: none;
+}
+
+.write_announcement .submit:hover,
+.write_announcement .modify:hover {
+    background-color: var(--button-positive-color);
+    color: var(--component-innertext-select-color);
+}
+
+.write_announcement .remove {
+    height: 70%;
+    width: 50%;
+    cursor: pointer;
+    border: 2px solid var(--button-negative-color);
+    background-color: var(--button-negative-light-color);
+    border-radius: 15px;
+    margin: 2px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--component-innertext-color);
+    user-select: none;
+}
+
+.write_announcement .remove:hover {
+    background-color: var(--button-negative-color);
+    color: var(--component-innertext-select-color);
+}
+
+.write_announcement .close {
+    height: 70%;
+    width: 50%;
+    cursor: pointer;
+    border: 2px solid var(--component-main-color);
+    background-color: var(--component-main-light-color);
+    border-radius: 15px;
+    margin: 2px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--component-innertext-color);
+    user-select: none;
+}
+
+.write_announcement .close:hover {
+    background-color: var(--component-main-color);
+    color: var(--component-innertext-select-color);
+}
+
+
+/* write_modal_middle's components*/
+.write_announcement .announcement_body {
+    width: calc(100% - 30px);
+    height: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.write_announcement textarea {
+    height: calc(100% - 14px);
+    width: calc(100% - 14px);
+    padding: 5px;
+    border-radius: 12px;
+    resize: none;
+    border: 2px solid var(--component-main-color);
+    font-size: 17px;
+}

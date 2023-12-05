@@ -8,6 +8,7 @@ import { Day } from "../types/Day";
 import FacilitySchedule from "../types/FacilitySchedule";
 import { FacilityEvent } from "../types/FacilityEvent";
 import Reservation from "../types/Reservation";
+import Announcement from "../types/Announcement";
 
 
 
@@ -249,7 +250,7 @@ export async function getUsers(token: string): Promise<User[]> {
     let responseData: UsersResponse = [];
     try {
         const response = await axios.get(
-            getApiUrl("/admin/master/users"),
+            getApiUrl("/master/users"),
             {
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -261,7 +262,7 @@ export async function getUsers(token: string): Promise<User[]> {
     } catch (error) {
         console.error(error);
     }
-    return responseData.map((user) => new User(user.id, user.sid, user.major, user.email, user.role));
+    return responseData.map((user) => new User(user.id, user.sid, undefined, user.major, user.email, user.role));
 }
 
 
@@ -286,7 +287,7 @@ export async function requestEmpowerment(token: string, userId: string): Promise
     try {
         const postData = { userId };
         const response = await axios.post(
-            getApiUrl("/admin/master/empowerment"),
+            getApiUrl("/master/users/empowerment"),
             postData,
             {
                 headers: {
@@ -327,7 +328,7 @@ export async function requestDeprivation(token: string, userId: string): Promise
     try {
         const postData = { userId };
         const response = await axios.post(
-            getApiUrl("/admin/master/deprivation"),
+            getApiUrl("/master/users/deprivation"),
             postData,
             {
                 headers: {
@@ -664,7 +665,7 @@ export async function getFixedSchedules(token: string, day: Day, startDate: Date
 
     try {
         const response = await axios.get(
-            getApiUrl(`/api/fixedSchedules/?${queryParams}`),
+            getApiUrl(`/api/admin/fixedSchedules/?${queryParams}`),
             {
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -760,7 +761,7 @@ export async function registerFixedSchedule(token: string, facility: Facility, b
             }
         };
         const response = await axios.post(
-            getApiUrl("/api/fixedSchedules/"),
+            getApiUrl("/api/admin/fixedSchedules/"),
             postData,
             {
                 headers: {
@@ -853,10 +854,8 @@ export async function modifyFixedSchedule(token: string, facilitySchedule: Facil
                 }
             }
         };
-        console.log(postData)
-        console.log(token)
         const response = await axios.patch(
-            getApiUrl("/api/fixedSchedules/"),
+            getApiUrl("/api/admin/fixedSchedules/"),
             postData,
             {
                 headers: {
@@ -866,14 +865,12 @@ export async function modifyFixedSchedule(token: string, facilitySchedule: Facil
                 withCredentials: true
             }
         );
-        console.log(response.data)
         responseData = response.data;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             responseData = error.response.data;
         }
     }
-    console.log(responseData);
     return "scheduleId" in responseData!;
 }
 
@@ -905,7 +902,7 @@ export async function deleteFixedSchedule(token: string, facilitySchedule: Facil
     try {
         const queryParams = facilitySchedule.getScheduleId();
         const response = await axios.delete(
-            getApiUrl(`/api/fixedSchedules/${queryParams}`),
+            getApiUrl(`/api/admin/fixedSchedules/${queryParams}`),
             {
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -923,6 +920,7 @@ export async function deleteFixedSchedule(token: string, facilitySchedule: Facil
 }
 
 
+<<<<<<< Updated upstream
 export async function getMyBookmark(token: string): Promise<Bookmark[]> {
     let result: Bookmark[] = [];
     try {
@@ -941,3 +939,221 @@ export async function getMyBookmark(token: string): Promise<Bookmark[]> {
     }
     return result;
 }
+=======
+
+
+/*****************************************************************
+ * 서버로부터 모든 공지사항 정보를 가져오는 API 메서드입니다.
+ *****************************************************************/
+
+/** 공지사항 정보 응답 데이터 타입 */
+type GetAnnouncementsResponse = {
+    authorId: string;
+    boardId: number;
+    title: string;
+}[];
+
+/**
+ * getAnnouncements 메서드는 서버에 저장된 모든 공지사항 목록을 조회합니다.
+ * 이 메서드는 인증 토큰을 사용하여 서버에 공지사항 정보 요청을 전송합니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @returns {Promise<Announcement[]>} 서버로부터 받은 공지사항 정보를 Announcement 객체 배열로 반환합니다.
+ * 각 객체에는 공지사항의 게시판 ID, 제목, 작성자 ID가 포함됩니다.
+ * 에러 발생 시 빈 배열을 반환합니다.
+ */
+export async function getAnnouncements(token: string): Promise<Announcement[]> {
+    let responseData: GetAnnouncementsResponse = [];
+    try {
+        const response = await axios.get(
+            getApiUrl("/api/board/"),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+    return responseData.map((announcement) => new Announcement(announcement.boardId, announcement.title, "", announcement.authorId));
+}
+
+
+
+
+/*****************************************************************
+ * 새로운 공지사항을 서버에 등록하는 API 메서드입니다.
+ *****************************************************************/
+
+/** 공지사항 등록 응답 데이터 타입 */
+type RegisterAnnouncementResponse = {
+    boardId: number;
+};
+
+/**
+ * registerAnnouncement 메서드는 새로운 공지사항을 서버에 등록합니다.
+ * 이 메서드는 인증 토큰, 공지사항 제목, 그리고 본문을 사용하여 서버에 새 공지사항을 생성하는 요청을 전송합니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {string} title 공지사항의 제목입니다.
+ * @param {string} body 공지사항의 본문입니다.
+ * @returns {Promise<boolean>} 공지사항 등록 성공 여부를 반환합니다.
+ * 성공적으로 등록되었을 경우 true, 그렇지 않으면 false를 반환합니다.
+ * 에러 발생 시, 오류 메시지가 콘솔에 출력됩니다.
+ */
+export async function registerAnnouncement(token: string, title: string, body: string): Promise<boolean> {
+    let responseData: RegisterAnnouncementResponse | undefined = undefined;
+    try {
+        const postData = { title, body };
+        const response = await axios.post(
+            getApiUrl("/api/admin/board/"),
+            postData,
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+    return responseData !== undefined && ("boardId" in responseData!);
+}
+
+
+
+
+/*****************************************************************
+ * 서버에 저장된 공지사항을 삭제하는 API 메서드입니다.
+ *****************************************************************/
+
+/** 공지사항 삭제 응답 데이터 타입 */
+type RemoveAnnouncementResponse = number;
+
+/**
+ * removeAnnouncement 메서드는 서버에 저장된 특정 공지사항을 삭제합니다.
+ * 이 메서드는 인증 토큰과 함께 공지사항의 고유 boardId를 사용하여,
+ * 해당 공지사항을 삭제하는 요청을 서버에 전송합니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {number} boardId 삭제할 공지사항의 고유 ID입니다.
+ * @returns {Promise<boolean>} 공지사항 삭제 성공 여부를 반환합니다.
+ * 성공적으로 삭제되었을 경우 true, 그렇지 않으면 false를 반환합니다.
+ * 에러 발생 시, 오류 메시지가 콘솔에 출력됩니다.
+ */
+export async function removeAnnouncement(token: string, boardId: number): Promise<boolean> {
+    let responseData: RemoveAnnouncementResponse | undefined = undefined;
+    try {
+        const response = await axios.delete(
+            getApiUrl(`/api/admin/board/${boardId}`),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+    return responseData !== undefined;
+}
+
+
+
+
+/*****************************************************************
+ * 서버에 저장된 공지사항을 수정하는 API 메서드입니다.
+ *****************************************************************/
+
+/** 공지사항 수정 응답 데이터 타입 */
+type ModifyAnnouncementResponse = {
+    boardId: number;
+};
+
+/**
+ * modifyAnnouncement 메서드는 서버에 저장된 특정 공지사항의 내용을 수정합니다.
+ * 이 메서드는 인증 토큰과 함께 공지사항의 고유 boardId, 수정할 제목(title), 
+ * 및 내용(body)을 사용하여 해당 공지사항을 수정하는 요청을 서버에 전송합니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {number} boardId 수정할 공지사항의 고유 ID입니다.
+ * @param {string} title 수정할 공지사항의 제목입니다.
+ * @param {string} body 수정할 공지사항의 내용입니다.
+ * @returns {Promise<boolean>} 공지사항 수정 성공 여부를 반환합니다.
+ * 성공적으로 수정되었을 경우 true, 그렇지 않으면 false를 반환합니다.
+ * 에러 발생 시, 오류 메시지가 콘솔에 출력됩니다.
+ */
+export async function modifyAnnouncement(token: string, boardId: number, title: string, body: string): Promise<boolean> {
+    let responseData: ModifyAnnouncementResponse | undefined = undefined;
+    try {
+        const postData = { title, body };
+        const response = await axios.patch(
+            getApiUrl(`/api/admin/board/${boardId}`),
+            postData,
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+    return responseData !== undefined && ("boardId" in responseData!);
+}
+
+
+
+
+/*****************************************************************
+ * 서버로부터 특정 공지사항의 상세 내용을 조회하는 API 메서드입니다.
+ *****************************************************************/
+
+/** 공지사항 상세 내용 응답 데이터 타입 */
+type GetAnnouncementBodyResponse = {
+    title: string;
+    body: string;
+    authorId: string;
+};
+
+/**
+ * getAnnouncementBody 메서드는 서버로부터 특정 공지사항의 상세 내용을 조회합니다.
+ * 이 메서드는 인증 토큰과 공지사항의 고유 boardId를 사용하여,
+ * 해당 공지사항의 상세 제목, 내용, 작성자 ID를 조회하는 요청을 서버에 전송합니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {number} boardId 조회할 공지사항의 고유 ID입니다.
+ * @returns {Promise<GetAnnouncementBodyResponse | undefined>} 공지사항의 상세 내용을 반환합니다.
+ * 공지사항의 제목, 내용, 작성자 ID가 포함된 객체를 반환합니다.
+ * 에러 발생 시, undefined를 반환하며 오류 메시지가 콘솔에 출력됩니다.
+ */
+export async function getAnnouncementBody(token: string, boardId: number): Promise<GetAnnouncementBodyResponse | undefined> {
+    let responseData: GetAnnouncementBodyResponse | undefined = undefined;
+    try {
+        const response = await axios.get(
+            getApiUrl(`/api/board/${boardId}`),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+    return responseData;
+}
+>>>>>>> Stashed changes
