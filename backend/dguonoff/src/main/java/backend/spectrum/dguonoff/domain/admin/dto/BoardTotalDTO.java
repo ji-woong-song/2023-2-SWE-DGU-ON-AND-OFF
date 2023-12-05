@@ -7,8 +7,9 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class BoardOutlineDTO {
+public class BoardTotalDTO {
     private Long boardId;
     private String title;
     private String authorId;
+    private String body;
 }
