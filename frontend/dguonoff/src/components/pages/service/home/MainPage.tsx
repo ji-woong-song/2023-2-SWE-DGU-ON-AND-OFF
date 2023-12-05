@@ -4,12 +4,16 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import styles from "../Service.module.css";
 import GrayBorderBox from "../../../../modules/GrayBorderBox";
 import GrayCircle from "../../../../modules/GrayCircle";
-import { Business, LocalLibrary, FilterHdr } from '@mui/icons-material';
+import { Business, LocalLibrary, FilterHdr, BlindsClosedSharp } from '@mui/icons-material';
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../../../hooks/useAuth";
 import Bookmark from "../../../../types/Bookmark";
-import { getMyBookmark } from "../../../../api/dguonandoff";
+import { getBuildings, getMyBookmark, getReservations } from "../../../../api/dguonandoff";
 import { CookieStorageProvider } from "../../../../modules/storage/AppStorageProvider";
+import { useModal } from "../../../../modules/modal/Modal";
+import { ModalAnimationType } from "../../../../modules/modal/ModalAnimations";
+import Building from "../../../../types/Building";
+import Reservation from "../../../../types/Reservation";
 
 
 interface FacilityMenu {
@@ -22,6 +26,12 @@ export default function MainPage() {
     const navigate = useNavigate();
     const isUserLoggedIn = useAuth();
     const [myBookmarks, setMyBookmarks] = useState<Bookmark[]>([]); // 즐겨찾기 목록
+    const [myReservations, setMyReservations] = useState<Reservation[]>([]); // 내 예약 목록
+    const [buildings, setBuildings] = useState<Building[]>([]); // 시설 목록
+    const [isActive, setIsActive] = useState<boolean>(false);
+    const [nowUsingReservation, setNowUsingReservation] = useState<Reservation>(); // 현재 이용중인 예약
+    const [FacilityMenuModal, openFacilityMenuModal, closeFacilityMenuModal] = useModal(ModalAnimationType.ZOOM);
+    
     let userToken : string = "";
 
     const appName : string = "동국 ON/OFF";
@@ -46,8 +56,16 @@ export default function MainPage() {
         if (!isUserLoggedIn) {
           navigate('/login'); // 로그인 안되어 있으면 로그인 페이지로 이동
         }else{
-            userToken = CookieStorageProvider.get('userAuthToken') || "";
+            userToken = CookieStorageProvider.get('userAuthToken')!;
             handleLoadBookmark();
+            handleLoadReservation();
+            handleLoadBuildings();
+            let { isActiveNow, ActiveReservation } = findActiveReservation(myReservations);
+            setIsActive(isActiveNow);
+
+            if(isActiveNow){
+                setNowUsingReservation(ActiveReservation!);
+            }
         }
       }, [isUserLoggedIn, navigate]);
 
@@ -57,9 +75,42 @@ export default function MainPage() {
         setMyBookmarks(bookmarks);
     }
 
+    const handleLoadReservation = async () => {
+        const reservations : Reservation[] = await getReservations(userToken);
+        setMyReservations(reservations);
+    }
+
     const handleBellClick = () => {
         console.log("bell clicked");
     }
+
+    const handleMenuClick = async () => {
+        openFacilityMenuModal();
+    }
+
+    const handleLoadBuildings = async () => {
+        const buildings : Building[] = await getBuildings(userToken);
+        setBuildings(buildings);
+    }
+
+    const handleEndUsing = () => {
+
+    }
+
+    const findActiveReservation = (reservationList: Reservation[]): { isActiveNow: boolean, ActiveReservation: Reservation | null } => {
+        const now = new Date();
+      
+        for (const reservation of reservationList) {
+          const startDate = new Date(`${reservation.getDate}T${reservation.getStartTime}`);
+          const endDate = new Date(`${reservation.getDate}T${reservation.getEndTime}`);
+      
+          if (now >= startDate && now <= endDate) {
+            return { isActiveNow: true, ActiveReservation :reservation };
+          }
+        }
+      
+        return { isActiveNow: false, ActiveReservation: null };
+    };
 
     return (
         <Container>
@@ -79,29 +130,41 @@ export default function MainPage() {
                 paddingTop: '32px', 
                 paddingBottom: '32px',
             }}>
-                {/* 상자 안의 내용 */}
-                <div className={styles.usingFacilityTitle} > 
-                    신공학관(기숙사)
-                </div>
-                <div className={styles.usingFacilityTitle}>
-                    401-3107(3107 강의실) 
-                </div>
-                <div style={{ height: '12px' }} />
-                <div className={styles.usingTime}>
-                    14:00 ~ 15:00 이용중
-                </div>
-                <div style={{ height: '12px' }} />
-                <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end'}}>
-                    <Button variant="contained"
-                    style={{ backgroundColor: '#EDEBE7', color: '#959494', fontWeight : 'bold', boxShadow: 'none' }}
-                    >이용 종료</Button>
-                </div>        
+                {
+                    isActive ? 
+                    <div>
+                        {/* 상자 안의 내용 */}
+                        <div className={styles.usingFacilityTitle} > 
+                            {nowUsingReservation!.getBuildingName()}
+                        </div>
+                        <div className={styles.usingFacilityTitle}>
+                            {nowUsingReservation!.getFacilityName()}
+                        </div>
+                        <div style={{ height: '12px' }} />
+                        <div className={styles.usingTime}>
+                            {nowUsingReservation!.getStartTime()} ~ {nowUsingReservation!.getEndTime()} 이용중
+                        </div>
+                        <div style={{ height: '12px' }} />
+                        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end'}}>
+                            <Button 
+                            variant="contained"
+                            style={{ backgroundColor: '#EDEBE7', color: '#959494', fontWeight : 'bold', boxShadow: 'none' }}
+                            >이용 종료</Button>
+                        </div>  
+                    </div> :
+                    <div className={styles.noUsingFacility}>
+                        <BlindsClosedSharp sx={{ color: '#959494', fontSize: '56px' }}/>
+                        <div className={styles.noUsingText}>
+                            현재 이용중인 시설물이 없어요.
+                        </div>
+                    </div>
+                }     
             </GrayBorderBox>
 
             <Box sx={{ display: 'flex', gap: 2 }} >
                 {
                     facilityMenu.map((menu, index) => (
-                        <div className={styles.menuContainer}>
+                        <div className={styles.menuContainer} onClick={handleMenuClick}>
                             <GrayCircle key={index} radius={23} icon = {menu.icon} />
                             <div className={styles.menuTitle}>{menu.name}</div>
                         </div>
@@ -126,16 +189,55 @@ export default function MainPage() {
                         </div>
                     ))}
                     </> : 
-                    <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '12px' }}>즐겨찾기가 없습니다.</div>}
+                    <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '12px' }}>즐겨찾기가 없어요.</div>}
                
             </GrayBorderBox>
-            <GrayBorderBox style={{
-                height : '180px'
-            }}>
+            <GrayBorderBox>
                 <div className={styles.boxTitle}>
                     내 예약
                 </div>
+                <Box sx={{ height : '4px' }}/>
+                {myReservations.length > 0 ? 
+                    <>
+                     {myReservations.map((reservation, index) => (
+                        <div key={index}>
+                            <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
+                                <Business sx={{ color: '#959494', paddingTop : '12px' }}/>
+                                <div>
+                                    <div style={{ paddingTop: '12px', fontSize : '10px' }}>{reservation.getDate()}</div>
+                                    <div style={{ display: 'flex', flexDirection: 'row', gap: '8px', alignItems: 'center' }}>
+                                        <div style={{ paddingTop: '0px' }}>{reservation.getBuildingName()}</div>
+                                        <div style={{ paddingTop: '0px' }}>{reservation.getFacilityName()}</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    ))}
+                    </> : 
+                    <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '12px' }}>예약내역이 없어요.</div>}
             </GrayBorderBox>
+            <FacilityMenuModal>
+                <table>
+                    <tbody>
+                        <div className={styles.modalContent}>
+                            {buildings.map((building, index) => (
+                                <tr>
+                                    <div key={index}>
+                                        <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
+                                            <Business sx={{ color: '#959494', paddingTop : '12px' }}/>
+                                            <div>
+                                                <div style={{ paddingTop: '12px', fontSize : '10px' }}>{building.getName()}</div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </tr>  
+                            ))}
+                        </div>x
+                    </tbody>
+                </table>
+            </FacilityMenuModal>
         </Container>
     );
 }

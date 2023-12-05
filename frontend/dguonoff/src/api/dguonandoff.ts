@@ -924,21 +924,20 @@ export async function deleteFixedSchedule(token: string, facilitySchedule: Facil
 
 
 export async function getMyBookmark(token: string): Promise<Bookmark[]> {
-let result: Bookmark[] = [];
-try {
-    const response = await axios.get(
-        getApiUrl("/api/user/bookmark"),
-        {
-            headers: {
-                "Authorization": `Bearer ${token}`
+    let result: Bookmark[] = [];
+    try {
+        const response = await axios.get(
+            getApiUrl("/api/user/bookmark"),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
             }
-        }
-    );
-
-    console.log(response.data);
-    result = response.data.map((item: any) => new Bookmark(item.facilityName, item.facilityCode, item.buildingName));
-} catch (error) {
-    console.error(error);
-}
-return result;
+        );
+        console.log(response.data);
+        result = response.data.map((item: any) => new Bookmark(item.facilityName, item.facilityCode, item.buildingName));
+    } catch (error) {
+        console.error(error);
+    }
+    return result;
 }
