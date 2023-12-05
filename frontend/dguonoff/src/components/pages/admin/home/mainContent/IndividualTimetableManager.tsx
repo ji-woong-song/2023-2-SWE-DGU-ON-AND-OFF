@@ -3,14 +3,13 @@ import styles from "./IndividualTimetableManager.module.css";
 import FacilityTable from "./commons/FacilityTable";
 import FacilityTimetable from "./commons/FacilityTimetable";
 import FacilityEventInfo from "./commons/FacilityEventInfo";
-import FacilityCategoryTable, { FacilityCategory } from "./commons/FacilityCategoryTable";
 import Facility from "../../../../../types/Facility";
 import Building from "../../../../../types/Building";
 import { Day } from "../../../../../types/Day";
 import { FacilityEvent } from "../../../../../types/FacilityEvent";
 import FacilitySchedule from "../../../../../types/FacilitySchedule";
 import { useNavigate } from "react-router-dom";
-import { deleteFixedSchedule, getAuthToken, getFacilities, getFixedSchedules, getUserRole, registerFixedSchedule } from "../../../../../api/dguonandoff";
+import { deleteFixedSchedule, getAuthToken, getFacilities, getFixedSchedules, getUserRole, modifyFixedSchedule, registerFixedSchedule } from "../../../../../api/dguonandoff";
 
 
 interface IndividualTimetableManagerParams {
@@ -25,7 +24,6 @@ export default function IndividualTimetableManager({ buildings }: IndividualTime
 
 
     // State
-    const [currFacility, setCurrFacility] = useState<FacilityCategory>("강의실");
     const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
     const [facilities, setFacilities] = useState<Facility[]>([]);
     const [selectedFacility, setSelectedFacility] = useState<Facility | null>(null);
@@ -51,7 +49,7 @@ export default function IndividualTimetableManager({ buildings }: IndividualTime
         if (selectedBuilding) {
             (async () => {
                 const [token, userRole] = [getAuthToken(), getUserRole()];
-                if (token && userRole) {
+                if (token && userRole && userRole !== "NORMAL") {
                     let newFacilities: Facility[] = [];
                     for (let i = 1; i <= selectedBuilding.getMaxFloor(); i++) {
                         newFacilities = [...newFacilities, ...(await getFacilities(token, i, selectedBuilding.getName()))];
@@ -69,7 +67,7 @@ export default function IndividualTimetableManager({ buildings }: IndividualTime
         if (selectedFacility && selectedBuilding) {
             (async () => {
                 const [token, userRole] = [getAuthToken(), getUserRole()];
-                if (token && userRole) {
+                if (token && userRole && userRole !== "NORMAL") {
                     setFacilitySchedules(await getFixedSchedules(token, currDay, date, date, selectedFacility, selectedBuilding));
                 } else {
                     alert("로그인 시간이 만료되었습니다.");
@@ -83,12 +81,9 @@ export default function IndividualTimetableManager({ buildings }: IndividualTime
         if (selectedFacility && selectedBuilding && doSubmitEvent) {
             (async () => {
                 const [token, userRole] = [getAuthToken(), getUserRole()];
-                if (token && userRole) {
+                if (token && userRole && userRole !== "NORMAL") {
                     if (selectedFacilitySchedule) {
-                        // 고정 시간표 수정
-                        //await modifyFixedSchedule(token, selectedFacilitySchedule, selectedFacility, selectedBuilding, startDate, endDate, currDay, facilityEvent);
-                        await deleteFixedSchedule(token, selectedFacilitySchedule);
-                        await registerFixedSchedule(token, selectedFacility, selectedBuilding, date, date, currDay, selectedFacilitySchedule.getStartTime(), selectedFacilitySchedule.getEndTime(), facilityEvent);
+                        await modifyFixedSchedule(token, selectedFacilitySchedule, selectedFacility, selectedBuilding, date, date, currDay, facilityEvent);
                         setSelectedFacilitySchedule(null);
                     } else {
                         // 고정 시간표 추가
@@ -114,7 +109,7 @@ export default function IndividualTimetableManager({ buildings }: IndividualTime
         if (selectedFacility && selectedBuilding && doRemoveEvent) {
             (async () => {
                 const [token, userRole] = [getAuthToken(), getUserRole()];
-                if (token && userRole) {
+                if (token && userRole && userRole !== "NORMAL") {
                     if (selectedFacilitySchedule) {
                         await deleteFixedSchedule(token, selectedFacilitySchedule);
                         setSelectedFacilitySchedule(null);
@@ -134,12 +129,6 @@ export default function IndividualTimetableManager({ buildings }: IndividualTime
     // Redner
     return (
         <div className={styles.individualTimetableManager}>
-            <div className={styles.top_contents}>
-                <FacilityCategoryTable
-                    currFacility={currFacility}
-                    setCurrFacility={setCurrFacility}
-                />
-            </div>
             <div className={styles.mid_contents}>
                 <div className={styles.search_filter}>
                     <div className={styles.period}>
@@ -165,10 +154,6 @@ export default function IndividualTimetableManager({ buildings }: IndividualTime
                                 </option>
                             ))}
                         </select>
-                    </div>
-
-                    <div className={styles.buttons}>
-                        <button className={styles.search}>조회</button>
                     </div>
                 </div>
 

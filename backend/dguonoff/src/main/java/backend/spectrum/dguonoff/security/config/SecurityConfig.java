@@ -41,8 +41,9 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/auth/**", // // auth로 시작하는 uri,
                         "/swagger*/**", "/v3/api-docs/**", "/swagger-ui/index.html#").permitAll()    // swagger는 인증 필요 없음
-                .antMatchers("/admin/**").hasAuthority("MASTER") // master api는 role master인 사용자만 허용
-                .antMatchers("/api/fixedSchedules").hasAnyRole("ADMIN", "MASTER") // ADMIN 또는 MASTER만
+                .antMatchers("/master/**").hasAuthority("MASTER") // master api는 role master인 사용자만 허용
+                .antMatchers("/api/admin/fixedSchedules").hasAnyRole("ADMIN", "MASTER") // ADMIN 또는 MASTER만
+                .antMatchers("/api/admin/board").hasAnyRole("ADMIN","MASTER")
                 .antMatchers("/api/**").authenticated() // api로 시작하는 uri에 대해서 인증 필요
                 .anyRequest().authenticated()
                 .and()

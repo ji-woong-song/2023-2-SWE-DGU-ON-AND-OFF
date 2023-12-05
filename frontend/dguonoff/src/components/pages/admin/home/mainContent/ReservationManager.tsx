@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./ReservationManager.module.css";
-import FacilityCategoryTable, { FacilityCategory } from "./commons/FacilityCategoryTable";
 import Reservation, { ReservationStatus } from "../../../../../types/Reservation";
 import Building from "../../../../../types/Building";
 import useElementDimensions from "../../../../../hooks/useElementDimensions";
@@ -18,7 +17,6 @@ interface ReservationManagerParams {
 export default function ReservationManager({ buildings }: ReservationManagerParams) {
     // Const
     const navigate = useNavigate();
-    const [currFacility, setCurrFacility] = useState<FacilityCategory>("강의실");
     const reservationStatuses: ("ALL" | ReservationStatus)[] = ["ALL", "PENDING", "APPROVED", "REJECTED"];
 
     const tableColumns: { name: string, style: React.CSSProperties }[] = [
@@ -90,30 +88,25 @@ export default function ReservationManager({ buildings }: ReservationManagerPara
         }
     }
 
+    const filterReservationsByDate = (reservations: Reservation[], startDate: Date, endDate: Date) => {
+        return reservations.filter((reservation) => {
+            const [year, month, day] = reservation.getDate().split("-").map(Number);
+            const reservationDate = new Date(year, month - 1, day);
+            const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+            const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+            return start <= reservationDate && reservationDate <= end;
+        });
+    };
+
 
     // Effect
     useEffect(() => {
-        const currDate = new Date();
-        currDate.setHours(0, 0, 0, 0);
-        const nextDate = new Date(currDate.getFullYear(), currDate.getMonth() + 1, currDate.getDate());
-        nextDate.setHours(0, 0, 0, 0);
-        nextDate.setSeconds(nextDate.getSeconds() - 1);
-        setStartDate(currDate);
-        setEndDate(nextDate);
-    }, [setStartDate, setEndDate]);
-
-
-    useEffect(() => {
         (async () => {
             const [token, userRole] = [getAuthToken(), getUserRole()];
-            if (token && userRole) {
+            if (token && userRole && userRole !== "NORMAL") {
                 const reservationsResponse = await getReservations(token);
-                const stringToDate = (dateStr: string): Date => {
-                    const [year, month, day] = dateStr.split("-").map(Number);
-                    return new Date(year, month - 1, day);
-                };
                 setReservations(reservationsResponse);
-                setFilteredReservations(reservationsResponse.filter((reservation) => startDate <= stringToDate(reservation.getDate()) && stringToDate(reservation.getDate()) <= endDate))
+                setFilteredReservations(filterReservationsByDate(reservationsResponse, startDate, endDate));
             } else {
                 alert("권한이 없습니다.");
                 navigate("/admin/login")
@@ -122,16 +115,10 @@ export default function ReservationManager({ buildings }: ReservationManagerPara
     }, [navigate, setReservations, startDate, endDate, refreshReservation]);
 
     useEffect(() => {
-        const stringToDate = (dateStr: string): Date => {
-            const [year, month, day] = dateStr.split("-").map(Number);
-            return new Date(year, month - 1, day);
-        };
-
-        let newReservations = reservations.filter((reservation) => startDate <= stringToDate(reservation.getDate()) && stringToDate(reservation.getDate()) <= endDate);
+        let newReservations = filterReservationsByDate(reservations, startDate, endDate);
         newReservations = newReservations.filter((reservation) => selectedBuilding.getName() === "전체" || selectedBuilding.getName() === reservation.getBuildingName());
         newReservations = newReservations.filter((reservation) => selectedReservationStatus === "ALL" || selectedReservationStatus === reservation.getStatus());
         setFilteredReservations(newReservations);
-
     }, [startDate, endDate, selectedBuilding, reservations, selectedReservationStatus]);
 
 
@@ -160,12 +147,6 @@ export default function ReservationManager({ buildings }: ReservationManagerPara
     // Render
     return (
         <div className={styles.reservationManager}>
-            <div className={styles.top_contents}>
-                <FacilityCategoryTable
-                    currFacility={currFacility}
-                    setCurrFacility={setCurrFacility}
-                />
-            </div>
             <div className={styles.mid_contents}>
                 <div className={styles.search_filter}>
                     <div className={styles.period}>
@@ -175,11 +156,7 @@ export default function ReservationManager({ buildings }: ReservationManagerPara
                             id="start-date"
                             name="start-date"
                             value={startDate.toISOString().split('T')[0]}
-                            onChange={(e) => {
-                                const newStartDate = new Date(e.target.value);
-                                newStartDate.setHours(0, 0, 0, 0); // 자정으로 설정
-                                setStartDate(newStartDate);
-                            }}
+                            onChange={(e) => { setStartDate(new Date(e.target.value)); }}
                         />
 
                         <span>~</span>
@@ -189,11 +166,7 @@ export default function ReservationManager({ buildings }: ReservationManagerPara
                             id="end-date"
                             name="end-date"
                             value={endDate.toISOString().split('T')[0]}
-                            onChange={(e) => {
-                                const newEndDate = new Date(e.target.value);
-                                newEndDate.setHours(23, 59, 59, 999); // 하루의 끝으로 설정
-                                setEndDate(newEndDate);
-                            }}
+                            onChange={(e) => { setEndDate(new Date(e.target.value)); }}
                         />
                     </div>
 

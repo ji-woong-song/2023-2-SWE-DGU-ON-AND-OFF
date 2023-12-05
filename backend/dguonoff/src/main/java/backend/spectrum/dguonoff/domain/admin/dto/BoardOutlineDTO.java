@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class BoardOutlineDTO {
-    private Long id;
+    private Long boardId;
     private String title;
     private String authorId;
 }

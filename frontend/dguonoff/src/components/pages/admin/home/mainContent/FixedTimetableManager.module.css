@@ -1,21 +1,19 @@
 .fixedTimetableManager {
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 
 
 /* fixedTimetableManager's components */
-.top_contents {
-    height: 80px;
-    width: 100%;
-}
-
 .mid_contents {
-    height: calc(100% - 80px);
-    width: 100%;
+    height: calc(100% - 20px);
+    width: calc(100% - 20px);
 }
-
 
 
 /* mid_contents's components */
@@ -50,7 +48,7 @@
 }
 
 .search_filter .building {
-    width: calc(25% - 30px);
+    width: calc(50% - 30px);
     padding-left: 15px;
     padding-right: 15px;
     display: flex;
@@ -96,53 +94,6 @@
     text-align: center;
     cursor: pointer;
     user-select: none;
-}
-
-.search_filter .buttons {
-    width: calc(25% - 30px);
-    padding-left: 15px;
-    padding-right: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.search_filter .buttons .search {
-    height: 37.5px;
-    width: 75px;
-    cursor: pointer;
-    border: 2px solid var(--component-main-color);
-    background-color: var(--component-main-light-color);
-    border-radius: 13px;
-    padding: 1px;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--component-innertext-color);
-    user-select: none;
-}
-
-.search_filter .buttons .search:hover {
-    background-color: var(--component-main-color);
-    color: var(--component-innertext-select-color);
-}
-
-.search_filter .buttons .register {
-    height: 37.5px;
-    width: 170px;
-    cursor: pointer;
-    border: 2px solid var(--component-main-color);
-    background-color: var(--component-main-light-color);
-    border-radius: 13px;
-    padding: 1px;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--component-innertext-color);
-    user-select: none;
-}
-
-.search_filter .buttons .register:hover {
-    background-color: var(--component-main-color);
-    color: var(--component-innertext-select-color);
 }
 
 

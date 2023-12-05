@@ -3,11 +3,10 @@ import styles from "./FixedTimetableManager.module.css";
 import FacilityTable from "./commons/FacilityTable";
 import FacilityTimetable from "./commons/FacilityTimetable";
 import FacilityEventInfo from "./commons/FacilityEventInfo";
-import FacilityCategoryTable, { FacilityCategory } from "./commons/FacilityCategoryTable";
 import Building from "../../../../../types/Building";
 import Facility from "../../../../../types/Facility";
 import { Day } from "../../../../../types/Day";
-import { deleteFixedSchedule, getAuthToken, getFacilities, getFixedSchedules, getUserRole, registerFixedSchedule } from "../../../../../api/dguonandoff";
+import { deleteFixedSchedule, getAuthToken, getFacilities, getFixedSchedules, getUserRole, modifyFixedSchedule, registerFixedSchedule } from "../../../../../api/dguonandoff";
 import { useNavigate } from "react-router-dom";
 import { FacilityEvent } from "../../../../../types/FacilityEvent";
 import FacilitySchedule from "../../../../../types/FacilitySchedule";
@@ -26,7 +25,6 @@ export default function FixedTimetableManager({ buildings }: FixedTimetableManag
 
 
     // State
-    const [currFacility, setCurrFacility] = useState<FacilityCategory>("강의실");
     const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
     const [facilities, setFacilities] = useState<Facility[]>([]);
     const [selectedFacility, setSelectedFacility] = useState<Facility | null>(null);
@@ -53,7 +51,7 @@ export default function FixedTimetableManager({ buildings }: FixedTimetableManag
         if (selectedBuilding) {
             (async () => {
                 const [token, userRole] = [getAuthToken(), getUserRole()];
-                if (token && userRole) {
+                if (token && userRole && userRole !== "NORMAL") {
                     let newFacilities: Facility[] = [];
                     for (let i = 1; i <= selectedBuilding.getMaxFloor(); i++) {
                         newFacilities = [...newFacilities, ...(await getFacilities(token, i, selectedBuilding.getName()))];
@@ -71,7 +69,7 @@ export default function FixedTimetableManager({ buildings }: FixedTimetableManag
         if (selectedFacility && selectedBuilding) {
             (async () => {
                 const [token, userRole] = [getAuthToken(), getUserRole()];
-                if (token && userRole) {
+                if (token && userRole && userRole !== "NORMAL") {
                     setFacilitySchedules(await getFixedSchedules(token, currDay, startDate, endDate, selectedFacility, selectedBuilding));
                 } else {
                     alert("로그인 시간이 만료되었습니다.");
@@ -85,12 +83,9 @@ export default function FixedTimetableManager({ buildings }: FixedTimetableManag
         if (selectedFacility && selectedBuilding && doSubmitEvent) {
             (async () => {
                 const [token, userRole] = [getAuthToken(), getUserRole()];
-                if (token && userRole) {
+                if (token && userRole && userRole !== "NORMAL") {
                     if (selectedFacilitySchedule) {
-                        // 고정 시간표 수정
-                        //await modifyFixedSchedule(token, selectedFacilitySchedule, selectedFacility, selectedBuilding, startDate, endDate, currDay, facilityEvent);
-                        await deleteFixedSchedule(token, selectedFacilitySchedule);
-                        await registerFixedSchedule(token, selectedFacility, selectedBuilding, startDate, endDate, currDay, selectedFacilitySchedule.getStartTime(), selectedFacilitySchedule.getEndTime(), facilityEvent);
+                        await modifyFixedSchedule(token, selectedFacilitySchedule, selectedFacility, selectedBuilding, startDate, endDate, currDay, facilityEvent);
                         setSelectedFacilitySchedule(null);
                     } else {
                         // 고정 시간표 추가
@@ -116,7 +111,7 @@ export default function FixedTimetableManager({ buildings }: FixedTimetableManag
         if (selectedFacility && selectedBuilding && doRemoveEvent) {
             (async () => {
                 const [token, userRole] = [getAuthToken(), getUserRole()];
-                if (token && userRole) {
+                if (token && userRole && userRole !== "NORMAL") {
                     if (selectedFacilitySchedule) {
                         await deleteFixedSchedule(token, selectedFacilitySchedule);
                         setSelectedFacilitySchedule(null);
@@ -136,12 +131,6 @@ export default function FixedTimetableManager({ buildings }: FixedTimetableManag
     // Render
     return (
         <div className={styles.fixedTimetableManager}>
-            <div className={styles.top_contents}>
-                <FacilityCategoryTable
-                    currFacility={currFacility}
-                    setCurrFacility={setCurrFacility}
-                />
-            </div>
             <div className={styles.mid_contents}>
                 <div className={styles.search_filter}>
                     <div className={styles.period}>
@@ -177,11 +166,6 @@ export default function FixedTimetableManager({ buildings }: FixedTimetableManag
                                 </option>
                             ))}
                         </select>
-                    </div>
-
-                    <div className={styles.buttons}>
-                        <button className={styles.search}>조회</button>
-                        <button className={styles.register}>고정 시간표 등록</button>
                     </div>
                 </div>
 

@@ -98,15 +98,22 @@ interface ModalFrameProps {
     onClose: () => void;
     children: React.ReactNode;
     backgroundColor: string;
+    initialRender: boolean
 }
 
 /** 
  * ModalFrame 컴포넌트는 모달의 프레임을 렌더링합니다.
  */
-function ModalFrame({ modalAnimation, isUnmount, isOpen, onClose, children, backgroundColor }: ModalFrameProps) {
+function ModalFrame({ modalAnimation, isUnmount, isOpen, onClose, children, backgroundColor, initialRender }: ModalFrameProps) {
     const handleClickInnerModal = (e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
     };
+
+    // 초기 렌더링 시에만 애니메이션 적용
+    const animationStyle = initialRender ? css`
+      animation: ${isUnmount ? modalAnimation.onDisappear : modalAnimation.onAppear} ${modalAnimation.duration / 1000}s ease-in-out;
+  ` : '';
+
     return (
         <>
             {isOpen && (
@@ -131,6 +138,8 @@ function ModalFrame({ modalAnimation, isUnmount, isOpen, onClose, children, back
     );
 }
 
+
+
 /** 
  * 모달 관리를 위한 Hook입니다.
  */
@@ -141,6 +150,7 @@ export function useModal(modalAnimation: ModalAnimationType, backgroundColor: st
 ] {
     const [isOpen, setIsOpen] = useState(false);
     const [isUnmount, setIsUnmount] = useState(false);
+    const [initialRender, setInitialRender] = useState(true); // 초기 렌더링 체크를 위한 상태
 
     const animation = ModalAnimation.getAnimationModtion(modalAnimation);
 
@@ -148,11 +158,15 @@ export function useModal(modalAnimation: ModalAnimationType, backgroundColor: st
         setIsUnmount(true);
         setTimeout(() => {
             setIsOpen(false);
+            setInitialRender(false); // 닫힐 때 초기 렌더링 상태를 false로 설정
         }, animation.duration * 0.9);
     };
 
     const openModal = () => {
-        setIsUnmount(false)
+        if (!isOpen) {
+            setInitialRender(true); // 열릴 때만 초기 렌더링 상태를 true로 설정
+        }
+        setIsUnmount(false);
         setIsOpen(true);
     };
 
@@ -163,6 +177,7 @@ export function useModal(modalAnimation: ModalAnimationType, backgroundColor: st
             isUnmount={isUnmount}
             modalAnimation={animation}
             backgroundColor={backgroundColor}
+            initialRender={initialRender} // 초기 렌더링 상태 전달
         >
             {children}
         </ModalFrame>
