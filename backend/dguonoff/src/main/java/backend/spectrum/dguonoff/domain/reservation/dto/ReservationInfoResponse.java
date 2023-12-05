@@ -1,5 +1,6 @@
 package backend.spectrum.dguonoff.domain.reservation.dto;
 
+import backend.spectrum.dguonoff.DAO.model.FacilityStatus;
 import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,7 @@ public class ReservationInfoResponse {
     private String facilityCode;
     private String buildingName;
     private String facilityName;
+    private FacilityStatus facilityState;
     private String outline;
     private String purpose;
     private HostUserInfo host;

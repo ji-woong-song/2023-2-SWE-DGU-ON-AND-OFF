@@ -12,6 +12,5 @@ import java.util.List;
 public class ReservationModificationRequest {
     private Long reservationId;
     private String outline;
-    private List<String> guestIds;
 
 }

@@ -133,6 +133,7 @@ public class ReservationService {
         LocalTime startTime = LocalTime.parse(reservationRequest.getStartTime());
         LocalTime endTime = LocalTime.parse(reservationRequest.getEndTime());
         String facilityCode = reservationRequest.getFacilityCode();
+        String buildingName = reservationRequest.getBuildingName();
         String outline = reservationRequest.getOutline();
         String purpose = reservationRequest.getPurpose();
         List<String> guestList = reservationRequest.getGuestIds();
@@ -142,7 +143,7 @@ public class ReservationService {
                 .orElseThrow(
                         () -> new UserNotFoundException(ErrorCode.NOT_EXIST_USER));
 
-        Facility facility = facilityRepository.findByCode(facilityCode) //시설물이 존재하지 않는 경우
+        Facility facility = facilityRepository.findByCodeAndBuilding(facilityCode, buildingName) //시설물이 존재하지 않는 경우
                 .orElseThrow(
                         () -> new FacilityNotFoundException(ErrorCode.NOT_EXIST_FACILITY));
 
@@ -228,42 +229,12 @@ public class ReservationService {
         }
 
         String outline = modificationRequest.getOutline();
-        List<String> guestList = modificationRequest.getGuestIds();
-
-
         //예약 수정하기
         Event event = reservationRepository.findEventById(reservationId)
                 .orElseThrow(
                         () -> new ReservationNotFoundException(ErrorCode.NOT_EXIST_RESERVATION));
         eventRepository.updateOutline(outline, event.getId());
 
-        //게스트 유저 참여 예약 수정
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(
-                        () -> new ReservationNotFoundException(ErrorCode.NOT_EXIST_RESERVATION));
-
-        //참여자들의 참여 에약 리스트 수정
-        List<Participation_Reservation> participation_reservations = new ArrayList<>();
-        guestList.forEach(
-                guestId -> {
-                    User guest = userRepository.findById(guestId)
-                            .orElseThrow(
-                                    () -> new UserNotFoundException(ErrorCode.NOT_EXIST_USER));
-
-                    Participation_Reservation participation_reservation = Participation_Reservation.builder()
-                            .bookmarkId(ParticipationReservationId.builder()
-                                    .reservationId(reservation.getReservationId())
-                                    .userId(guest.getId())
-                                    .build())
-                            .reservationId(reservation)
-                            .guestId(guest)
-                            .build();
-                    participation_reservations.add(participation_reservation);
-                }
-        );
-
-        participationReservationRepository.deleteAllByReservation(reservation);
-        participationReservationRepository.saveAll(participation_reservations);
     }
 
     //예약을 삭제하는 함수
@@ -396,6 +367,7 @@ public class ReservationService {
                             .facilityCode(reservation.getFacility().getCode())
                             .facilityName(reservation.getFacility().getName())
                             .buildingName(reservation.getFacility().getBuilding().getName())
+                            .facilityState(reservation.getFacility().getState())
                             .outline(event.getOutline())
                             .purpose(event.getPurpose())
                             .host(hostUserInfo)
@@ -446,9 +418,9 @@ public class ReservationService {
         //예약 유효성 검사: 최대 이용 시간, 최대 이용 인원, 최소 이용 인원을 초과한 경우 예외 발생
         if(usageTime > usageConstraint.getMax_time() && usageConstraint.getMax_time() != NO_MAX_TIME){ //최대 이용 시간을 초과한 경우
             throw new InvalidReservationException(ErrorCode.EXCEED_MAX_USAGE_TIME);
-        } else if(guestList.size() > usageConstraint.getMax_personnel()){ //최대 이용 인원을 초과한 경우
+        } else if(guestList.size() + 1 > usageConstraint.getMax_personnel()){ //최대 이용 인원을 초과한 경우
             throw new InvalidReservationException(ErrorCode.EXCEED_MAX_PERSONNEL);
-        } else if(guestList.size() < usageConstraint.getMin_personnel()){ //최소 이용 인원을 초과한 경우
+        } else if(guestList.size() + 1< usageConstraint.getMin_personnel()){ //최소 이용 인원을 초과한 경우
             throw new InvalidReservationException(ErrorCode.UNDER_MIN_PERSONNEL);
         }
     }
