@@ -109,4 +109,25 @@
     color: #000000;
 }
 
+.modalContent {
+    background-color: white;
+    width: 60%; /* 모달 너비를 전체 화면의 60%로 설정 */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* 내용이 넘칠 경우에 스크롤 바 표시 */
+}
 
+.noUsingFacility{
+    display: flex;
+    flex-direction: column; /* 자식 요소들을 수직으로 정렬 */
+    align-items: center; /* 수평 중앙 정렬 */
+    justify-content: center; /* 수직 중앙 정렬 */
+    height: 100%; /* 부모 요소의 높이를 적절히 설정해야 중앙 정렬이 잘 작동합니다. */
+}
+
+.noUsingText{
+    font-size : 14px;
+    color : '#646464';
+    font-weight: bold;
+}

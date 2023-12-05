@@ -1,4 +1,5 @@
 import axios from "axios";
+import Bookmark from "../types/Bookmark";
 import User, { UserRole } from "../types/User";
 import { CookieStorageProvider } from "../modules/storage/AppStorageProvider";
 import Building from "../types/Building";
@@ -919,4 +920,24 @@ export async function deleteFixedSchedule(token: string, facilitySchedule: Facil
         }
     }
     return responseData === "success";
+}
+
+
+export async function getMyBookmark(token: string): Promise<Bookmark[]> {
+    let result: Bookmark[] = [];
+    try {
+        const response = await axios.get(
+            getApiUrl("/api/user/bookmark"),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+        console.log(response.data);
+        result = response.data.map((item: any) => new Bookmark(item.facilityName, item.facilityCode, item.buildingName));
+    } catch (error) {
+        console.error(error);
+    }
+    return result;
 }
