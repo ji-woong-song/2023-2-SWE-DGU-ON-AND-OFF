@@ -397,6 +397,7 @@ public class ReservationService {
                             .facilityCode(reservation.getFacility().getCode())
                             .facilityName(reservation.getFacility().getName())
                             .buildingName(reservation.getFacility().getBuilding().getName())
+                            .facilityState(reservation.getFacility().getState())
                             .outline(event.getOutline())
                             .purpose(event.getPurpose())
                             .host(hostUserInfo)
