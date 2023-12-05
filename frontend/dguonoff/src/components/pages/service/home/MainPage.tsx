@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Box, Container, IconButton, Toolbar, Button } from "@mui/material";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import styles from "../Service.module.css";
 import GrayBorderBox from "../../../../modules/GrayBorderBox";
 import GrayCircle from "../../../../modules/GrayCircle";
 import { Business, LocalLibrary, FilterHdr, BlindsClosedSharp } from '@mui/icons-material';
-import { useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import useAuth from "../../../../hooks/useAuth";
 import Bookmark from "../../../../types/Bookmark";
 import { getBuildings, getMyBookmark, getReservations } from "../../../../api/dguonandoff";
@@ -14,6 +14,7 @@ import { useModal } from "../../../../modules/modal/Modal";
 import { ModalAnimationType } from "../../../../modules/modal/ModalAnimations";
 import Building from "../../../../types/Building";
 import Reservation from "../../../../types/Reservation";
+import { ReservationContext } from "../../../../App";
 
 
 interface FacilityMenu {
@@ -31,6 +32,7 @@ export default function MainPage() {
     const [isActive, setIsActive] = useState<boolean>(false);
     const [nowUsingReservation, setNowUsingReservation] = useState<Reservation>(); // 현재 이용중인 예약
     const [FacilityMenuModal, openFacilityMenuModal, closeFacilityMenuModal] = useModal(ModalAnimationType.ZOOM);
+    const {setReservationInfo } = useContext(ReservationContext);
     
     let userToken : string = "";
 
@@ -93,6 +95,11 @@ export default function MainPage() {
         setBuildings(buildings);
     }
 
+    const handleOnClickMyResrvation = (reservation : Reservation) => {
+        setReservationInfo(reservation);
+        navigate('/reservationInfo');
+    }
+
     const handleEndUsing = () => {
 
     }
@@ -113,7 +120,7 @@ export default function MainPage() {
     };
 
     return (
-        <Container>
+            <Container>
             <Toolbar>
                 <div className={styles.mainTitle}>
                     {appName}
@@ -180,7 +187,7 @@ export default function MainPage() {
                 {myBookmarks.length > 0 ? 
                     <>
                      {myBookmarks.map((bookmark, index) => (
-                        <div key={index}>
+                        <div key={index} >
                             <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
                                 <Business sx={{ color: '#959494', paddingTop : '12px' }}/>
                                 <div style={{ paddingTop: '12px' }}>{bookmark.getBuildingName()}</div>
@@ -200,7 +207,7 @@ export default function MainPage() {
                 {myReservations.length > 0 ? 
                     <>
                      {myReservations.map((reservation, index) => (
-                        <div key={index}>
+                        <div key={index} onClick={() => handleOnClickMyResrvation(reservation)}>
                             <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
                                 <Business sx={{ color: '#959494', paddingTop : '12px' }}/>
                                 <div>
