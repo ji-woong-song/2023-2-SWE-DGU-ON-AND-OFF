@@ -36,17 +36,6 @@ public class BoardService {
         return save.getId();
     }
 
-    public void deleteBoard(String userId, Long boardId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_EXIST_USER));
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_BOARD));
-        if (user.getRole() != Role.MASTER && user.getRole() != Role.ADMIN ||
-                !board.getAuthor().getId().equals(user.getId()))
-                throw new BusinessException(ErrorCode.NOT_ALLOW_AUTHOR);
-        boardRepository.delete(board);
-    }
-
     public Long updateBoard(String userId, Long boardId ,PostBoardDTO dto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_EXIST_USER));
@@ -64,6 +53,7 @@ public class BoardService {
     @Transactional(readOnly = true)
     public List<BoardOutlineDTO> getOutlines() {
         return boardRepository.findAll().stream().map(board -> BoardOutlineDTO.builder()
+                .boardId(board.getId())
                 .authorId(board.getAuthor().getId())
                 .title(board.getTitle())
                 .build()
@@ -79,5 +69,12 @@ public class BoardService {
                 .title(board.getTitle())
                 .authorId(board.getAuthor().getId())
                 .build();
+    }
+
+    public Long deleteBoard(Long boardId) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_BOARD));
+        boardRepository.delete(board);
+        return board.getId();
     }
 }
