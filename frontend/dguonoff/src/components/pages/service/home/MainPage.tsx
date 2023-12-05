@@ -103,10 +103,9 @@ export default function MainPage() {
 
     const handleEndUsing = async () => {
         const userConfirmed = window.confirm("이용을 종료하시겠습니까?");
-
         if(!userConfirmed) return;
-        
-        let success = await finishFacilityUsing(userToken, nowUsingReservation!.getBuildingName(), nowUsingReservation!.getFacilityName());
+
+        let success = await finishFacilityUsing(CookieStorageProvider.get('userAuthToken')!, nowUsingReservation!.getBuildingName(), nowUsingReservation!.getFacilityCode());
         if(success){
             alert("이용이 종료되었습니다.");
             setIsActive(false);
