@@ -103,22 +103,22 @@ public class FacilityService {
     }
 
     //시설물의 이용 제약조건을 반환하는 함수
-    public UsageConstraint getUsageConstraint(String facilityCode) {
-        UsageConstraint constraint = facilityRepository.findFacilityUsageConstraint(facilityCode)
+    public UsageConstraint getUsageConstraint(String facilityCode, String buildingName) {
+        UsageConstraint constraint = facilityRepository.findFacilityUsageConstraint(facilityCode, buildingName)
                 .orElseThrow(() -> new FacilityNotFoundException(ErrorCode.NOT_EXIST_FACILITY));
         return constraint;
     }
 
     //특정 시설물의 이용상태 반환 함수
-    public FacilityStatus getFacilityStatus(String facilityCode) {
-        FacilityStatus status = facilityRepository.findStatusByFacilityCode(facilityCode)
+    public FacilityStatus getFacilityStatus(String facilityCode, String buildingName) {
+        FacilityStatus status = facilityRepository.findStatusByFacilityCode(facilityCode, buildingName)
                 .orElseThrow(() -> new FacilityNotFoundException(ErrorCode.NOT_EXIST_FACILITY));
         return status;
     }
 
     //시설물 이용 상태 종료 함수
-    public void endFacility(String facilityCode) {
-        facilityRepository.updateFacilityStatus(FacilityStatus.EMPTY, facilityCode);
+    public void endFacility(String facilityCode, String buildingName) {
+        facilityRepository.updateFacilityStatus(FacilityStatus.EMPTY, facilityCode, buildingName);
     }
 
     //시설물의 다음 예약 정보를 반환하는 함수

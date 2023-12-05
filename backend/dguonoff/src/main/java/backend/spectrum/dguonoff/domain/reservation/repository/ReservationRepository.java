@@ -20,8 +20,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     Optional<List<Reservation>> findReservationsAfterYesterday(String code, LocalDate date, ReservationStatus status);
     @Query("select r.event from Reservation r where r.reservationId = ?1")
     Optional<Event> findEventById(Long reservationId);
-    @Query("select r from Reservation r where r.facility.code = ?1 and r.date = ?2")
-    List<Reservation> findByFacilityCodeAndDate(String code, LocalDate date);
+    @Query("select r from Reservation r where r.facility.code = ?1 and r.facility.building.name = ?2 and r.date = ?3")
+    List<Reservation> findByFacilityCodeAndDate(String code, String buildingName, LocalDate date);
 
     @Query("select count(r) from Reservation r " +
             "where r.hotUserId.id = ?1 and r.date between ?2 and ?3 and r.facility.category.name = ?4")
