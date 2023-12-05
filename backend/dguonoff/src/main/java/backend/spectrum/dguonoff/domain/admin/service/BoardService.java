@@ -4,7 +4,7 @@ import backend.spectrum.dguonoff.DAO.Board;
 import backend.spectrum.dguonoff.DAO.User;
 import backend.spectrum.dguonoff.DAO.model.Role;
 import backend.spectrum.dguonoff.domain.admin.dto.BoardDetailDTO;
-import backend.spectrum.dguonoff.domain.admin.dto.BoardOutlineDTO;
+import backend.spectrum.dguonoff.domain.admin.dto.BoardTotalDTO;
 import backend.spectrum.dguonoff.domain.admin.dto.PostBoardDTO;
 import backend.spectrum.dguonoff.domain.admin.repository.BoardRepository;
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
@@ -51,11 +51,12 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public List<BoardOutlineDTO> getOutlines() {
-        return boardRepository.findAll().stream().map(board -> BoardOutlineDTO.builder()
+    public List<BoardTotalDTO> getOutlines() {
+        return boardRepository.findAll().stream().map(board -> BoardTotalDTO.builder()
                 .boardId(board.getId())
                 .authorId(board.getAuthor().getId())
                 .title(board.getTitle())
+                .body(board.getBody())
                 .build()
         ).collect(Collectors.toList());
     }

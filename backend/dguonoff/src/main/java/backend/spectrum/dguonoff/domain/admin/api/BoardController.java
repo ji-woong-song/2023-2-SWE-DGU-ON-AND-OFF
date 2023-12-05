@@ -1,7 +1,7 @@
 package backend.spectrum.dguonoff.domain.admin.api;
 
 import backend.spectrum.dguonoff.domain.admin.dto.BoardDetailDTO;
-import backend.spectrum.dguonoff.domain.admin.dto.BoardOutlineDTO;
+import backend.spectrum.dguonoff.domain.admin.dto.BoardTotalDTO;
 import backend.spectrum.dguonoff.domain.admin.service.BoardService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping("/")
-    public ResponseEntity<List<BoardOutlineDTO>> getOutlines() {
+    public ResponseEntity<List<BoardTotalDTO>> getOutlines() {
         return ResponseEntity.ok(boardService.getOutlines());
     }
     @GetMapping("/{boardId}")
