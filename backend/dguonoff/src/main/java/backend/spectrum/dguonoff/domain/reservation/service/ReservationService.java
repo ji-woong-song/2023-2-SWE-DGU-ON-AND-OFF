@@ -189,7 +189,7 @@ public class ReservationService {
 
         //게스트 유저 참여 예약 등록
         guestList.forEach(guestId -> {
-            User guest = userRepository.findById(guestId)
+            User guest = userRepository.findBySid(guestId) //유저가 존재하지 않는 경우
                     .orElseThrow(
                             () -> new UserNotFoundException(NOT_EXIST_USER));
 

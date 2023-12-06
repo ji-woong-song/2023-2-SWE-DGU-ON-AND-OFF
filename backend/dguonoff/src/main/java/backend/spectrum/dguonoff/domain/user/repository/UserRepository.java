@@ -13,6 +13,8 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
+    @Query("select u from User u where u.sid = ?1")
+    Optional<User> findBySid(String sid);
     @Transactional
     @Modifying
     @Query("update User u set u.role = 'ADMIN' where u.id = ?1")
