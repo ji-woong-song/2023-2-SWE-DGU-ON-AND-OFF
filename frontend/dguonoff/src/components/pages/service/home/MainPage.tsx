@@ -140,7 +140,7 @@ export default function MainPage() {
         if(!userConfirmed) return;
 
         CookieStorageProvider.remove('authToken');
-        navigate(-1);
+        navigate('/login');
     }
 
     const handleOnClickBuilding = (building : Building) => {
