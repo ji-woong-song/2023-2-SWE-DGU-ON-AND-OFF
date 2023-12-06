@@ -47,6 +47,7 @@ public enum ErrorCode {
     INVALID_ORDER_TIME(HttpStatus.NOT_ACCEPTABLE, "시작 시간이 종료 시간보다 이전입니다."),
     INVALID_SAME_TIME(HttpStatus.NOT_ACCEPTABLE, "시작 시간과 종료 시간이 같습니다."),
     INVALID_RESERVATION_DATE(HttpStatus.NOT_ACCEPTABLE, "예약 가능한 날짜가 아닙니다."),
+    NOT_BOOKABLE_FACILITY(HttpStatus.NOT_ACCEPTABLE, "예약 불가능한 시설입니다."),
 
     // FixedSchedule
     NOT_EXIST_SCHEDULE(HttpStatus.NOT_FOUND, "원하는 고정시간표가 없습니다"),
