@@ -58,7 +58,7 @@ export default function MainPage() {
         if (!isUserLoggedIn) {
           navigate('/login'); // 로그인 안되어 있으면 로그인 페이지로 이동
         }else{
-            userToken = CookieStorageProvider.get('userAuthToken')!;
+            userToken = CookieStorageProvider.get('authToken')!;
             handleLoadBookmark();
             handleLoadReservation();
             handleLoadBuildings();
@@ -105,7 +105,7 @@ export default function MainPage() {
         const userConfirmed = window.confirm("이용을 종료하시겠습니까?");
         if(!userConfirmed) return;
 
-        let success = await finishFacilityUsing(CookieStorageProvider.get('userAuthToken')!, nowUsingReservation!.getBuildingName(), nowUsingReservation!.getFacilityCode());
+        let success = await finishFacilityUsing(CookieStorageProvider.get('authToken')!, nowUsingReservation!.getBuildingName(), nowUsingReservation!.getFacilityCode());
         if(success){
             alert("이용이 종료되었습니다.");
             setIsActive(false);

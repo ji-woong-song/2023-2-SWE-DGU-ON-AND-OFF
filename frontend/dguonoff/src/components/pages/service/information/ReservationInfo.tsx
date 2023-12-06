@@ -24,7 +24,7 @@ export default function ReservationInfo({reservation} : ReservationInfoProps) {
     }
 
     const handleOutlineSubmit = async () => {
-        let userToken = CookieStorageProvider.get('userAuthToken')!;
+        let userToken = CookieStorageProvider.get('authToken')!;
         let success = await modifyReservation(userToken,reservationInfo.getReservationId(), newOutline);
         if(success){
             alert("메모가 수정 되었습니다.");
@@ -32,7 +32,7 @@ export default function ReservationInfo({reservation} : ReservationInfoProps) {
     }
 
     const handleCancel = async () => {
-        let userToken = CookieStorageProvider.get('userAuthToken')!;
+        let userToken = CookieStorageProvider.get('authToken')!;
         let success = await deleteReservation(userToken,reservationInfo.getReservationId());
         if(success){
             alert("예약이 취소되었습니다.");

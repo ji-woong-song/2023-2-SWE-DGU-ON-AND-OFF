@@ -28,7 +28,7 @@ export default function LoginPage() {
             const { message, data } = await requestAuthLogin(userId, userPw);
             switch (message) {
                 case "LOGIN_SUCCESS": {
-                    CookieStorageProvider.set("userAuthToken", data!.token);
+                    CookieStorageProvider.set("authToken", data!.token);
                     alert(`${userId}님 환영합니다.`);
                     navigate("/");
                     break;
