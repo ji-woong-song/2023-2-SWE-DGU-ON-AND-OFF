@@ -143,7 +143,7 @@
     width: 90px;
     border-radius: 15px;
     padding: 1px;
-    font-size: 15px;
+    font-size: 12px;
     border : none;
     background-color: var(--button-positive-color);
     color: var(--button-text-light-color);
@@ -154,7 +154,7 @@
     width: 90px;
     border-radius: 15px;
     padding: 1px;
-    font-size: 15px;
+    font-size: 12px;
     border : none;
     background-color: var(--button-negative-color);
     color: var(--button-text-light-color);
