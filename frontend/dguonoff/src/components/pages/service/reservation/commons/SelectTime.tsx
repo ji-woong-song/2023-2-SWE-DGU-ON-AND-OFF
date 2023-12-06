@@ -1,6 +1,5 @@
 import { useRef } from "react";
 import VirtualizedTable from "../../../../../modules/virtualizedTable/VirtualizedTable";
-import { Day } from "../../../../../types/Day";
 import FacilitySchedule from "../../../../../types/FacilitySchedule";
 import styles from "./SelectTime.module.css";
 import useElementDimensions from "../../../../../hooks/useElementDimensions";
@@ -11,12 +10,9 @@ interface SelectTimeProps {
     setCurrProcess: React.Dispatch<React.SetStateAction<ReservationProcess>>;
     date: Date;
     setDate: React.Dispatch<React.SetStateAction<Date>>;
-    currDay: Day;
-    setCurrDay: React.Dispatch<React.SetStateAction<Day>>;
     selectedTimes: Date[];
     setSelectedTimes: React.Dispatch<React.SetStateAction<Date[]>>;
     facilitySchedules: FacilitySchedule[];
-    setFacilitySchedules: React.Dispatch<React.SetStateAction<FacilitySchedule[]>>;
     selectedFacilitySchedule: FacilitySchedule | null;
     setSelectedFacilitySchedule: React.Dispatch<React.SetStateAction<FacilitySchedule | null>>
 }
@@ -26,17 +22,13 @@ export default function SelectTime({
     setCurrProcess,
     date,
     setDate,
-    currDay,
-    setCurrDay,
     selectedTimes,
     setSelectedTimes,
     facilitySchedules,
-    setFacilitySchedules,
     selectedFacilitySchedule,
     setSelectedFacilitySchedule }: SelectTimeProps
 ) {
     // Const
-    const weekdays: Day[] = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
     const timeIntervals = Array.from({ length: 32 }, (_, index) => {
         const startTime = new Date();
         startTime.setHours(8, 0, 0, 0);
@@ -102,7 +94,6 @@ export default function SelectTime({
                     onChange={(e) => {
                         const newDate = new Date(e.target.value);
                         setDate(newDate);
-                        setCurrDay(weekdays[newDate.getDay()]);
                     }}
                 />
             </div>

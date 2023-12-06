@@ -51,7 +51,7 @@ export default function FloorFacilityTable({ reservationMode, floor, building, f
             setSelectedFacility(new Facility(facility.getName(), facility.getCode(), !facility.getBookmarked(), facility.getStatus(), facility.getCapacity()));
         } else {
             alert("로그인 시간이 만료되었습니다.");
-            navigate("/admin/login")
+            navigate("/login")
         }
     };
 

@@ -3,7 +3,6 @@ import styles from "./FacilityManager.module.css";
 import SelectBuildingFloor from "./commons/SelectFacilityFloor";
 import FloorFacilityTable from "./commons/FloorFacilityTable";
 import Facility from "../../../../types/Facility";
-import Building from "../../../../types/Building";
 import { getAuthToken, getFacilities, getUserRole } from "../../../../api/dguonandoff";
 import { useNavigate } from "react-router-dom";
 import FacilityDetails from "./commons/FacilityDetails";
@@ -26,14 +25,14 @@ export default function FacilityManager() {
 
 
   // Context
-  const { selectedBuilding, setSelectedBuilding } = React.useContext(SelectedBuildingContext);
+  const selectedBuilding = React.useContext(SelectedBuildingContext).selectedBuilding;
   const { selectedFacility, setSelectedFacility } = React.useContext(SelectedFacilityContext);
 
 
   // Effect
-  useEffect(() => {
+  /*useEffect(() => {
     setSelectedBuilding(new Building("신공학관(기숙사)", 10));
-  }, []);
+  }, []);*/
 
   useEffect(() => {
     if (selectedBuilding) {
@@ -44,11 +43,11 @@ export default function FacilityManager() {
           setFacilities(newFacilities);
         } else {
           alert("로그인 시간이 만료되었습니다.");
-          navigate("/admin/login")
+          navigate("/login")
         }
       })();
     }
-  }, [navigate, floor]);
+  }, [navigate, floor, selectedBuilding]);
 
 
   // Render

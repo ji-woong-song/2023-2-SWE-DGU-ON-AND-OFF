@@ -1,8 +1,6 @@
 import React, { useRef, useState } from "react";
 import { SelectedBuildingContext, SelectedFacilityContext } from "../../../../../App";
 import styles from "./EventInfo.module.css";
-import { Day } from "../../../../../types/Day";
-import FacilitySchedule from "../../../../../types/FacilitySchedule";
 import useElementDimensions from "../../../../../hooks/useElementDimensions";
 import VirtualizedTable from "../../../../../modules/virtualizedTable/VirtualizedTable";
 import { getAuthToken, getUserRole, registerReservation } from "../../../../../api/dguonandoff";
@@ -11,30 +9,11 @@ import { useNavigate } from "react-router-dom";
 
 interface EventInfoProps {
     date: Date;
-    setDate: React.Dispatch<React.SetStateAction<Date>>;
-    currDay: Day;
-    setCurrDay: React.Dispatch<React.SetStateAction<Day>>;
     selectedTimes: Date[];
-    setSelectedTimes: React.Dispatch<React.SetStateAction<Date[]>>;
-    facilitySchedules: FacilitySchedule[];
-    setFacilitySchedules: React.Dispatch<React.SetStateAction<FacilitySchedule[]>>;
-    selectedFacilitySchedule: FacilitySchedule | null;
-    setSelectedFacilitySchedule: React.Dispatch<React.SetStateAction<FacilitySchedule | null>>
 }
 
 
-export default function EventInfo({
-    date,
-    setDate,
-    currDay,
-    setCurrDay,
-    selectedTimes,
-    setSelectedTimes,
-    facilitySchedules,
-    setFacilitySchedules,
-    selectedFacilitySchedule,
-    setSelectedFacilitySchedule }: EventInfoProps
-) {
+export default function EventInfo({ date, selectedTimes }: EventInfoProps) {
     // Const
     const navigate = useNavigate();
     const guestTableColumns: { name: string, style: React.CSSProperties }[] = [
@@ -54,8 +33,8 @@ export default function EventInfo({
 
 
     // Context
-    const { selectedFacility, setSelectedFacility } = React.useContext(SelectedFacilityContext);
-    const { selectedBuilding, setSelectedBuilding } = React.useContext(SelectedBuildingContext);
+    const selectedFacility = React.useContext(SelectedFacilityContext).selectedFacility;
+    const selectedBuilding = React.useContext(SelectedBuildingContext).selectedBuilding;
 
 
     // Hook
@@ -76,7 +55,7 @@ export default function EventInfo({
             navigate("/facility");
         } else {
             alert("로그인 시간이 만료되었습니다.");
-            navigate("/admin/login")
+            navigate("/login")
         }
     };
 
