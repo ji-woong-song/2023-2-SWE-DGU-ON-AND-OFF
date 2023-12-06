@@ -88,8 +88,13 @@ export default function MainPage() {
         navigate('/announcement');
     }
 
-    const handleMenuClick = async () => {
-        openFacilityMenuModal();
+    const handleMenuClick = (index:number) => {
+        if(index === 0){
+            openFacilityMenuModal();
+        }else{
+            alert("서비스 준비중이에요!");
+        }
+
     }
 
     const handleLoadBuildings = async () => {
@@ -189,7 +194,7 @@ export default function MainPage() {
             <Box sx={{ display: 'flex', gap: 2 }} >
                 {
                     facilityMenu.map((menu, index) => (
-                        <div className={styles.menuContainer} onClick={handleMenuClick}>
+                        <div className={styles.menuContainer} onClick={()=>handleMenuClick(index)}>
                             <GrayCircle key={index} radius={23} icon = {menu.icon} />
                             <div className={styles.menuTitle}>{menu.name}</div>
                         </div>
@@ -251,25 +256,26 @@ export default function MainPage() {
                     <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '12px' }}>예약내역이 없어요.</div>}
             </GrayBorderBox>
             <FacilityMenuModal>
-                <table>
-                    <tbody>
-                        <div className={styles.modalContent}>
-                            {buildings.map((building, index) => (
-                                <tr>
-                                    <div key={index} onClick={()=>handleOnClickBuilding(building)}>
-                                        <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
-                                            <Business sx={{ color: '#959494', paddingTop : '12px' }}/>
-                                            <div>
-                                                <div style={{ paddingTop: '12px', fontSize : '10px' }}>{building.getName()}</div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </tr>  
-                            ))}
-                        </div>x
-                    </tbody>
-                </table>
+                    <table>
+                        <tbody className={styles.scrollableTbody}>
+                            <div style={{fontWeight : 'bold'}}>
+                                건물을 선택해주세요
+                            </div>
+                        <Box sx={{ height : '12px' }}/>
+                        {buildings.map((building, index) => (
+                            <tr key={index}>
+                            <td onClick={()=>handleOnClickBuilding(building)}>
+                                <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
+                                <Business sx={{ color: '#959494', paddingTop : '12px' }}/>
+                                <div>
+                                    <div style={{ paddingTop: '12px', fontSize : '12px' }}>{building.getName()}</div>
+                                </div>
+                                </div>
+                            </td>
+                            </tr>  
+                        ))}
+                        </tbody>
+                    </table>
             </FacilityMenuModal>
         </Container>
     );

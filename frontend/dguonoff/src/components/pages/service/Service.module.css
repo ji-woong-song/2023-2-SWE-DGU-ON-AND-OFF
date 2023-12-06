@@ -110,15 +110,6 @@
     color: #000000;
 }
 
-.modalContent {
-    background-color: white;
-    width: 60%; /* 모달 너비를 전체 화면의 60%로 설정 */
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow-y: auto; /* 내용이 넘칠 경우에 스크롤 바 표시 */
-}
-
 .noUsingFacility{
     display: flex;
     flex-direction: column; /* 자식 요소들을 수직으로 정렬 */
@@ -159,3 +150,14 @@
     background-color: var(--button-negative-color);
     color: var(--button-text-light-color);
 }
+
+.scrollableTbody {
+    display: block;
+    max-height: 240px; /* 또는 원하는 높이 */
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: white;
+    width: 240px;
+    padding: 20px;
+    border-radius: 10px;
+  }

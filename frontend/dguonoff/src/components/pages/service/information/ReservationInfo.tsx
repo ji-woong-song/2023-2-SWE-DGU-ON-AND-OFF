@@ -71,7 +71,7 @@ export default function ReservationInfo({reservation} : ReservationInfoProps) {
                 </Grid>
                 <Grid container justifyContent="space-between" sx={{ pt: 1.5, pb: 1.5 }}>
                     <Grid item className={styles.infoMenuTitle}>예약 인원</Grid>
-                    <Grid item className={styles.infoMenuContent}>{reservation.getGuests.length}명</Grid>
+                    <Grid item className={styles.infoMenuContent}>{reservation.getGuests().length}명</Grid>
                 </Grid>
                 <Grid container justifyContent="space-between" sx={{ pt: 1.5, pb: 0 }}>
                     <Grid item className={styles.infoMenuTitle}>메모</Grid>
