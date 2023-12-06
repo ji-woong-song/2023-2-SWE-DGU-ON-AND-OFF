@@ -164,7 +164,7 @@ export default function MainPage() {
                 </IconButton>
             </div>
 
-
+            <Box sx={{ height: '12px' }} />
             <GrayBorderBox style={{
                 display: 'flex', // Flexbox 레이아웃 사용
                 flexDirection: 'column', // 요소들을 세로 방향으로 정렬

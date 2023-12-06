@@ -53,7 +53,7 @@ export default function AnnouncementPage(){
                                 <div className={styles.announcementAuthor}>
                                     작성자 : {announcement.getAuthorId()}
                                 </div>
-                                <div style={{paddingTop : '12px'}}>
+                                <div style={{paddingTop : '12px', whiteSpace: 'pre-wrap'}}>
                                     {announcement.getBody()}
                                 </div>
                             </GrayBorderBox>
