@@ -33,6 +33,7 @@ public class UserBookmarkService {
                 .map(facility -> UserBookmarkDTO.builder()
                                 .facilityName(facility.getName())
                                 .buildingName(facility.getBuilding().getName())
+                                .facilityState(facility.getState())
                                 .facilityCode(facility.getCode())
                                 .build()
                 ).collect(Collectors.toList());
