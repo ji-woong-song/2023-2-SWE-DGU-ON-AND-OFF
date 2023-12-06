@@ -14,7 +14,7 @@ import { useModal } from "../../../../modules/modal/Modal";
 import { ModalAnimationType } from "../../../../modules/modal/ModalAnimations";
 import Building from "../../../../types/Building";
 import Reservation from "../../../../types/Reservation";
-import { ReservationContext } from "../../../../App";
+import { ReservationContext, SelectedBuildingContext } from "../../../../App";
 
 
 interface FacilityMenu {
@@ -33,6 +33,7 @@ export default function MainPage() {
     const [nowUsingReservation, setNowUsingReservation] = useState<Reservation>(); // 현재 이용중인 예약
     const [FacilityMenuModal, openFacilityMenuModal, closeFacilityMenuModal] = useModal(ModalAnimationType.ZOOM);
     const {setReservationInfo } = useContext(ReservationContext);
+    const {setSelectedBuilding } = useContext(SelectedBuildingContext);
     
     let userToken : string = "";
 
@@ -128,6 +129,12 @@ export default function MainPage() {
         return { isActiveNow: false, ActiveReservation: null };
     };
 
+    const handleOnClickBuilding = (building : Building) => {
+        setSelectedBuilding(building);
+        closeFacilityMenuModal();
+        navigate('/facility');
+    }
+
     return (
             <Container>
             <Box sx={{ height: '12px' }} />
@@ -200,12 +207,13 @@ export default function MainPage() {
                      {myBookmarks.map((bookmark, index) => (
                         <div key={index} >
                             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'clip'
+                            }}>
                                     <Business sx={{ color: '#959494', paddingTop : '12px' }}/>
-                                    <div style={{ paddingTop: '12px' }}>{bookmark.getBuildingName()}</div>
-                                    <div style={{ paddingTop: '12px' }}>{bookmark.getFacilityName()}</div>
+                                    <div style={{ paddingTop: '12px', fontSize : '14px' }}>{bookmark.getBuildingName()}</div>
+                                    <div style={{ paddingTop: '12px', fontSize : '14px'  }}>{bookmark.getFacilityName()}</div>
                                 </div>
-                                <div style={{ height: "100%",display: "flex", alignItems: "center", justifyContent: "center", paddingTop: '12px' }}>
+                                <div style={{ height: "100%", width: "20%",display: "flex", alignItems: "center", justifyContent: "center", paddingTop: '12px' }}>
                                         <button className={bookmark.getFacilityState() === "EMPTY" ? styles.button_EMPTY : styles.button_USING}>
                                             {bookmark.getFacilityState() === "EMPTY" ? "사용가능" : "사용중"}
                                         </button>
@@ -248,7 +256,7 @@ export default function MainPage() {
                         <div className={styles.modalContent}>
                             {buildings.map((building, index) => (
                                 <tr>
-                                    <div key={index}>
+                                    <div key={index} onClick={()=>handleOnClickBuilding(building)}>
                                         <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
                                             <Business sx={{ color: '#959494', paddingTop : '12px' }}/>
                                             <div>
