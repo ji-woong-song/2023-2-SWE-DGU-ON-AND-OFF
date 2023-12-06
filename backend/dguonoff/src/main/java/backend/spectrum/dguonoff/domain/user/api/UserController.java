@@ -7,12 +7,7 @@ import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * User 정보를 찾거나 수정하는 api
@@ -34,8 +29,9 @@ public class UserController {
         return ResponseEntity.ok("등록 성공");
     }
 
-    @DeleteMapping("/bookmark")
-    public ResponseEntity<String> removeBookmark(Principal principal, @RequestBody FacilityKeyDTO request) {
+    @DeleteMapping("/bookmark/{buildingName}/{facilityCode}")
+    public ResponseEntity<String> removeBookmark(Principal principal, @PathVariable String buildingName, @PathVariable String facilityCode) {
+        FacilityKeyDTO request = new FacilityKeyDTO(buildingName, facilityCode);
         this.userBookmarkService.removeBookmark(principal.getName(), request);
         return ResponseEntity.ok("삭제 성공");
     }
