@@ -1,0 +1,81 @@
+.SelectTime {
+    height: 100%;
+    width: 100%;
+}
+
+
+/* SelectTime's components */
+.top {
+    height: 60px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.middle {
+    width: 100%;
+    height: calc(100% - 60px - 45px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.bottom {
+    height: 45px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+
+
+/* top's components */
+.top .period {
+    width: calc(100% - 6px);
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.top input[type="date"] {
+    flex-grow: 1;
+    height: 30px;
+    padding: 5px;
+    border-radius: 10px;
+    border: 2px solid var(--component-main-color);
+    font-size: 17px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+
+/* middle's components */
+.timetable {
+    width: 100%;
+    height: calc(100% - 10px - 20px);
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
+
+/* bottom's components */
+.manage_button_reservation {
+    height: 35px;
+    width: calc(100% - 6px);
+    cursor: pointer;
+    border-radius: 15px;
+    padding: 1px;
+    font-size: 15px;
+    border: 2px solid var(--component-main-color);
+    background-color: var(--component-main-light-color);
+}
+
+.manage_button_reservation :hover {
+    background-color: var(--component-main-color);
+    color: var(--button-text-light-color);
+}

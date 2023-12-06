@@ -924,8 +924,28 @@ export async function deleteFixedSchedule(token: string, facilitySchedule: Facil
 
 
 
+/*****************************************************************
+ * 사용자의 시설 북마크 정보를 가져오는 API입니다.
+ *****************************************************************/
+
+/** 나의 북마크 정보 응답 데이터 타입 */
+type GetMyBookmarkResponse = {
+    facilityName: string;
+    facilityCode: string;
+    buildingName: string;
+}[]
+
+/**
+ * getMyBookmark 메서드는 현재 사용자의 모든 북마크 목록을 조회합니다.
+ * 이 메서드는 인증 토큰을 사용하여 서버에 사용자의 북마크 정보 요청을 전송합니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @returns {Promise<Bookmark[]>} 서버로부터 받은 북마크 정보를 Bookmark 객체 배열로 반환합니다.
+ * 각 객체에는 시설명, 시설 코드, 건물명이 포함됩니다.
+ * 에러 발생 시 빈 배열을 반환합니다.
+ */
 export async function getMyBookmark(token: string): Promise<Bookmark[]> {
-    let result: Bookmark[] = [];
+    let responseData: GetMyBookmarkResponse = [];
     try {
         const response = await axios.get(
             getApiUrl("/api/user/bookmark"),
@@ -935,12 +955,92 @@ export async function getMyBookmark(token: string): Promise<Bookmark[]> {
                 }
             }
         );
-        console.log(response.data);
-        result = response.data.map((item: any) => new Bookmark(item.facilityName, item.facilityCode, item.buildingName));
+        responseData = response.data;
     } catch (error) {
         console.error(error);
     }
-    return result;
+    return responseData.map((item) => new Bookmark(item.facilityName, item.facilityCode, item.buildingName));
+}
+
+
+
+
+/*****************************************************************
+ * 사용자가 시설을 북마크에 등록하는 API입니다.
+ *****************************************************************/
+
+/** 북마크 등록 응답 데이터 타입 */
+type RegisterBookmarkResponse = string;
+
+/**
+ * registerBookmark 메서드는 서버에 새로운 북마크를 등록합니다.
+ * 이 메서드는 인증 토큰, 건물 코드, 건물명을 사용하여 서버에 북마크 등록 요청을 전송합니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {string} code 건물의 고유 코드입니다.
+ * @param {string} buildingName 건물명입니다.
+ * @returns {Promise<boolean>} 북마크 등록 성공 여부를 반환합니다.
+ * 성공 시 true, 실패 시 false를 반환합니다.
+ */
+export async function registerBookmark(token: string, code: string, buildingName: string): Promise<boolean> {
+    let responseData: RegisterBookmarkResponse = "";
+    try {
+        const postData = { code, buildingName };
+        const response = await axios.post(
+            getApiUrl("/api/user/bookmark"),
+            postData,
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+    return responseData.includes("등록 성공");
+}
+
+
+
+
+/*****************************************************************
+ * 사용자가 시설을 북마크 해제하는 API입니다.
+ *****************************************************************/
+
+/** 북마크 해제 응답 데이터 타입 */
+type RemoveBookmarkResponse = string;
+
+/**
+ * removeBookmark 메서드는 서버에 저장된 북마크를 해제합니다.
+ * 이 메서드는 인증 토큰, 건물 코드, 건물명을 사용하여 서버에 북마크 해제 요청을 전송합니다.
+ * 
+ * @param {string} token 현재 사용자의 인증 토큰입니다.
+ * @param {string} code 건물의 고유 코드입니다.
+ * @param {string} buildingName 건물명입니다.
+ * @returns {Promise<boolean>} 북마크 해제 성공 여부를 반환합니다.
+ * 성공 시 true, 실패 시 false를 반환합니다.
+ */
+export async function removeBookmark(token: string, code: string, buildingName: string): Promise<boolean> {
+    let responseData: RemoveBookmarkResponse = "";
+    try {
+        const response = await axios.delete(
+            getApiUrl(`/api/user/bookmark/${buildingName}/${code}`),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+    return responseData.includes("해제 성공");
 }
 
 
@@ -952,7 +1052,7 @@ export async function getMyBookmark(token: string): Promise<Bookmark[]> {
 type GetAnnouncementsResponse = {
     authorId: string;
     boardId: number;
-    body : string;
+    body: string;
     title: string;
 }[];
 
@@ -1160,32 +1260,89 @@ export async function getAnnouncementBody(token: string, boardId: number): Promi
     return responseData;
 }
 
-export async function deleteReservation(token: string, reservationId : number): Promise<boolean> {
-    let responseData: number = 0;
+
+
+/*
+  "title": "string",
+  "date": "string",
+  "startTime": "string",
+  "endTime": "string",
+  "facilityCode": "string",
+  "buildingName": "string",
+  "outline": "string",
+  "purpose": "string",
+  "guestIds": [
+    "string"
+  ]
+*/
+
+/** TODO: 구현 필요 */
+export async function registerReservation(
+    token: string,
+    hostName: string,
+    date: Date,
+    startTime: Date,
+    endTime: Date,
+    facility: Facility,
+    building: Building,
+    purpose: string,
+    guestIds: string[]
+): Promise<boolean> {
+    let responseData: any = 0;
+
+    const formatDate = (date: Date) => {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    const formatTime = (time: Date): string => {
+        const hours = time.getHours().toString().padStart(2, '0');
+        const minutes = time.getMinutes().toString().padStart(2, '0');
+        const seconds = time.getSeconds().toString().padStart(2, '0');
+        return `${hours}:${minutes}:${seconds}`;
+    };
+
+    const postData = {
+        title: hostName,
+        date: formatDate(date),
+        startTime: formatTime(startTime),
+        endTime: formatTime(endTime),
+        facilityCode: facility.getCode(),
+        buildingName: building.getName(),
+        outline: purpose,
+        purpose: purpose,
+        guestIds: guestIds
+    };
     try {
-        const response = await axios.delete(
-            getApiUrl(`/api/reservation/deletion/${reservationId}`),
+        console.log(postData)
+        const response = await axios.post(
+            getApiUrl("/api/reservation/registration"),
+            postData,
             {
                 headers: {
-                    "Authorization": `Bearer ${token}`
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
                 },
                 withCredentials: true
             }
         );
-        responseData = response.status;
+        responseData = response.status
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             responseData = error.response.data;
         }
-    }
+    } console.log(responseData);
     return responseData === 200;
 }
 
-export async function modifyReservation(token: string, reservationId: number ,outline : string): Promise<boolean>{
+
+export async function modifyReservation(token: string, reservationId: number, outline: string): Promise<boolean> {
     let responseData: number = 0;
-    const postData = { 
-        "reservationId" : reservationId,
-        "outline" : outline,
+    const postData = {
+        "reservationId": reservationId,
+        "outline": outline,
         "guestIds": []
     };
     try {
@@ -1208,6 +1365,32 @@ export async function modifyReservation(token: string, reservationId: number ,ou
     }
     return responseData === 200;
 }
+
+
+
+
+export async function deleteReservation(token: string, reservationId: number): Promise<boolean> {
+    let responseData: number = 0;
+    try {
+        const response = await axios.delete(
+            getApiUrl(`/api/reservation/deletion/${reservationId}`),
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+                withCredentials: true
+            }
+        );
+        responseData = response.status;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            responseData = error.response.data;
+        }
+    }
+    return responseData === 200;
+}
+
+
 
 
 export async function getMyReservations(token: string): Promise<Reservation[]> {
@@ -1243,7 +1426,10 @@ export async function getMyReservations(token: string): Promise<Reservation[]> {
         reservations.guests));
 }
 
-export async function finishFacilityUsing(token: string, buildingName: string, facilityCode: string): Promise<boolean>{
+
+
+
+export async function finishFacilityUsing(token: string, buildingName: string, facilityCode: string): Promise<boolean> {
     let responseData: number = 0;
     try {
         const response = await axios.get(
