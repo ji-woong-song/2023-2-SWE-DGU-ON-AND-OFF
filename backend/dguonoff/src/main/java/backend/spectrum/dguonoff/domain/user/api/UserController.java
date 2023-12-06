@@ -31,7 +31,7 @@ public class UserController {
 
     @DeleteMapping("/bookmark/{buildingName}/{facilityCode}")
     public ResponseEntity<String> removeBookmark(Principal principal, @PathVariable String buildingName, @PathVariable String facilityCode) {
-        FacilityKeyDTO request = new FacilityKeyDTO(buildingName, facilityCode);
+        FacilityKeyDTO request = new FacilityKeyDTO(facilityCode, buildingName);
         this.userBookmarkService.removeBookmark(principal.getName(), request);
         return ResponseEntity.ok("삭제 성공");
     }
