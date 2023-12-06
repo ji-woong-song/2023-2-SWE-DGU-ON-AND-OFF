@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.domain.user.api;
 
-import backend.spectrum.dguonoff.DAO.User;
+import backend.spectrum.dguonoff.dao.User;
 import backend.spectrum.dguonoff.domain.user.dto.EmpowermentParams;
 import backend.spectrum.dguonoff.domain.user.dto.UserInfoDTO;
 import backend.spectrum.dguonoff.domain.user.service.UserService;

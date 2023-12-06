@@ -1,10 +1,10 @@
 package backend.spectrum.dguonoff.domain.admin.service;
 
-import backend.spectrum.dguonoff.DAO.Event;
-import backend.spectrum.dguonoff.DAO.Facility;
-import backend.spectrum.dguonoff.DAO.FixedSchedule;
-import backend.spectrum.dguonoff.DAO.Reservation;
-import backend.spectrum.dguonoff.DAO.User;
+import backend.spectrum.dguonoff.dao.Event;
+import backend.spectrum.dguonoff.dao.Facility;
+import backend.spectrum.dguonoff.dao.FixedSchedule;
+import backend.spectrum.dguonoff.dao.Reservation;
+import backend.spectrum.dguonoff.dao.User;
 import backend.spectrum.dguonoff.domain.admin.converter.FixedScheduleConverter;
 import backend.spectrum.dguonoff.domain.admin.dto.DailyScheduleResponse;
 import backend.spectrum.dguonoff.domain.admin.dto.PostNewScheduleRequest;
@@ -12,7 +12,6 @@ import backend.spectrum.dguonoff.domain.admin.dto.PostNewScheduleResponse;
 import backend.spectrum.dguonoff.domain.admin.dto.UpdateScheduleRequest;
 import backend.spectrum.dguonoff.domain.admin.dto.UpdateScheduleResponse;
 import backend.spectrum.dguonoff.domain.admin.dto.common.EventInfoDTO;
-import backend.spectrum.dguonoff.domain.admin.dto.common.PeriodDTO;
 import backend.spectrum.dguonoff.domain.admin.repository.FixedScheduleRepository;
 import backend.spectrum.dguonoff.domain.admin.repository.TempReservationRepository;
 import backend.spectrum.dguonoff.domain.facility.repository.FacilityRepository;
@@ -20,7 +19,6 @@ import backend.spectrum.dguonoff.domain.reservation.repository.EventRepository;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.global.error.Exception.BusinessException;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
-import backend.spectrum.dguonoff.global.util.IntervalUtil;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -185,9 +183,8 @@ public class FixedScheduleService {
                 reservation.getEvent().getId().equals(event.getId()))
                 continue;
             // 같은 요일의 경우 겹치는 시간대를 확인한다.
-            PeriodDTO<LocalTime> timeInterval = new PeriodDTO<>(reservation.getStartTime(), reservation.getEndTime());
             // 유효기간도 겹치고 시간대도 겹치면 에러 발생
-            if (dateOverlapped(request, reservation) && IntervalUtil.isOverlapped(request.getTime(), timeInterval)){
+            if (dateOverlapped(request, reservation) && timeOverlapped(request, reservation)){
                 throw new BusinessException(ErrorCode.EXIST_OVERLAPPED_INTERVAL);
             }
         }
@@ -284,5 +281,18 @@ public class FixedScheduleService {
                 reservation.getDate().equals(request.getEffectiveDate().getStart()) &&
                 reservation.getDate().isBefore(request.getEffectiveDate().getEnd()) &&
                 reservation.getDate().equals(request.getEffectiveDate().getEnd());
+    }
+
+    public static boolean timeOverlapped(PostNewScheduleRequest request, Reservation reservation) {
+        return reservation.getStartTime().equals(request.getTime().getStart()) ||
+                reservation.getEndTime().equals(request.getTime().getEnd()) ||
+                (
+                        reservation.getStartTime().isBefore(request.getTime().getEnd()) &&
+                        reservation.getStartTime().isAfter(request.getTime().getStart())
+                ) ||
+                (
+                        reservation.getEndTime().isAfter(request.getTime().getStart()) &&
+                        reservation.getStartTime().isBefore(request.getTime().getStart())
+                );
     }
 }

@@ -1,7 +1,7 @@
 package backend.spectrum.dguonoff.domain.facility.service;
 
-import backend.spectrum.dguonoff.DAO.*;
-import backend.spectrum.dguonoff.DAO.model.FacilityStatus;
+import backend.spectrum.dguonoff.dao.*;
+import backend.spectrum.dguonoff.dao.model.FacilityStatus;
 import backend.spectrum.dguonoff.domain.facility.converter.FacilityConverter;
 import backend.spectrum.dguonoff.domain.facility.dto.BuildingDTO;
 import backend.spectrum.dguonoff.domain.facility.dto.FacilityOutlineDTO;
@@ -17,7 +17,6 @@ import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -28,8 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static backend.spectrum.dguonoff.DAO.model.FacilityStatus.USING;
-import static backend.spectrum.dguonoff.DAO.model.ReservationStatus.APPROVED;
+import static backend.spectrum.dguonoff.dao.model.FacilityStatus.USING;
+import static backend.spectrum.dguonoff.dao.model.ReservationStatus.APPROVED;
 
 @Service
 @Slf4j

@@ -1,7 +1,7 @@
 package backend.spectrum.dguonoff.domain.admin.repository;
 
 
-import backend.spectrum.dguonoff.DAO.FixedSchedule;
+import backend.spectrum.dguonoff.dao.FixedSchedule;
 import java.time.DayOfWeek;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

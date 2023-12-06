@@ -1,7 +1,7 @@
 package backend.spectrum.dguonoff.domain.user.repository;
 
-import backend.spectrum.dguonoff.DAO.User;
-import backend.spectrum.dguonoff.DAO.model.Role;
+import backend.spectrum.dguonoff.dao.User;
+import backend.spectrum.dguonoff.dao.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Modifying;

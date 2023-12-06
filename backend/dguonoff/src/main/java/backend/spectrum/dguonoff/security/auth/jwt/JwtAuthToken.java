@@ -35,7 +35,8 @@ public class JwtAuthToken implements AuthToken<Claims> {
     public JwtAuthToken(String id, Key key, String role,
                         Map<String, String> claims, Date expiredDate) {
         this.key = key;
-        this.token = createJwtToken(id, role, claims, expiredDate).get();
+        this.token = createJwtToken(id, role, claims, expiredDate)
+                .orElseThrow(()-> new JwtTokenException(ErrorCode.JWT_MALFORMED));
     }
 
     public String getToken() {

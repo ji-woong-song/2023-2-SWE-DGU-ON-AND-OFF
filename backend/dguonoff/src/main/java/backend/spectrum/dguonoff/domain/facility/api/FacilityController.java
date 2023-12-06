@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.domain.facility.api;
 
-import backend.spectrum.dguonoff.DAO.model.FacilityStatus;
+import backend.spectrum.dguonoff.dao.model.FacilityStatus;
 import backend.spectrum.dguonoff.domain.facility.dto.FloorFacilityListResponse;
 import backend.spectrum.dguonoff.domain.facility.dto.NextReservationResponse;
 import backend.spectrum.dguonoff.domain.facility.service.FacilityService;

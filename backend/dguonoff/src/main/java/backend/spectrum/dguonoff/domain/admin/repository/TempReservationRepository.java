@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.domain.admin.repository;
 
-import backend.spectrum.dguonoff.DAO.Reservation;
+import backend.spectrum.dguonoff.dao.Reservation;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;

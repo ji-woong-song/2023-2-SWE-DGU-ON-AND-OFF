@@ -1,6 +1,6 @@
-package backend.spectrum.dguonoff.DAO;
+package backend.spectrum.dguonoff.dao;
 
-import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
+import backend.spectrum.dguonoff.dao.model.ReservationStatus;
 import lombok.*;
 
 import javax.persistence.*;

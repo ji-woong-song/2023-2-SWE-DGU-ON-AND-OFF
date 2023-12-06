@@ -1,4 +1,4 @@
-package backend.spectrum.dguonoff.DAO.idClass;
+package backend.spectrum.dguonoff.dao.idClass;
 
 import lombok.*;
 

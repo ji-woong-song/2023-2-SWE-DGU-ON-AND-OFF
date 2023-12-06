@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.email;
 
-import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
+import backend.spectrum.dguonoff.dao.model.ReservationStatus;
 import backend.spectrum.dguonoff.email.content.EmailMessage;
 import backend.spectrum.dguonoff.event.ReservationConfirmEvent;
 import java.time.format.DateTimeFormatter;

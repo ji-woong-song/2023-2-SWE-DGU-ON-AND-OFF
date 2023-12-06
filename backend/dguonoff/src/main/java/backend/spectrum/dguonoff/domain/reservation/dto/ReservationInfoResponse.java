@@ -1,12 +1,11 @@
 package backend.spectrum.dguonoff.domain.reservation.dto;
 
-import backend.spectrum.dguonoff.DAO.model.FacilityStatus;
-import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
+import backend.spectrum.dguonoff.dao.model.FacilityStatus;
+import backend.spectrum.dguonoff.dao.model.ReservationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import javax.persistence.Column;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;

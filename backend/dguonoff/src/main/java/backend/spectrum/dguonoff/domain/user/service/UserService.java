@@ -1,7 +1,7 @@
 package backend.spectrum.dguonoff.domain.user.service;
 
-import backend.spectrum.dguonoff.DAO.User;
-import backend.spectrum.dguonoff.DAO.model.Role;
+import backend.spectrum.dguonoff.dao.User;
+import backend.spectrum.dguonoff.dao.model.Role;
 import backend.spectrum.dguonoff.domain.user.dto.UserInfoDTO;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import static backend.spectrum.dguonoff.DAO.model.Role.ADMIN;
-import static backend.spectrum.dguonoff.DAO.model.Role.MASTER;
+import static backend.spectrum.dguonoff.dao.model.Role.ADMIN;
+import static backend.spectrum.dguonoff.dao.model.Role.MASTER;
 import static backend.spectrum.dguonoff.global.statusCode.ErrorCode.NOT_EXIST_ADMIN;
 
 @Service

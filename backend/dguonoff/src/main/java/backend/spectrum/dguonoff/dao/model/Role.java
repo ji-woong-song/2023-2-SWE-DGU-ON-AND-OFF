@@ -1,4 +1,4 @@
-package backend.spectrum.dguonoff.DAO.model;
+package backend.spectrum.dguonoff.dao.model;
 
 public enum Role {
     NORMAL,

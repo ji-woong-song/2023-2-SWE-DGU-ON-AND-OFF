@@ -1,7 +1,7 @@
 package backend.spectrum.dguonoff.Service;
 
-import backend.spectrum.dguonoff.DAO.User;
-import backend.spectrum.dguonoff.DAO.model.Role;
+import backend.spectrum.dguonoff.dao.User;
+import backend.spectrum.dguonoff.dao.model.Role;
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.domain.user.service.UserService;
@@ -59,36 +59,6 @@ public class UserServiceTest {
 
     }
 
-//    @DisplayName("마스터 관리자 아이디로 권한 확인하면 관리자 권한이 있는지 확인할 수 있다.")
-//    @Test
-//    public void 마스터_관리자_권한_확인() {
-//        String checkId = "200M";
-//
-//        assertThatCode(() -> {
-//            userService.checkMasterAdmin(checkId);
-//        }).doesNotThrowAnyException();
-//    }
-
-//    @DisplayName("존재하지 않는 아이디로 권한 확인하면 예외가 발생한다.")
-//    @Test
-//    public void 존재하지_않는_아이디_권한_확인() {
-//        String checkId = "300M";
-//
-//        assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> {
-//            userService.checkMasterAdmin(checkId);
-//        }).withMessage("존재하지 않는 마스터 관리자입니다.");
-//    }
-
-//    @DisplayName("관리자가 아닌 아이디로 권한 확인하면 예외가 발생한다.")
-//    @Test
-//    public void 마스터_관리자_아닌_아이디로_권한_확인() {
-//        String checkId = "100N";
-//
-//        assertThatExceptionOfType(InvalidAccessException.class).isThrownBy(() -> {
-//            userService.checkMasterAdmin(checkId);
-//        }).withMessage("권한이 없는 유저입니다. MASTER 권한이 필요합니다.");
-//    }
-
     @DisplayName("유저에게 권한을 부여하면 역할이 ADMIN이 된다.")
     @Test
     public void 유저_권한_부여() {
@@ -96,8 +66,4 @@ public class UserServiceTest {
         User newAdmin = userService.findUser(userA.getId());
         assertThat(newAdmin.getRole()).isEqualTo(Role.ADMIN);
     }
-
-
-
-
 }

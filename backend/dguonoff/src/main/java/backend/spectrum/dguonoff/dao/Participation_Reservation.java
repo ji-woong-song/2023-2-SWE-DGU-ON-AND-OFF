@@ -1,6 +1,6 @@
-package backend.spectrum.dguonoff.DAO;
+package backend.spectrum.dguonoff.dao;
 
-import backend.spectrum.dguonoff.DAO.idClass.ParticipationReservationId;
+import backend.spectrum.dguonoff.dao.idClass.ParticipationReservationId;
 import lombok.*;
 
 import javax.persistence.*;

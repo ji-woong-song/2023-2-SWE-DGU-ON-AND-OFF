@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.domain.user.dto;
 
-import backend.spectrum.dguonoff.DAO.model.FacilityStatus;
+import backend.spectrum.dguonoff.dao.model.FacilityStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

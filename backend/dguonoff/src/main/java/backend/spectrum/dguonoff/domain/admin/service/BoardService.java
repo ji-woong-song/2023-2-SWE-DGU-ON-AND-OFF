@@ -1,8 +1,8 @@
 package backend.spectrum.dguonoff.domain.admin.service;
 
-import backend.spectrum.dguonoff.DAO.Board;
-import backend.spectrum.dguonoff.DAO.User;
-import backend.spectrum.dguonoff.DAO.model.Role;
+import backend.spectrum.dguonoff.dao.Board;
+import backend.spectrum.dguonoff.dao.User;
+import backend.spectrum.dguonoff.dao.model.Role;
 import backend.spectrum.dguonoff.domain.admin.dto.BoardDetailDTO;
 import backend.spectrum.dguonoff.domain.admin.dto.BoardTotalDTO;
 import backend.spectrum.dguonoff.domain.admin.dto.PostBoardDTO;

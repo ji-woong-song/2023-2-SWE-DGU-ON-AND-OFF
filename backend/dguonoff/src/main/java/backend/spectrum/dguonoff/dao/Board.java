@@ -1,4 +1,4 @@
-package backend.spectrum.dguonoff.DAO;
+package backend.spectrum.dguonoff.dao;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;

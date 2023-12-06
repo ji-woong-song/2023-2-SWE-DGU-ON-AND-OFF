@@ -1,6 +1,6 @@
-package backend.spectrum.dguonoff.DAO;
+package backend.spectrum.dguonoff.dao;
 
-import backend.spectrum.dguonoff.DAO.model.FacilityStatus;
+import backend.spectrum.dguonoff.dao.model.FacilityStatus;
 import lombok.*;
 
 import javax.persistence.*;

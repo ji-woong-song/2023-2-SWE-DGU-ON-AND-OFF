@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.event;
 
-import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
+import backend.spectrum.dguonoff.dao.model.ReservationStatus;
 import backend.spectrum.dguonoff.domain.admin.dto.common.PeriodDTO;
 import java.time.LocalDate;
 import java.time.LocalTime;

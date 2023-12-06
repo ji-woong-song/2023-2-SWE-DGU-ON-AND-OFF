@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.domain.admin.repository;
 
-import backend.spectrum.dguonoff.DAO.Board;
+import backend.spectrum.dguonoff.dao.Board;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
