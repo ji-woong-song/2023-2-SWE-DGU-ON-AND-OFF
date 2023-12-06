@@ -149,6 +149,7 @@ public class ReservationService {
 
 
         //예약 유효성 검사
+        validBookableFacility(facility); //예약 가능한 시설인지 검사
         validateMaxReservation(facilityCode, buildingName, reservationDate, userId); // 최대 예약 횟수를 초과한 경우 예외 발생
         validateAvailableDate(reservationDate, facilityCode, buildingName); //예약 가능 날짜인지 검사
         validateTime(startTime, endTime); //예약 시간이 유효한지 검사
@@ -203,6 +204,14 @@ public class ReservationService {
             participationReservationRepository.save(participation_reservation);
         });
 
+    }
+
+    //예약 가능한 시설물인지 확인하는 함수
+    private static void validBookableFacility(Facility facility) {
+        log.info("facility.isBookable() : " + facility.isBookable());
+        if(facility.isBookable() == false) { //예약이 불가능한 시설인 경우 예외 발생
+            throw new FacilityNotBookableException(ErrorCode.NOT_BOOKABLE_FACILITY);
+        }
     }
 
     //예약을 수정하는 함수
