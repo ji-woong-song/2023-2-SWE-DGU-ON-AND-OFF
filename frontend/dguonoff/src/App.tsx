@@ -11,6 +11,7 @@ import SignupPage from './components/pages/service/signup/SignupPage';
 import React, { createContext, useState } from 'react';
 import Reservation from './types/Reservation';
 import AnnouncementPage from './components/pages/service/information/Announcement';
+import FacilityManager from './components/pages/service/reservation/FacilityManager';
 // import UserInfo from './components/pages/service/information/UserInfo';
 // import ReservationDetailPage from './components/pages/service/reservation/ReservationDetailPage';
 
@@ -44,6 +45,7 @@ function App() {
             <Route path="/reservationPage" element={<ReservationPage />} />
             <Route path="/onoffPage" element={<OnOffPage />} />
             <Route path="/reservationdetailPage" element={<ReservationDetailPage />}/> */}
+             <Route path="/reservation" element={<FacilityManager />} />
             <Route path="/admin" element={<AdminHome />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/signup" element={<AdminSignup />} />
