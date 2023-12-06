@@ -5,6 +5,7 @@ import styles from "../Service.module.css";
 import { requestAuthLogin, setUserRole } from "../../../../api/dguonandoff";
 import { useNavigate } from "react-router-dom";
 import { CookieStorageProvider } from "../../../../modules/storage/AppStorageProvider";
+import logoImage from '../../../../resource/logo.png';
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -62,11 +63,9 @@ export default function LoginPage() {
             alignItems: 'center',
             padding : '36px'
           }}>
-            <Business sx={{ color: '#FBAF3E', fontSize: '56px', paddingBottom : '14px' }}/>
-            <div className={styles.mainTitle}>
-                동국 ON/OFF
+            <div>
+                <img src={logoImage} alt="로고" style={{ width: '240px', height: '240px' }} />
             </div>
-            <Box sx={{ height : 80 }}/>
             <Box component="form" onSubmit={handleSubmit}  sx={{ width: '100%'}}>
                 <div>
                     <input className={styles.inputBox} type="text" placeholder="아이디" value={userId}
