@@ -933,6 +933,7 @@ type GetMyBookmarkResponse = {
     facilityName: string;
     facilityCode: string;
     buildingName: string;
+    facilityState: "EMPTY" | "USING";
 }[]
 
 /**
@@ -959,7 +960,7 @@ export async function getMyBookmark(token: string): Promise<Bookmark[]> {
     } catch (error) {
         console.error(error);
     }
-    return responseData.map((item) => new Bookmark(item.facilityName, item.facilityCode, item.buildingName));
+    return responseData.map((item) => new Bookmark(item.facilityName, item.facilityCode, item.buildingName, item.facilityState));
 }
 
 

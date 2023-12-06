@@ -137,3 +137,25 @@
     font-size : 12px;
     color : '#646464';
 }
+
+.button_EMPTY {
+    height: 25px;
+    width: 90px;
+    border-radius: 15px;
+    padding: 1px;
+    font-size: 15px;
+    border : none;
+    background-color: var(--button-positive-color);
+    color: var(--button-text-light-color);
+}
+
+.button_USING {
+    height: 25px;
+    width: 90px;
+    border-radius: 15px;
+    padding: 1px;
+    font-size: 15px;
+    border : none;
+    background-color: var(--button-negative-color);
+    color: var(--button-text-light-color);
+}

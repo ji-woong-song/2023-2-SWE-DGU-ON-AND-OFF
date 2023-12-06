@@ -199,11 +199,18 @@ export default function MainPage() {
                     <>
                      {myBookmarks.map((bookmark, index) => (
                         <div key={index} >
-                            <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
-                                <Business sx={{ color: '#959494', paddingTop : '12px' }}/>
-                                <div style={{ paddingTop: '12px' }}>{bookmark.getBuildingName()}</div>
-                                <div style={{ paddingTop: '12px' }}>{bookmark.getFacilityName()}</div>
-                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
+                                    <Business sx={{ color: '#959494', paddingTop : '12px' }}/>
+                                    <div style={{ paddingTop: '12px' }}>{bookmark.getBuildingName()}</div>
+                                    <div style={{ paddingTop: '12px' }}>{bookmark.getFacilityName()}</div>
+                                </div>
+                                <div style={{ height: "100%",display: "flex", alignItems: "center", justifyContent: "center", paddingTop: '12px' }}>
+                                        <button className={bookmark.getFacilityState() === "EMPTY" ? styles.button_EMPTY : styles.button_USING}>
+                                            {bookmark.getFacilityState() === "EMPTY" ? "사용가능" : "사용중"}
+                                        </button>
+                                </div>
+                            </div>     
                         </div>
                     ))}
                     </> : 

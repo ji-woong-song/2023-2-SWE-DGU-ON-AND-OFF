@@ -15,8 +15,7 @@ import FacilityManager from './components/pages/service/reservation/FacilityMana
 import ReservationManager from './components/pages/service/reservation/ReservationManager';
 import Facility from './types/Facility';
 import Building from './types/Building';
-// import UserInfo from './components/pages/service/information/UserInfo';
-// import ReservationDetailPage from './components/pages/service/reservation/ReservationDetailPage';
+
 
 export const ReservationContext = React.createContext({
   reservationInfo: new Reservation(), // 기본값
@@ -55,7 +54,6 @@ function App() {
       <ReservationContext.Provider value={{ reservationInfo, setReservationInfo }}>
         <SelectedBuildingContext.Provider value={{ selectedBuilding, setSelectedBuilding }}>
           <SelectedFacilityContext.Provider value={{ selectedFacility, setSelectedFacility }}>
-
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<MainPage />} />
@@ -63,10 +61,6 @@ function App() {
                 <Route path="/announcement" element={<AnnouncementPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
-                {/* <Route path="/userInfo" element={<UserInfo/>} />
-            <Route path="/reservationPage" element={<ReservationPage />} />
-            <Route path="/onoffPage" element={<OnOffPage />} />
-            <Route path="/reservationdetailPage" element={<ReservationDetailPage />}/> */}
                 <Route path="/facility" element={<FacilityManager />} />
                 <Route path="/reservation" element={<ReservationManager />} />
                 <Route path="/admin" element={<AdminHome />} />
