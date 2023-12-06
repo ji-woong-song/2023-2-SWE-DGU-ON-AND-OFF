@@ -54,7 +54,7 @@ export default class Facility {
     }
 
     // 북마크 상태 관련 getter 및 setter
-    public isBookmarked(): boolean {
+    public getBookmarked(): boolean {
         return this.bookmarked;
     }
     public setBookmarked(bookmarked: boolean): void {

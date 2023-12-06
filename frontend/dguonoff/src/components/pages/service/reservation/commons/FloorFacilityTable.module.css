@@ -1,0 +1,37 @@
+.facilityTable {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.manage_button_EMPTY {
+    height: calc(50%);
+    width: calc(100% - 6px);
+    cursor: pointer;
+    border-radius: 15px;
+    padding: 1px;
+    font-size: 15px;
+    border: 2px solid var(--button-positive-color);
+    background-color: var(--button-positive-light-color);
+}
+
+.manage_button_EMPTY:hover {
+    background-color: var(--button-positive-color);
+    color: var(--button-text-light-color);
+}
+
+.manage_button_USING {
+    height: calc(50%);
+    width: calc(100% - 6px);
+    cursor: pointer;
+    border-radius: 15px;
+    padding: 1px;
+    font-size: 15px;
+    border: 2px solid var(--button-negative-color);
+    background-color: var(--button-negative-light-color);
+}
+
+.manage_button_USING :hover {
+    background-color: var(--button-negative-color);
+    color: var(--button-text-light-color);
+}

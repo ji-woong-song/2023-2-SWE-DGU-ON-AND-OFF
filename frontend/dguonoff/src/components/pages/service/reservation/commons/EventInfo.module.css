@@ -1,0 +1,135 @@
+.EventInfo {
+    height: 100%;
+    width: 100%;
+}
+
+
+/* EventInfo's components */
+.top {
+    height: 60px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.middle {
+    width: 100%;
+    height: calc(100% - 60px - 45px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.bottom {
+    height: 45px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+
+
+/* middle's components */
+.basic_info {
+    height: calc(25% - 10px - 10px);
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20%;
+}
+
+.guests {
+    height: calc(75% - 15px);
+    width: 100%;
+    padding-bottom: 15px;
+}
+
+
+/* basic_info's components */
+.text_field {
+    height: 40%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.text_field label {
+    width: 90px;
+    margin-right: 8%;
+    font-size: 20px;
+    font-weight: 600;
+    user-select: none;
+}
+
+.text_field input {
+    height: calc(100% - 14px);
+    width: 60%;
+    padding: 5px;
+    border-radius: 10px;
+    border: 2px solid var(--component-main-color);
+    font-size: 17px;
+}
+
+.add_guest {
+    height: 14%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
+.guest_table {
+    height: calc(86% - 15px);
+    width: 100%;
+    padding-top: 15px;
+}
+
+
+/* add_guest's components */
+.add_guest input {
+    height: calc(80% - 14px);
+    width: 60%;
+    padding: 5px;
+    border-radius: 10px;
+    border: 2px solid var(--component-main-color);
+    font-size: 17px;
+}
+
+.manage_button_add {
+    height: calc(85% - 6px);
+    width: calc(30% - 6px);
+    cursor: pointer;
+    border-radius: 15px;
+    padding: 1px;
+    font-size: 15px;
+    border: 2px solid var(--component-main-color);
+    background-color: var(--component-main-light-color);
+}
+
+.manage_button_add :hover {
+    background-color: var(--component-main-color);
+    color: var(--button-text-light-color);
+}
+
+
+/* bottom's components */
+.manage_button_reservation {
+    height: 35px;
+    width: calc(100% - 6px);
+    cursor: pointer;
+    border-radius: 15px;
+    padding: 1px;
+    font-size: 15px;
+    border: 2px solid var(--component-main-color);
+    background-color: var(--component-main-light-color);
+}
+
+.manage_button_reservation :hover {
+    background-color: var(--component-main-color);
+    color: var(--button-text-light-color);
+}
