@@ -42,12 +42,12 @@ export default function ReservationInfo({reservation} : ReservationInfoProps) {
 
     return (
         <Container>
-            <Box sx={{ height: '12px' }} />
-            <Toolbar>
+            <Box sx={{ height: '36px' }} />
+            <div className={styles.toolBar}>
                 <div className={styles.mainTitle}>
                     {title}
                 </div>
-            </Toolbar>
+            </div>
             <Container>
                 <div className={styles.infoFacility}>
                     <div className={styles.usingFacilityTitle} > 

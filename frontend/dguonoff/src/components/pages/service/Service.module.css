@@ -161,3 +161,10 @@
     padding: 20px;
     border-radius: 10px;
   }
+
+
+.toolBar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* 세로 중앙 정렬 */
+}

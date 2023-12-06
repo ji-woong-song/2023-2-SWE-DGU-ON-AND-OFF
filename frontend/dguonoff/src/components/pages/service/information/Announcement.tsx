@@ -35,12 +35,12 @@ export default function AnnouncementPage(){
 
     return (
         <Container>
-            <Box sx={{ height: '12px' }} />
-            <Toolbar>
+            <Box sx={{ height: '36px' }} />
+            <div className={styles.toolBar}>
                 <div className={styles.mainTitle}>
                     {title}
                 </div>
-            </Toolbar>
+            </div>
             <List>
                 {
                     announcementList.length === 0 ? <div>공지사항이 없습니다.</div> :

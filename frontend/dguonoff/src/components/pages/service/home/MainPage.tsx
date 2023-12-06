@@ -4,7 +4,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import styles from "../Service.module.css";
 import GrayBorderBox from "../../../../modules/GrayBorderBox";
 import GrayCircle from "../../../../modules/GrayCircle";
-import { Business, LocalLibrary, FilterHdr, BlindsClosedSharp } from '@mui/icons-material';
+import { Business, LocalLibrary, FilterHdr, BlindsClosedSharp, StarBorder, FormatLineSpacing, FormatListBulleted, Logout } from '@mui/icons-material';
 import { Route, Routes, useNavigate } from "react-router-dom";
 import useAuth from "../../../../hooks/useAuth";
 import Bookmark from "../../../../types/Bookmark";
@@ -134,6 +134,15 @@ export default function MainPage() {
         return { isActiveNow: false, ActiveReservation: null };
     };
 
+    const handleClickLogout = () => {
+        //confirm
+        const userConfirmed = window.confirm("로그아웃 하시겠습니까?");
+        if(!userConfirmed) return;
+
+        CookieStorageProvider.remove('authToken');
+        navigate(-1);
+    }
+
     const handleOnClickBuilding = (building : Building) => {
         setSelectedBuilding(building);
         closeFacilityMenuModal();
@@ -142,15 +151,19 @@ export default function MainPage() {
 
     return (
             <Container>
-            <Box sx={{ height: '12px' }} />
-            <Toolbar>
+            <Box sx={{ height: '36px' }} />
+            <div className={styles.toolBar}>
                 <div className={styles.mainTitle}>
                     {appName}
                 </div>
                 <IconButton onClick={handleBellClick}>
                     <NotificationsIcon/>
                 </IconButton>
-            </Toolbar>
+                <IconButton onClick={handleClickLogout}>
+                    <Logout/>
+                </IconButton>
+            </div>
+
 
             <GrayBorderBox style={{
                 display: 'flex', // Flexbox 레이아웃 사용
@@ -227,7 +240,10 @@ export default function MainPage() {
                         </div>
                     ))}
                     </> : 
-                    <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '12px' }}>즐겨찾기가 없어요.</div>}
+                    <div className={styles.noUsingFacility}>
+                         <StarBorder sx={{ color: '#959494', fontSize: '56px' }}/>
+                        <div className={styles.noUsingText}>즐겨찾기가 없어요.</div>
+                    </div>}
                
             </GrayBorderBox>
             <GrayBorderBox>
@@ -253,7 +269,12 @@ export default function MainPage() {
                         </div>
                     ))}
                     </> : 
-                    <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '12px' }}>예약내역이 없어요.</div>}
+                    <div>
+                        <div className={styles.noUsingFacility}>
+                            <FormatListBulleted sx={{ color: '#959494', fontSize: '56px' }}/>
+                            <div className={styles.noUsingText}>예약내역이 없어요.</div>
+                        </div>
+                    </div>}
             </GrayBorderBox>
             <FacilityMenuModal>
                     <table>
