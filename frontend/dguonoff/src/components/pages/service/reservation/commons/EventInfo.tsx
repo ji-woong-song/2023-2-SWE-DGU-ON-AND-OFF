@@ -43,16 +43,24 @@ export default function EventInfo({ date, selectedTimes }: EventInfoProps) {
 
     // Handler
     const onReservation = () => {
+        const formatTime = (time: Date): string => {
+            const hours = time.getHours().toString().padStart(2, '0');
+            const minutes = time.getMinutes().toString().padStart(2, '0');
+            const seconds = time.getSeconds().toString().padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        };
         const [token, userRole] = [getAuthToken(), getUserRole()];
         if (token && userRole) {
+            let result = "";
             selectedTimes.forEach(async (startTime) => {
                 const endTime = new Date(startTime);
                 endTime.setMinutes(endTime.getMinutes() + 30);
                 if (selectedFacility && selectedBuilding) {
-                    await registerReservation(token, hostName, date, startTime, endTime, selectedFacility, selectedBuilding, purpose, guestIds);
+                    result += `${formatTime(startTime)}~${formatTime(endTime)}: ` + (await registerReservation(token, hostName, date, startTime, endTime, selectedFacility, selectedBuilding, purpose, guestIds));
                 }
             });
-            navigate("/facility");
+            alert(result === "" ? "예약을 성공하였습니다" : result);
+            navigate(-2);
         } else {
             alert("로그인 시간이 만료되었습니다.");
             navigate("/login")

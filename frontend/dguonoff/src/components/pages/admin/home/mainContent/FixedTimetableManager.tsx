@@ -96,8 +96,9 @@ export default function FixedTimetableManager({ buildings }: FixedTimetableManag
                         });
                         setSelectedTimes([]);
                     }
-                    setFacilitySchedules(await getFixedSchedules(token, currDay, startDate, endDate, selectedFacility, selectedBuilding));
+                  //  setFacilitySchedules();
                     setFacilityEvent(new FacilityEvent('', '', '', '', 0));
+                    console.log(await getFixedSchedules(token, currDay, startDate, endDate, selectedFacility, selectedBuilding))
                     setDoSubmitEvent(false);
                 } else {
                     alert("로그인 시간이 만료되었습니다.");

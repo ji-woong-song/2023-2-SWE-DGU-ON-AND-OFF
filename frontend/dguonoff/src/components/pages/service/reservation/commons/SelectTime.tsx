@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import VirtualizedTable from "../../../../../modules/virtualizedTable/VirtualizedTable";
 import FacilitySchedule from "../../../../../types/FacilitySchedule";
 import styles from "./SelectTime.module.css";
@@ -80,6 +80,12 @@ export default function SelectTime({
         }
     }
 
+
+    useEffect(() => {
+        const newDate = new Date();
+        newDate.setHours(newDate.getHours() + 9);
+        setDate(newDate);
+    }, [])
 
 
     // Render

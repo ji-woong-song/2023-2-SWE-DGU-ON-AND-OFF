@@ -86,7 +86,6 @@ export default function IndividualTimetableManager({ buildings }: IndividualTime
                         await modifyFixedSchedule(token, selectedFacilitySchedule, selectedFacility, selectedBuilding, date, date, currDay, facilityEvent);
                         setSelectedFacilitySchedule(null);
                     } else {
-                        // 고정 시간표 추가
                         selectedTimes.forEach(async (startTime) => {
                             const endTime = new Date(startTime);
                             endTime.setMinutes(endTime.getMinutes() + 30);
@@ -94,6 +93,7 @@ export default function IndividualTimetableManager({ buildings }: IndividualTime
                         });
                         setSelectedTimes([]);
                     }
+                    console.log(123);
                     setFacilitySchedules(await getFixedSchedules(token, currDay, date, date, selectedFacility, selectedBuilding));
                     setFacilityEvent(new FacilityEvent('', '', '', '', 0));
                     setDoSubmitEvent(false);

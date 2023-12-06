@@ -1288,7 +1288,7 @@ export async function registerReservation(
     building: Building,
     purpose: string,
     guestIds: string[]
-): Promise<boolean> {
+): Promise<string> {
     let responseData: any = 0;
 
     const formatDate = (date: Date) => {
@@ -1334,8 +1334,8 @@ export async function registerReservation(
         if (axios.isAxiosError(error) && error.response) {
             responseData = error.response.data;
         }
-    } console.log(responseData);
-    return responseData === 200;
+    }
+    return typeof responseData === 'object' ? responseData.message: "에약 성공";
 }
 
 

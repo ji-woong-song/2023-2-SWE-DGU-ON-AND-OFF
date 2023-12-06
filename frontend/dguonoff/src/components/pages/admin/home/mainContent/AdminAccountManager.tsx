@@ -54,7 +54,7 @@ export default function AdminAccountManager() {
     // Handler
     const handleRoleChange = async (userIndex: number, newRole: UserRole) => {
         const [token, userRole] = [getAuthToken(), getUserRole()];
-        const user = users[userIndex];
+        const user = filteredUsers[userIndex];
         if (token && userRole === "MASTER") {
             switch (newRole) {
                 case "NORMAL": {
@@ -92,7 +92,6 @@ export default function AdminAccountManager() {
                 const reponseUsers = await getUsers(token);
                 setUsers(reponseUsers);
                 setFilteredUsers(reponseUsers);
-
             } else {
                 alert("권한이 없습니다.");
                 navigate("/admin/login")
@@ -217,7 +216,7 @@ export default function AdminAccountManager() {
                                     cursor: "pointer",
                                     userSelect: "none"
                                 }}
-                                    value={user.getRole()}
+                                    defaultValue={user.getRole()}
                                     onChange={(e) => handleRoleChange(index, e.currentTarget.value as UserRole)}
                                 >
                                     {userRoles.map((userRole, index) => (

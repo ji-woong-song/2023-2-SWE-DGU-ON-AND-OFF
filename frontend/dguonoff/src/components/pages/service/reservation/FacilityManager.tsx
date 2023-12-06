@@ -20,7 +20,7 @@ export default function FacilityManager() {
 
   // State
   const [reservationMode, setReservationMode] = useState<ReservationMode>("예약");
-  const [floor, setFloor] = useState<number>(-1);
+  const [floor, setFloor] = useState<number>(1);
   const [facilities, setFacilities] = useState<Facility[]>([]);
 
 
@@ -30,9 +30,11 @@ export default function FacilityManager() {
 
 
   // Effect
-  /*useEffect(() => {
-    setSelectedBuilding(new Building("신공학관(기숙사)", 10));
-  }, []);*/
+  useEffect(() => {
+    if (selectedBuilding && selectedBuilding.getMaxFloor() > 0) {
+      setFloor(1);
+    }
+  }, []);
 
   useEffect(() => {
     if (selectedBuilding) {
@@ -40,6 +42,7 @@ export default function FacilityManager() {
         const [token, userRole] = [getAuthToken(), getUserRole()];
         if (token && userRole) {
           let newFacilities: Facility[] = await getFacilities(token, floor, selectedBuilding.getName());
+          console.log(floor, newFacilities)
           setFacilities(newFacilities);
         } else {
           alert("로그인 시간이 만료되었습니다.");
@@ -63,7 +66,6 @@ export default function FacilityManager() {
       <div className={styles.middle}>
         <div className={styles.middle_left}>
           <SelectBuildingFloor
-            maxFloor={10}
             floor={floor}
             setFloor={setFloor}
           />

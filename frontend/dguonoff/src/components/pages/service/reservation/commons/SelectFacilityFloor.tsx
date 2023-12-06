@@ -1,15 +1,15 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import VirtualizedTable from "../../../../../modules/virtualizedTable/VirtualizedTable";
 import styles from "./SelectBuildingFloor.module.css"
 import useElementDimensions from "../../../../../hooks/useElementDimensions";
+import { SelectedBuildingContext } from "../../../../../App";
 
 interface SelectFacilityFloorProps {
-    maxFloor: number;
     floor: number;
     setFloor: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function SelectBuildingFloor({ maxFloor, floor, setFloor }: SelectFacilityFloorProps) {
+export default function SelectBuildingFloor({ floor, setFloor }: SelectFacilityFloorProps) {
     // Const
     const floorTableColumns: { name: string, style: React.CSSProperties }[] = [
         { name: "층", style: { width: "100%" } },
@@ -24,14 +24,8 @@ export default function SelectBuildingFloor({ maxFloor, floor, setFloor }: Selec
     const floorTableHeight = useElementDimensions(floorTable, "Pure")[1];
 
 
-    // Effect
-    useEffect(() => {
-        if (maxFloor > 0) {
-            setFloor(1);
-        } else {
-            setFloor(-1);
-        }
-    }, [maxFloor, setFloor]);
+    // Context
+    const selectedBuilding = React.useContext(SelectedBuildingContext).selectedBuilding;
 
 
     // Render
@@ -68,7 +62,7 @@ export default function SelectBuildingFloor({ maxFloor, floor, setFloor }: Selec
                     );
                 }}
 
-                numRows={maxFloor}
+                numRows={selectedBuilding ? selectedBuilding.getMaxFloor() : 0}
                 rowHeight={50}
                 rowStyles={{
                     default: {
