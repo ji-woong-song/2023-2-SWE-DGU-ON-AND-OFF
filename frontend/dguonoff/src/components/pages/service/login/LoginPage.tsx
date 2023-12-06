@@ -2,7 +2,7 @@ import { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import { Box, Container} from "@mui/material";
 import { Business } from '@mui/icons-material';
 import styles from "../Service.module.css";
-import { requestAuthLogin } from "../../../../api/dguonandoff";
+import { requestAuthLogin, setUserRole } from "../../../../api/dguonandoff";
 import { useNavigate } from "react-router-dom";
 import { CookieStorageProvider } from "../../../../modules/storage/AppStorageProvider";
 
@@ -29,6 +29,7 @@ export default function LoginPage() {
             switch (message) {
                 case "LOGIN_SUCCESS": {
                     CookieStorageProvider.set("authToken", data!.token);
+                    setUserRole(data!.role);
                     alert(`${userId}님 환영합니다.`);
                     navigate("/");
                     break;
