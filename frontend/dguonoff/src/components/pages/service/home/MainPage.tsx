@@ -116,6 +116,7 @@ export default function MainPage() {
             alert("이용이 종료되었습니다.");
             setIsActive(false);
             setNowUsingReservation(undefined);
+            window.location.reload();
         }
     }
 

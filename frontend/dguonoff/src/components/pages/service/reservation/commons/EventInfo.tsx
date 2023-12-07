@@ -87,7 +87,7 @@ export default function EventInfo({ date, selectedTimes }: EventInfoProps) {
             </div>
             <div className={styles.guests}>
                 <div className={styles.add_guest}>
-                    <input type="text" maxLength={50} placeholder="ID 입력" ref={guestText} />
+                    <input type="text" maxLength={50} placeholder="학번 입력" ref={guestText} />
                     <button className={styles.manage_button_add} onClick={() => {
                         if (guestText.current) {
                             if (guestText.current.value.length === 0) {
