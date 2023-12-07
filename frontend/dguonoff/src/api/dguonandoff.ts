@@ -250,7 +250,7 @@ export async function getUsers(token: string): Promise<User[]> {
     let responseData: UsersResponse = [];
     try {
         const response = await axios.get(
-            getApiUrl("/master/users"),
+            getApiUrl("/api/master/users"),
             {
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -287,7 +287,7 @@ export async function requestEmpowerment(token: string, userId: string): Promise
     try {
         const postData = { userId };
         const response = await axios.post(
-            getApiUrl("/master/users/empowerment"),
+            getApiUrl("/api/master/users/empowerment"),
             postData,
             {
                 headers: {
@@ -328,7 +328,7 @@ export async function requestDeprivation(token: string, userId: string): Promise
     try {
         const postData = { userId };
         const response = await axios.post(
-            getApiUrl("/master/users/deprivation"),
+            getApiUrl("/api/master/users/deprivation"),
             postData,
             {
                 headers: {
@@ -393,7 +393,7 @@ export async function getReservations(token: string): Promise<Reservation[]> {
     let responseData: GetReservationsResponse = [];
     try {
         const response = await axios.get(
-            getApiUrl("/api/reservation/admin/all"),
+            getApiUrl("/api/admin/reservation/all"),
             {
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -449,7 +449,7 @@ export async function approveReservation(token: string, reservation: Reservation
     let responseData: ApproveReservationResponse = "";
     try {
         const response = await axios.get(
-            getApiUrl(`/api/reservation/admin/approval/${reservation.getReservationId()}`),
+            getApiUrl(`/api/admin/reservation/approval/${reservation.getReservationId()}`),
             {
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -493,7 +493,7 @@ export async function rejectReservation(token: string, reservation: Reservation)
     let responseData: RejectReservationResponse = "";
     try {
         const response = await axios.get(
-            getApiUrl(`/api/reservation/admin/reject/${reservation.getReservationId()}`),
+            getApiUrl(`/api/admin/reservation/reject/${reservation.getReservationId()}`),
             {
                 headers: {
                     "Authorization": `Bearer ${token}`
