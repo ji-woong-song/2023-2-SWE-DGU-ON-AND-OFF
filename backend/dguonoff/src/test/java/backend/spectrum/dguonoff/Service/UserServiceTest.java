@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
 @SpringBootTest
-public class UserServiceTest {
+class UserServiceTest {
 
     @Autowired
     private UserRepository userRepository;
@@ -41,7 +41,7 @@ public class UserServiceTest {
 
     @DisplayName("존재하는 아이디로 조회하면 그 유저를 조회할 수 있다.")
     @Test
-    public void 존재하는_유저조회() {
+    void 존재하는_유저조회() {
         String checkId = "100N";
         User findUser = userService.findUser(checkId);
 
@@ -50,18 +50,19 @@ public class UserServiceTest {
 
     @DisplayName("존재하지 않는 아이디로 조회하면 예외가 발생한다.")
     @Test
-    public void 존재하지_않는_유저조회() {
+    void 존재하지_않는_유저조회() {
         String notExistUserId = "101N";
 
-        assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> {
-            userService.findUser(notExistUserId);
-        }).withMessage("존재하지 않는 유저입니다.");
+        assertThatExceptionOfType(UserNotFoundException.class)
+                .isThrownBy(() -> userService
+                        .findUser(notExistUserId))
+                .withMessage("존재하지 않는 유저입니다.");
 
     }
 
     @DisplayName("유저에게 권한을 부여하면 역할이 ADMIN이 된다.")
     @Test
-    public void 유저_권한_부여() {
+    void 유저_권한_부여() {
         userService.changeRoleToAdmin(userA);
         User newAdmin = userService.findUser(userA.getId());
         assertThat(newAdmin.getRole()).isEqualTo(Role.ADMIN);

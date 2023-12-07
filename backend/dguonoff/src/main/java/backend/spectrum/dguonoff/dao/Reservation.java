@@ -45,7 +45,7 @@ public class Reservation {
     private User hotUserId;
 
     @OneToMany(mappedBy = "reservationId")
-    private List<Participation_Reservation> guestUserId = new ArrayList<>();
+    private final List<Participation_Reservation> guestUserId = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Event event;

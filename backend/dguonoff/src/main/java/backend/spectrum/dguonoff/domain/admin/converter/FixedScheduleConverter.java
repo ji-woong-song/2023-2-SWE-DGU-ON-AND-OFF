@@ -8,8 +8,10 @@ import backend.spectrum.dguonoff.domain.admin.dto.PostNewScheduleRequest;
 import backend.spectrum.dguonoff.domain.admin.dto.common.EventInfoDTO;
 import backend.spectrum.dguonoff.domain.admin.dto.DailyScheduleResponse;
 import backend.spectrum.dguonoff.domain.admin.dto.common.PeriodDTO;
-import java.util.ArrayList;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FixedScheduleConverter {
     public static EventInfoDTO toEventDTO(FixedSchedule fixedSchedule) {
         Event event = fixedSchedule.getEvent();
@@ -28,7 +30,6 @@ public class FixedScheduleConverter {
                 .hostName(eventInfoDTO.getHostName())
                 .purpose(eventInfoDTO.getPurpose())
                 .outline(eventInfoDTO.getOutline())
-                .reservations(new ArrayList<>())
                 .build();
     }
 

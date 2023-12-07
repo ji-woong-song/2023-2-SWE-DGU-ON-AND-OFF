@@ -49,5 +49,5 @@ public class Facility {
     private FacilityCategory category;
 
     @OneToMany(mappedBy = "facility")
-    private List<Reservation> reservations = new ArrayList<>();
+    private final List<Reservation> reservations = new ArrayList<>();
 }

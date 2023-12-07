@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class JwtAuthToken implements AuthToken<Claims> {
+    public static final String AUTHORITIES_KEY = "role";
     private final String token;
     private final Key key;
 
@@ -77,7 +78,7 @@ public class JwtAuthToken implements AuthToken<Claims> {
     private Optional<String> createJwtToken(String id, String role,
                                             Map<String, String> claimsMap, Date expiredDate) {
         Claims claims = new DefaultClaims(claimsMap);
-        claims.put(JwtAuthToken.AUTHORITIES_KEY, role);
+        claims.put(AUTHORITIES_KEY, role);
         return Optional.ofNullable(Jwts.builder()
                 .setSubject(id)
                 .addClaims(claims)

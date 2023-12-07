@@ -34,14 +34,6 @@ public class UserService {
         return user;
     }
 
-    //마스터 관리자 조회 및 권한 확인 함수
-//    public void checkMasterAdmin(String userId) {
-//        User user = userRepository
-//                .findById(userId)
-//                .orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_EXIST_MASTER_ADMIN));
-//        Role userRole = user.getRole();
-//    }
-
     //관리자 권한 부여 함수
     public void changeRoleToAdmin(User targetUser) {
         userRepository.changeRoleToAdmin(targetUser.getId());

@@ -32,18 +32,18 @@ public class ReservationController {
 
     //유저 자신의 예약 목록 조회 기능
     @GetMapping
-    public ResponseEntity<String> getReservationInfo(Principal principal){
+    public ResponseEntity<List<ReservationInfoResponse>> getReservationInfo(Principal principal){
         String userId = principal.getName();
         List<ReservationInfoResponse> reservationInfoList = reservationService.getReservationInfoList(userId);
 
         HttpStatus successStatus = SUCCESS_FACILITY_LOOKUP.getStatus();
 
-        return new ResponseEntity(reservationInfoList, successStatus);
+        return new ResponseEntity<>(reservationInfoList, successStatus);
     }
 
     //전체 예약 목록 조회
     @GetMapping("/admin/all")
-    public ResponseEntity<String> getAllReservationInfo(Principal principal){
+    public ResponseEntity<List<ReservationInfoResponse>> getAllReservationInfo(Principal principal){
         String adminId = principal.getName();
 
         //관리자 권한 확인
@@ -51,12 +51,12 @@ public class ReservationController {
 
         List<ReservationInfoResponse> reservationInfoList = reservationService.getAllReservationInfoList();
 
-        return new ResponseEntity(reservationInfoList, HttpStatus.OK);
+        return new ResponseEntity<>(reservationInfoList, HttpStatus.OK);
     }
 
     // 특정 유저의 예약 목록 조회 기능
     @GetMapping("admin/{userId}")
-    public ResponseEntity<String> getUserReservationInfo(@PathVariable String userId, Principal principal){
+    public ResponseEntity<List<ReservationInfoResponse>> getUserReservationInfo(@PathVariable String userId, Principal principal){
         String adminId = principal.getName();
 
         //관리자 권한 확인
@@ -64,7 +64,7 @@ public class ReservationController {
 
         List<ReservationInfoResponse> reservationInfoList = reservationService.getReservationInfoList(userId);
 
-        return new ResponseEntity(reservationInfoList, HttpStatus.OK);
+        return new ResponseEntity<>(reservationInfoList, HttpStatus.OK);
     }
 
     //예약 수정 기능
@@ -78,7 +78,7 @@ public class ReservationController {
         String successMessage = String.format(SUCCESS_MODIFICATION.getMessage(), userId);
         HttpStatus successStatus = SUCCESS_MODIFICATION.getStatus();
 
-        return new ResponseEntity(successMessage, successStatus);
+        return new ResponseEntity<>(successMessage, successStatus);
     }
 
     //예약 삭제 기능
@@ -162,7 +162,7 @@ public class ReservationController {
         String successMessage = String.format(SUCCESS_RESERVATION.getMessage(), userId);
         HttpStatus successStatus = SUCCESS_RESERVATION.getStatus();
 
-        return new ResponseEntity(successMessage, successStatus);
+        return new ResponseEntity<>(successMessage, successStatus);
     }
 
 }

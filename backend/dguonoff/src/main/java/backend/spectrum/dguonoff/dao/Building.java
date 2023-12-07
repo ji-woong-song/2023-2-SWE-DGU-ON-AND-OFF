@@ -21,5 +21,5 @@ public class Building {
     private int maxFloor;
 
     @OneToMany(mappedBy = "building")
-    private List<Facility> facilities = new ArrayList<>();
+    private final List<Facility> facilities = new ArrayList<>();
 }

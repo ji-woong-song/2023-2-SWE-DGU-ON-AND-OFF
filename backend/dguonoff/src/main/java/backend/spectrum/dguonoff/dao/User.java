@@ -11,7 +11,6 @@ import java.util.List;
 @Table(name = "User")
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
     @Id
@@ -38,13 +37,13 @@ public class User {
     private String email;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Bookmark> bookmarks = new ArrayList<>();
+    private final List<Bookmark> bookmarks = new ArrayList<>();
 
     @OneToMany(mappedBy = "hotUserId")
-    private List<Reservation> reservations = new ArrayList<>();
+    private final List<Reservation> reservations = new ArrayList<>();
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
-    private List<Board> boards = new ArrayList<>();
+    private final List<Board> boards = new ArrayList<>();
 
     public User(String id, String sid, String password, Role role, String name, String major, String email) {
         this.id = id;
@@ -58,6 +57,5 @@ public class User {
     public void addBookmark(Bookmark bookmark) {
         this.bookmarks.add(bookmark);
     }
-    public void addBoard(Board board) {this.boards.add(board);}
 }
 

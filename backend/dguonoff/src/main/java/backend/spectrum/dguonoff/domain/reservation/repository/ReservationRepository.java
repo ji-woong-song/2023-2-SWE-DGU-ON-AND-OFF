@@ -3,6 +3,7 @@ package backend.spectrum.dguonoff.domain.reservation.repository;
 import backend.spectrum.dguonoff.dao.Event;
 import backend.spectrum.dguonoff.dao.Reservation;
 import backend.spectrum.dguonoff.dao.model.ReservationStatus;
+import java.time.LocalTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -42,4 +43,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Modifying
     @Query("update Reservation r set r.status = ?1 where r.reservationId = ?2")
     int updateStatus(ReservationStatus status, Long reservationId);
+
+    List<Reservation> findByDateAfterOrDateEqualsAndStartTimeAfter(LocalDate date, LocalDate eqDate, LocalTime time);
 }

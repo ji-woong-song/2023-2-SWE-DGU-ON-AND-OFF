@@ -13,9 +13,9 @@ import backend.spectrum.dguonoff.domain.admin.dto.UpdateScheduleRequest;
 import backend.spectrum.dguonoff.domain.admin.dto.UpdateScheduleResponse;
 import backend.spectrum.dguonoff.domain.admin.dto.common.EventInfoDTO;
 import backend.spectrum.dguonoff.domain.admin.repository.FixedScheduleRepository;
-import backend.spectrum.dguonoff.domain.admin.repository.TempReservationRepository;
 import backend.spectrum.dguonoff.domain.facility.repository.FacilityRepository;
 import backend.spectrum.dguonoff.domain.reservation.repository.EventRepository;
+import backend.spectrum.dguonoff.domain.reservation.repository.ReservationRepository;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.global.error.Exception.BusinessException;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class FixedScheduleService {
-    private final TempReservationRepository tempReservationRepository;
+    private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
     private final FixedScheduleRepository fixedScheduleRepository;
     private final FacilityRepository facilityRepository;
@@ -62,7 +62,7 @@ public class FixedScheduleService {
         User admin = userRepository.findById(adminId)
             .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_USER));
         // 겹치는 고정 시간표가 있는지 확인
-        List<Reservation> reservations = tempReservationRepository.findByDateAfterOrDateEqualsAndStartTimeAfter(
+        List<Reservation> reservations = reservationRepository.findByDateAfterOrDateEqualsAndStartTimeAfter(
                 LocalDate.now(), LocalDate.now(), LocalTime.now());
         FixedSchedule fixedSchedule = FixedScheduleConverter.toFixedScheduleEntity(request, facility, admin);
         // 겹치지 않았다면 해당 시간표 대로 주어진 기간에 주어진 시간대에 예약을 한다.
@@ -88,12 +88,11 @@ public class FixedScheduleService {
                 request.getScheduleInfo().getFacility().getCode()
         ).orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_FACILITY));
         // 다음에 올 예약 정보들
-        List<Reservation> futureReservations = tempReservationRepository.findByDateAfterOrDateEqualsAndStartTimeAfter(
+        List<Reservation> futureReservations = reservationRepository.findByDateAfterOrDateEqualsAndStartTimeAfter(
                 LocalDate.now(), LocalDate.now(), LocalTime.now());
         // 지난 예약이 있는지 확인
         List<Reservation> passedReservation = event.getPastReservation(today, now);
         // 이미 지난 예약 정보가 없다면 event를 새로 만들지 않고 업데이트 수행
-        System.out.println("updateSchedule에서 " + event.getReservations().size());
         if (passedReservation.isEmpty())
             return updateWithoutEventChange(persistentSchedule, request.getScheduleInfo(), newFacility);
         
@@ -151,13 +150,12 @@ public class FixedScheduleService {
         Event event = schedule.getEvent();
         // 기존 예약 객체 제거
         event.clearReservation();
-        System.out.println("후" + event.getReservations().size());
         updateEventInfo(event, request.getEvent());
         schedule.setGuestNumber(request.getEvent().getGuestNumber());
 
         // 스케쥴이 달라졌다면 예약 정보들을 수정한다.
         if (isScheduleTimeChanged(schedule, request, facility)) {
-            List<Reservation> reservations = tempReservationRepository.findByDateAfterOrDateEqualsAndStartTimeAfter(
+            List<Reservation> reservations = reservationRepository.findByDateAfterOrDateEqualsAndStartTimeAfter(
                     LocalDate.now(), LocalDate.now(), LocalTime.now());
             checkOverlappedReservation(request, facility, event, reservations);
             // 달라진 스케쥴 정보로 수정후 예약하기.
@@ -219,7 +217,6 @@ public class FixedScheduleService {
         schedule.setFacility(newFacility);
         schedule.setStartDate(request.getEffectiveDate().getStart());
         schedule.setEndDate(request.getEffectiveDate().getEnd());
-//            schedule.setReservationAdmin();
         schedule.setStartTime(request.getTime().getStart());
         schedule.setEndTime(request.getTime().getEnd());
     }

@@ -46,7 +46,7 @@ public class Event {
 
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reservation> reservations = new ArrayList<>();
+    private final List<Reservation> reservations = new ArrayList<>();
 
 
     public void addReservation(Reservation reservation) {
@@ -54,7 +54,6 @@ public class Event {
     }
 
     public void addOneReservation(Reservation reservation) {
-        reservations = new ArrayList<Reservation>();
         this.reservations.add(reservation);
     }
 
@@ -95,7 +94,13 @@ public class Event {
                         (reservation.getDate().equals(today) && reservation.getStartTime().isAfter(now)))
                 .collect(Collectors.toList());
         futureReservation.forEach(reservation -> reservation.setEvent(otherEvent));
-        this.reservations.removeAll(reservations);
+        this.reservations.removeIf(reservation ->
+                        !(
+                                reservation.getDate().isAfter(today) ||
+                                (reservation.getDate().equals(today) &&
+                                 reservation.getStartTime().isAfter(now))
+                        )
+                );
     }
 
     /**
