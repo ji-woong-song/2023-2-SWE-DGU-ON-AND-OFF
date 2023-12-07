@@ -80,7 +80,9 @@ public class ReservationService {
     public void validateMaxReservation(String facilityCode, String buildingName, LocalDate date, String userId) {
 
         //관리자인 경우 이용 횟수 초과를 확인하지 않음
-        if (!userRepository.findById(userId).get().getRole().equals(NORMAL)) {
+        if (!userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(NOT_EXIST_USER))
+                .getRole().equals(NORMAL)) {
             return;
         }
 
