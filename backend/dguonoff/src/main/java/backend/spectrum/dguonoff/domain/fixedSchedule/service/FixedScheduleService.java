@@ -144,7 +144,6 @@ public class FixedScheduleService {
      * @param request
      * @param facility
      */
-    @Transactional
     public UpdateScheduleResponse updateWithoutEventChange(FixedSchedule schedule, PostNewScheduleRequest request, Facility facility)  {
         // 기존 event 객체에 요청으로 받은 이벤트 정보를 반영
         Event event = schedule.getEvent();
@@ -258,10 +257,10 @@ public class FixedScheduleService {
     public boolean isScheduleTimeChanged(FixedSchedule schedule,
                                           PostNewScheduleRequest request,
                                           Facility newFacility) {
-        return (!schedule.getEndTime().equals(request.getEffectiveDate().getEnd())) ||
+        return (!schedule.getEndTime().equals(request.getTime().getEnd())) ||
                 (!schedule.getStartTime().equals(request.getTime().getStart())) ||
                 (!schedule.getEndDate().equals(request.getEffectiveDate().getEnd())) ||
-                (!schedule.getStartTime().equals(request.getEffectiveDate().getStart())) ||
+                (!schedule.getStartDate().equals(request.getEffectiveDate().getStart()))||
                 (!schedule.getDay().equals(request.getDay())) ||
                 (!schedule.getFacility().getId().equals(newFacility.getId()));
     }
