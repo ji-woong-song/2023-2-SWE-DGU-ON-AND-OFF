@@ -1,4 +1,4 @@
-package backend.spectrum.dguonoff.domain.admin.repository;
+package backend.spectrum.dguonoff.domain.fixedSchedule.repository;
 
 
 import backend.spectrum.dguonoff.dao.FixedSchedule;

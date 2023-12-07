@@ -1,4 +1,4 @@
-package backend.spectrum.dguonoff.domain.admin.repository;
+package backend.spectrum.dguonoff.domain.board.repository;
 
 import backend.spectrum.dguonoff.dao.Board;
 import org.springframework.data.jpa.repository.JpaRepository;

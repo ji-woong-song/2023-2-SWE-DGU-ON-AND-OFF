@@ -1,4 +1,4 @@
-package backend.spectrum.dguonoff.domain.admin.dto;
+package backend.spectrum.dguonoff.domain.fixedSchedule.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

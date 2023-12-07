@@ -1,12 +1,12 @@
-package backend.spectrum.dguonoff.domain.admin.api;
+package backend.spectrum.dguonoff.domain.fixedSchedule.api;
 
 
-import backend.spectrum.dguonoff.domain.admin.dto.DailyScheduleResponse;
-import backend.spectrum.dguonoff.domain.admin.dto.PostNewScheduleRequest;
-import backend.spectrum.dguonoff.domain.admin.dto.PostNewScheduleResponse;
-import backend.spectrum.dguonoff.domain.admin.dto.UpdateScheduleRequest;
-import backend.spectrum.dguonoff.domain.admin.dto.UpdateScheduleResponse;
-import backend.spectrum.dguonoff.domain.admin.service.FixedScheduleService;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.DailyScheduleResponse;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.PostNewScheduleRequest;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.PostNewScheduleResponse;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.UpdateScheduleRequest;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.UpdateScheduleResponse;
+import backend.spectrum.dguonoff.domain.fixedSchedule.service.FixedScheduleService;
 import java.security.Principal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;

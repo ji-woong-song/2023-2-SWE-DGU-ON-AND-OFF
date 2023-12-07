@@ -20,7 +20,7 @@ import static backend.spectrum.dguonoff.global.statusCode.CommonCode.SUCCESS_EMP
 
 @RestController
 @Slf4j
-@RequestMapping("/master")
+@RequestMapping("/api/master")
 @RequiredArgsConstructor
 public class MasterAdminController {
 

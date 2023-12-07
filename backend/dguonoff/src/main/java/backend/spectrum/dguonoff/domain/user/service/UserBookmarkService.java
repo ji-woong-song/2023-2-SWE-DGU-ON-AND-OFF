@@ -3,7 +3,7 @@ package backend.spectrum.dguonoff.domain.user.service;
 import backend.spectrum.dguonoff.dao.Bookmark;
 import backend.spectrum.dguonoff.dao.Facility;
 import backend.spectrum.dguonoff.dao.User;
-import backend.spectrum.dguonoff.domain.admin.dto.common.FacilityKeyDTO;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.common.FacilityKeyDTO;
 import backend.spectrum.dguonoff.domain.facility.repository.FacilityRepository;
 import backend.spectrum.dguonoff.domain.user.dto.UserBookmarkDTO;
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;

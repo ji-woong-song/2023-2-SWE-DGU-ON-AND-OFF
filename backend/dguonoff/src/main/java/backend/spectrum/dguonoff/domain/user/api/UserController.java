@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.domain.user.api;
 
-import backend.spectrum.dguonoff.domain.admin.dto.common.FacilityKeyDTO;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.common.FacilityKeyDTO;
 import backend.spectrum.dguonoff.domain.user.dto.UserBookmarkDTO;
 import backend.spectrum.dguonoff.domain.user.service.UserBookmarkService;
 import java.security.Principal;

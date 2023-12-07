@@ -1,8 +1,8 @@
-package backend.spectrum.dguonoff.domain.admin.api;
+package backend.spectrum.dguonoff.domain.board.api;
 
-import backend.spectrum.dguonoff.domain.admin.dto.BoardDetailDTO;
-import backend.spectrum.dguonoff.domain.admin.dto.BoardTotalDTO;
-import backend.spectrum.dguonoff.domain.admin.service.BoardService;
+import backend.spectrum.dguonoff.domain.board.dto.BoardDetailDTO;
+import backend.spectrum.dguonoff.domain.board.dto.BoardTotalDTO;
+import backend.spectrum.dguonoff.domain.board.service.BoardService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

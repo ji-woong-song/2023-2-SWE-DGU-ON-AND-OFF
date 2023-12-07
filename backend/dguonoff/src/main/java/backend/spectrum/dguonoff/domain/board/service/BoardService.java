@@ -1,12 +1,12 @@
-package backend.spectrum.dguonoff.domain.admin.service;
+package backend.spectrum.dguonoff.domain.board.service;
 
 import backend.spectrum.dguonoff.dao.Board;
 import backend.spectrum.dguonoff.dao.User;
 import backend.spectrum.dguonoff.dao.model.Role;
-import backend.spectrum.dguonoff.domain.admin.dto.BoardDetailDTO;
-import backend.spectrum.dguonoff.domain.admin.dto.BoardTotalDTO;
-import backend.spectrum.dguonoff.domain.admin.dto.PostBoardDTO;
-import backend.spectrum.dguonoff.domain.admin.repository.BoardRepository;
+import backend.spectrum.dguonoff.domain.board.dto.BoardDetailDTO;
+import backend.spectrum.dguonoff.domain.board.dto.BoardTotalDTO;
+import backend.spectrum.dguonoff.domain.board.dto.PostBoardDTO;
+import backend.spectrum.dguonoff.domain.board.repository.BoardRepository;
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.global.error.Exception.BusinessException;

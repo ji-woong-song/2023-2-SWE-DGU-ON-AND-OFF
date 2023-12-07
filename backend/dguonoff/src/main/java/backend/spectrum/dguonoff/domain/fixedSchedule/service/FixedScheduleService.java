@@ -1,18 +1,18 @@
-package backend.spectrum.dguonoff.domain.admin.service;
+package backend.spectrum.dguonoff.domain.fixedSchedule.service;
 
 import backend.spectrum.dguonoff.dao.Event;
 import backend.spectrum.dguonoff.dao.Facility;
 import backend.spectrum.dguonoff.dao.FixedSchedule;
 import backend.spectrum.dguonoff.dao.Reservation;
 import backend.spectrum.dguonoff.dao.User;
-import backend.spectrum.dguonoff.domain.admin.converter.FixedScheduleConverter;
-import backend.spectrum.dguonoff.domain.admin.dto.DailyScheduleResponse;
-import backend.spectrum.dguonoff.domain.admin.dto.PostNewScheduleRequest;
-import backend.spectrum.dguonoff.domain.admin.dto.PostNewScheduleResponse;
-import backend.spectrum.dguonoff.domain.admin.dto.UpdateScheduleRequest;
-import backend.spectrum.dguonoff.domain.admin.dto.UpdateScheduleResponse;
-import backend.spectrum.dguonoff.domain.admin.dto.common.EventInfoDTO;
-import backend.spectrum.dguonoff.domain.admin.repository.FixedScheduleRepository;
+import backend.spectrum.dguonoff.domain.fixedSchedule.converter.FixedScheduleConverter;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.DailyScheduleResponse;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.PostNewScheduleRequest;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.PostNewScheduleResponse;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.UpdateScheduleRequest;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.UpdateScheduleResponse;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.common.EventInfoDTO;
+import backend.spectrum.dguonoff.domain.fixedSchedule.repository.FixedScheduleRepository;
 import backend.spectrum.dguonoff.domain.facility.repository.FacilityRepository;
 import backend.spectrum.dguonoff.domain.reservation.repository.EventRepository;
 import backend.spectrum.dguonoff.domain.reservation.repository.ReservationRepository;

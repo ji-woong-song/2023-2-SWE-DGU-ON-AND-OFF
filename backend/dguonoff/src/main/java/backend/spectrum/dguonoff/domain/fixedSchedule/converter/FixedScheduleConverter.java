@@ -1,13 +1,13 @@
-package backend.spectrum.dguonoff.domain.admin.converter;
+package backend.spectrum.dguonoff.domain.fixedSchedule.converter;
 
 import backend.spectrum.dguonoff.dao.Event;
 import backend.spectrum.dguonoff.dao.Facility;
 import backend.spectrum.dguonoff.dao.FixedSchedule;
 import backend.spectrum.dguonoff.dao.User;
-import backend.spectrum.dguonoff.domain.admin.dto.PostNewScheduleRequest;
-import backend.spectrum.dguonoff.domain.admin.dto.common.EventInfoDTO;
-import backend.spectrum.dguonoff.domain.admin.dto.DailyScheduleResponse;
-import backend.spectrum.dguonoff.domain.admin.dto.common.PeriodDTO;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.PostNewScheduleRequest;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.common.EventInfoDTO;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.DailyScheduleResponse;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.common.PeriodDTO;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
