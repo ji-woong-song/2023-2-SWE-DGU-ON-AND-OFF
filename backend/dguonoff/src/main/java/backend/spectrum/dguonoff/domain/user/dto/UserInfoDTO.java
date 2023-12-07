@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.domain.user.dto;
 
-import backend.spectrum.dguonoff.DAO.model.Role;
+import backend.spectrum.dguonoff.dao.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

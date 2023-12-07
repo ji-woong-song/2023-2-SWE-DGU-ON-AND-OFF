@@ -1,8 +1,9 @@
 package backend.spectrum.dguonoff.domain.reservation.repository;
 
-import backend.spectrum.dguonoff.DAO.Event;
-import backend.spectrum.dguonoff.DAO.Reservation;
-import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
+import backend.spectrum.dguonoff.dao.Event;
+import backend.spectrum.dguonoff.dao.Reservation;
+import backend.spectrum.dguonoff.dao.model.ReservationStatus;
+import java.time.LocalTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +30,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("select r from Reservation r where r.hotUserId.id = ?1")
     List<Reservation> findReservationList(String id);
 
-    @Query("select r from Reservation r where r.status = backend.spectrum.dguonoff.DAO.model.ReservationStatus.APPROVED")
+    @Query("select r from Reservation r where r.status = backend.spectrum.dguonoff.dao.model.ReservationStatus.APPROVED")
     List<Reservation> findAllApproved();
 
     @Query("select r.hotUserId.id from Reservation r where r.reservationId = ?1")
@@ -43,4 +43,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Modifying
     @Query("update Reservation r set r.status = ?1 where r.reservationId = ?2")
     int updateStatus(ReservationStatus status, Long reservationId);
+
+    List<Reservation> findByDateAfterOrDateEqualsAndStartTimeAfter(LocalDate date, LocalDate eqDate, LocalTime time);
 }

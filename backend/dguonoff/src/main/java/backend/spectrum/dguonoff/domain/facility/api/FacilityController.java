@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.domain.facility.api;
 
-import backend.spectrum.dguonoff.DAO.model.FacilityStatus;
+import backend.spectrum.dguonoff.dao.model.FacilityStatus;
 import backend.spectrum.dguonoff.domain.facility.dto.FloorFacilityListResponse;
 import backend.spectrum.dguonoff.domain.facility.dto.NextReservationResponse;
 import backend.spectrum.dguonoff.domain.facility.service.FacilityService;
@@ -42,17 +42,17 @@ public class FacilityController {
 
         HttpStatus successStatus = SUCCESS_FACILITY_NEXT_RESERVATION_LOOKUP.getStatus();
 
-        return new ResponseEntity(nextReservation, successStatus);
+        return new ResponseEntity<>(nextReservation, successStatus);
     }
 
     //특정 시설물 이용상태 확인 기능
     @GetMapping("/status/{buildingName}/{facilityCode}")
-    public ResponseEntity<String> getFacilityStatus(@PathVariable String buildingName, @PathVariable String facilityCode){
+    public ResponseEntity<FacilityStatus> getFacilityStatus(@PathVariable String buildingName, @PathVariable String facilityCode){
         FacilityStatus facilityStatus = facilityService.getFacilityStatus(facilityCode, buildingName);
 
         HttpStatus successStatus = SUCCESS_FACILITY_LOOKUP.getStatus();
 
-        return new ResponseEntity(facilityStatus, successStatus);
+        return new ResponseEntity<>(facilityStatus, successStatus);
     }
 
     //시설물 이용 종료 기능
@@ -63,6 +63,6 @@ public class FacilityController {
         String successMessage = SUCCESS_FACILITY_FINISH.getMessage();
         HttpStatus successStatus = SUCCESS_FACILITY_FINISH.getStatus();
 
-        return new ResponseEntity(successMessage, successStatus);
+        return new ResponseEntity<>(successMessage, successStatus);
     }
 }

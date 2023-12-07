@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.domain.user.api;
 
-import backend.spectrum.dguonoff.DAO.User;
+import backend.spectrum.dguonoff.dao.User;
 import backend.spectrum.dguonoff.domain.user.dto.EmpowermentParams;
 import backend.spectrum.dguonoff.domain.user.dto.UserInfoDTO;
 import backend.spectrum.dguonoff.domain.user.service.UserService;
@@ -20,7 +20,7 @@ import static backend.spectrum.dguonoff.global.statusCode.CommonCode.SUCCESS_EMP
 
 @RestController
 @Slf4j
-@RequestMapping("/master")
+@RequestMapping("/api/master")
 @RequiredArgsConstructor
 public class MasterAdminController {
 

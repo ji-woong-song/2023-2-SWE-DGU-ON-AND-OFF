@@ -1,6 +1,5 @@
 package backend.spectrum.dguonoff.security.auth.jwt;
 
-import backend.spectrum.dguonoff.security.auth.AuthToken;
 import backend.spectrum.dguonoff.security.auth.AuthTokenProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -74,7 +73,7 @@ public class JwtAuthTokenProvider implements AuthTokenProvider<JwtAuthToken> {
         if (authToken.validate()) {
             Claims claims = authToken.getData();
             Collection<? extends GrantedAuthority> authorities = Collections.singleton(
-                    new SimpleGrantedAuthority(claims.get(AuthToken.AUTHORITIES_KEY, String.class))
+                    new SimpleGrantedAuthority(claims.get(JwtAuthToken.AUTHORITIES_KEY, String.class))
             );
             User principal = new User(claims.getSubject(), "", authorities);
             return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);

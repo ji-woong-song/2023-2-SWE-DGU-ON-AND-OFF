@@ -1,7 +1,7 @@
 package backend.spectrum.dguonoff.domain.user.service;
 
-import backend.spectrum.dguonoff.DAO.User;
-import backend.spectrum.dguonoff.DAO.model.Role;
+import backend.spectrum.dguonoff.dao.User;
+import backend.spectrum.dguonoff.dao.model.Role;
 import backend.spectrum.dguonoff.domain.user.dto.UserInfoDTO;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import static backend.spectrum.dguonoff.DAO.model.Role.ADMIN;
-import static backend.spectrum.dguonoff.DAO.model.Role.MASTER;
+import static backend.spectrum.dguonoff.dao.model.Role.ADMIN;
+import static backend.spectrum.dguonoff.dao.model.Role.MASTER;
 import static backend.spectrum.dguonoff.global.statusCode.ErrorCode.NOT_EXIST_ADMIN;
 
 @Service
@@ -33,14 +33,6 @@ public class UserService {
 
         return user;
     }
-
-    //마스터 관리자 조회 및 권한 확인 함수
-//    public void checkMasterAdmin(String userId) {
-//        User user = userRepository
-//                .findById(userId)
-//                .orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_EXIST_MASTER_ADMIN));
-//        Role userRole = user.getRole();
-//    }
 
     //관리자 권한 부여 함수
     public void changeRoleToAdmin(User targetUser) {

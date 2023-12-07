@@ -1,10 +1,10 @@
 package backend.spectrum.dguonoff.domain.reservation.service;
 
-import backend.spectrum.dguonoff.DAO.*;
-import backend.spectrum.dguonoff.DAO.idClass.ParticipationReservationId;
-import backend.spectrum.dguonoff.DAO.model.ReservationPeriod;
-import backend.spectrum.dguonoff.DAO.model.ReservationStatus;
-import backend.spectrum.dguonoff.DAO.model.Role;
+import backend.spectrum.dguonoff.dao.*;
+import backend.spectrum.dguonoff.dao.idClass.ParticipationReservationId;
+import backend.spectrum.dguonoff.dao.model.ReservationPeriod;
+import backend.spectrum.dguonoff.dao.model.ReservationStatus;
+import backend.spectrum.dguonoff.dao.model.Role;
 import backend.spectrum.dguonoff.domain.facility.repository.FacilityRepository;
 import backend.spectrum.dguonoff.domain.facility.service.FacilityService;
 import backend.spectrum.dguonoff.domain.reservation.dto.*;
@@ -34,10 +34,10 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static backend.spectrum.dguonoff.DAO.model.FacilityStatus.EMPTY;
-import static backend.spectrum.dguonoff.DAO.model.FacilityStatus.USING;
-import static backend.spectrum.dguonoff.DAO.model.ReservationStatus.*;
-import static backend.spectrum.dguonoff.DAO.model.Role.*;
+import static backend.spectrum.dguonoff.dao.model.FacilityStatus.EMPTY;
+import static backend.spectrum.dguonoff.dao.model.FacilityStatus.USING;
+import static backend.spectrum.dguonoff.dao.model.ReservationStatus.*;
+import static backend.spectrum.dguonoff.dao.model.Role.*;
 import static backend.spectrum.dguonoff.email.CommonMessage.APPROVE_RESERVATION;
 import static backend.spectrum.dguonoff.email.CommonMessage.REJECT_RESERVATION;
 import static backend.spectrum.dguonoff.global.statusCode.ErrorCode.*;
@@ -80,7 +80,9 @@ public class ReservationService {
     public void validateMaxReservation(String facilityCode, String buildingName, LocalDate date, String userId) {
 
         //관리자인 경우 이용 횟수 초과를 확인하지 않음
-        if (!userRepository.findById(userId).get().getRole().equals(NORMAL)) {
+        if (!userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(NOT_EXIST_USER))
+                .getRole().equals(NORMAL)) {
             return;
         }
 

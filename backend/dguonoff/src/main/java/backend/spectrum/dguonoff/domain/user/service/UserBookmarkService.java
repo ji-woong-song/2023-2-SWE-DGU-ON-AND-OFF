@@ -1,15 +1,16 @@
 package backend.spectrum.dguonoff.domain.user.service;
 
-import backend.spectrum.dguonoff.DAO.Bookmark;
-import backend.spectrum.dguonoff.DAO.Facility;
-import backend.spectrum.dguonoff.DAO.User;
-import backend.spectrum.dguonoff.domain.admin.dto.common.FacilityKeyDTO;
+import backend.spectrum.dguonoff.dao.Bookmark;
+import backend.spectrum.dguonoff.dao.Facility;
+import backend.spectrum.dguonoff.dao.User;
+import backend.spectrum.dguonoff.domain.fixedSchedule.dto.common.FacilityKeyDTO;
 import backend.spectrum.dguonoff.domain.facility.repository.FacilityRepository;
 import backend.spectrum.dguonoff.domain.user.dto.UserBookmarkDTO;
 import backend.spectrum.dguonoff.domain.user.exception.UserNotFoundException;
 import backend.spectrum.dguonoff.domain.user.repository.UserRepository;
 import backend.spectrum.dguonoff.global.error.Exception.BusinessException;
 import backend.spectrum.dguonoff.global.statusCode.ErrorCode;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -56,12 +57,11 @@ public class UserBookmarkService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_EXIST_USER));
         List<Bookmark> bookmarks = user.getBookmarks();
-        int size = bookmarks.size();
-        for (int i = 0 ; i < size ; i++) {
-            Bookmark bookmark = bookmarks.get(i);
+        for (Iterator<Bookmark> itr = bookmarks.iterator(); itr.hasNext();) {
+            Bookmark bookmark = itr.next();
             if (bookmark.getFacility().getCode().equals(request.getCode()) &&
-                bookmark.getFacility().getBuilding().getName().equals(request.getBuildingName())) {
-                bookmarks.remove(i);
+                    bookmark.getFacility().getBuilding().getName().equals(request.getBuildingName())) {
+                itr.remove();
                 userRepository.save(user);
                 return ;
             }

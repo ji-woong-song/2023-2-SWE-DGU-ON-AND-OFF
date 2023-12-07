@@ -1,10 +1,10 @@
 package backend.spectrum.dguonoff.domain.facility.repository;
 
-import backend.spectrum.dguonoff.DAO.Facility;
+import backend.spectrum.dguonoff.dao.Facility;
 
 import java.util.List;
 import java.util.Optional;
-import backend.spectrum.dguonoff.DAO.model.FacilityStatus;
+import backend.spectrum.dguonoff.dao.model.FacilityStatus;
 import backend.spectrum.dguonoff.domain.reservation.dto.constraint.DateConstraint;
 import backend.spectrum.dguonoff.domain.reservation.dto.constraint.MaxReservationConstraint;
 import backend.spectrum.dguonoff.domain.reservation.dto.constraint.UsageConstraint;

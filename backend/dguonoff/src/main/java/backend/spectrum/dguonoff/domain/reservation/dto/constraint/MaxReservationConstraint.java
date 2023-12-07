@@ -1,6 +1,6 @@
 package backend.spectrum.dguonoff.domain.reservation.dto.constraint;
 
-import backend.spectrum.dguonoff.DAO.model.ReservationPeriod;
+import backend.spectrum.dguonoff.dao.model.ReservationPeriod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

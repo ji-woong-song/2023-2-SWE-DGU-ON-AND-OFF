@@ -1,5 +1,6 @@
 package backend.spectrum.dguonoff.security.config;
 
+import backend.spectrum.dguonoff.dao.model.Role;
 import backend.spectrum.dguonoff.security.error.handler.JwtExceptionFilter;
 import backend.spectrum.dguonoff.security.auth.jwt.JwtFilter;
 import java.util.List;
@@ -39,11 +40,14 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt로 무상태 정책
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**", // // auth로 시작하는 uri,
-                        "/swagger*/**", "/v3/api-docs/**", "/swagger-ui/index.html#").permitAll()    // swagger는 인증 필요 없음
-                .antMatchers("/master/**").hasAuthority("MASTER") // master api는 role master인 사용자만 허용
-                .antMatchers("/api/admin/fixedSchedules").hasAnyRole("ADMIN", "MASTER") // ADMIN 또는 MASTER만
-                .antMatchers("/api/admin/board").hasAnyRole("ADMIN","MASTER")
+                .antMatchers(
+                        "/swagger-ui/index.html#",
+                        "/v3/api-docs/**",
+                        "/swagger*/**",
+                        "/auth/**" // // auth로 시작하는 uri,
+                ).permitAll()    // swagger는 인증 필요 없음
+                .antMatchers("/api/master/**").hasAuthority(Role.MASTER.toString()) // master api는 role master인 사용자만 허용
+                .antMatchers("/api/admin/**").hasAnyRole(Role.ADMIN.toString(), Role.MASTER.toString()) // ADMIN 또는 MASTER만
                 .antMatchers("/api/**").authenticated() // api로 시작하는 uri에 대해서 인증 필요
                 .anyRequest().authenticated()
                 .and()

@@ -1,8 +1,8 @@
 package backend.spectrum.dguonoff.domain.reservation.repository;
 
-import backend.spectrum.dguonoff.DAO.Participation_Reservation;
-import backend.spectrum.dguonoff.DAO.Reservation;
-import backend.spectrum.dguonoff.DAO.idClass.ParticipationReservationId;
+import backend.spectrum.dguonoff.dao.Participation_Reservation;
+import backend.spectrum.dguonoff.dao.Reservation;
+import backend.spectrum.dguonoff.dao.idClass.ParticipationReservationId;
 import backend.spectrum.dguonoff.domain.reservation.dto.GuestInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
